@@ -44,7 +44,7 @@ namespace EdFi.Identity.Controllers
         {
             try
             {
-                var schoolIdentity = new SchoolIdentity { UniqueId = "12345" };
+                var schoolIdentity = new SchoolIdentity { EducationOrganizationId = 12345 };
                 var result = _schoolIdentitySubsystem.Get(schoolIdentity);
                 return Request.CreateResponse(HttpStatusCode.OK, result.Select(s => _schoolIdentityMapper.MapToResource(s)));
             }

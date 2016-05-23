@@ -20,7 +20,7 @@ namespace EdFi.Identity.Models
         {
             return new SchoolIdentityResource
             {
-                UniqueId = schoolIdentity.UniqueId
+                EducationOrganizationId = schoolIdentity.EducationOrganizationId
             };
         }
     }

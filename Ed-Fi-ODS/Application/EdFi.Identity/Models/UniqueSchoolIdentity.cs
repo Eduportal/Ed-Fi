@@ -9,7 +9,7 @@ namespace EdFi.Identity.Models
         {
             return new SchoolIdentity
             {
-                UniqueId = "12345"
+                EducationOrganizationId = 12345
             };
         }
 
@@ -20,7 +20,7 @@ namespace EdFi.Identity.Models
 
         public ISchoolIdentity Post(ISchoolIdentity command)
         {
-            command.UniqueId = Guid.NewGuid().ToString("N");
+            command.EducationOrganizationId = 12345;
             return command;
         }
     }

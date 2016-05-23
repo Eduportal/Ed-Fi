@@ -2,6 +2,6 @@
 {
     public class SchoolIdentityResource
     {
-        public string UniqueId { get; set; }
+        public int EducationOrganizationId { get; set; }
     }
 }
