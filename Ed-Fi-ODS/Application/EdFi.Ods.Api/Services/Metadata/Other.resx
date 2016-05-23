@@ -118,8 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="other.api-docs.json" xml:space="preserve">
-    <value>
-{
+    <value>{
   "apiVersion": "1.0.0.0",
   "swaggerVersion": "1.2",
   "basePath": "%BASE_URL%/metadata/other/api-docs",
@@ -137,6 +136,10 @@
       "description": "Retrieve or create Unique Ids for a person, and add or update their information"
     },
     {
+      "path": "/schoolIdentities",
+      "description": "Retrieve or create Unique Ids for a school, and add or update their information"
+    },
+    {
       "path": "/uploads",
       "description": "Upload interchange XML files"
     }
@@ -148,8 +151,7 @@
     "contact": "support@ed-fi.org",
     "licenseUrl": "http://www.ed-fi.org/license/"
   }
-}
-    </value>
+}</value>
   </data>
   <data name="other.bulkOperations.json" xml:space="preserve">
     <value>
@@ -393,7 +395,7 @@
               "message": "No Identity matching the provided Unique Id was found.",
               "responseModel": "identity"
             },
-			{
+            {
               "code": 501,
               "message": "There is no integrated Unique Identity System.",
               "responseModel": "identity"
@@ -411,7 +413,7 @@
           "nickname": "getByExample",
           "summary": "Lookup an existing Unique Id for a person, or suggest possible matches.",
           "type": "array",
-          "items":{"$ref":"identity"},
+          "items": { "$ref": "identity" },
           "parameters": [
             {
               "paramType": "query",
@@ -452,7 +454,7 @@
               "message": "One or more Identity matches were found",
               "responseModel": "void"
             },
-			{
+            {
               "code": 501,
               "message": "There is no integrated Unique Identity System.",
               "responseModel": "identity"
@@ -482,10 +484,33 @@
               "message": "A Identity was created. The new Unique Id is returned in the returned Identity record",
               "responseModel": "void"
             },
-			{
+            {
               "code": 501,
               "message": "There is no integrated Unique Identity System.",
               "responseModel": "identity"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/schoolIdentities",
+      "description": "Retrieves Unique Ids for a school",
+      "operations": [
+        {
+          "method": "GET",
+          "nickname": "getByExample",
+          "summary": "Lookup an existing Unique Id for a school, or suggest possible matches.",
+          "type": "array",
+          "items": { "$ref": "school" },
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "uniqueId",
+              "description": "Gender of the identity",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
             }
           ]
         }
@@ -499,28 +524,28 @@
         "uniqueId": {
           "type": "string",
           "required": true
-        }
-        , "birthGender": {
+        },
+        "birthGender": {
           "type": "string",
           "required": false
-        }
-        , "birthDate": {
+        },
+        "birthDate": {
           "type": "dateTime",
           "required": false
-        }
-        , "familyNames": {
+        },
+        "familyNames": {
           "type": "string",
           "required": true
-        }
-        , "givenNames": {
+        },
+        "givenNames": {
           "type": "string",
           "required": true
-        }
-        , "weight": {
+        },
+        "weight": {
           "type": "decimal",
           "required": true
-        }
-        , "schoolAssociations": {
+        },
+        "schoolAssociations": {
           "type": "schoolAssociation",
           "required": false
         }
@@ -532,17 +557,26 @@
         "SchoolName": {
           "type": "string",
           "required": false
-        }
-        , "LocalEducationAgencyName": {
+        },
+        "LocalEducationAgencyName": {
           "type": "string",
           "required": false
-        }
-        , "SchoolYear": {
+        },
+        "SchoolYear": {
           "type": "string",
           "required": false
         }
       }
-    }
+    },
+    "school": {
+      "id": "school",
+      "properties": {
+        "uniqueId": {
+          "type": "string",
+          "required": true
+        }
+      }  
+    } 
   }
 }</value>
   </data>

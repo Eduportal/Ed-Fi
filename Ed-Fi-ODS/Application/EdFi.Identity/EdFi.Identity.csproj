@@ -136,12 +136,17 @@
   <ItemGroup>
     <Compile Include="Controllers\IdentitiesController.cs" />
     <Compile Include="Controllers\MergeController.cs" />
+    <Compile Include="Controllers\SchoolIdentitiesController.cs" />
     <Compile Include="Marker_EdFi_Identity.cs" />
     <Compile Include="Models\IdentityCreateValidator.cs" />
     <Compile Include="Models\IdentityMapper.cs" />
     <Compile Include="Models\IdentityResource.cs" />
+    <Compile Include="Models\SchoolIdentityMapper.cs" />
+    <Compile Include="Models\SchoolIdentityResource.cs" />
+    <Compile Include="Models\SchoolIdentityResourceCreateValidator.cs" />
     <Compile Include="Models\UnimplementedUniqueIdentity.cs" />
     <Compile Include="Models\SampleUniqueIdentity.cs" />
+    <Compile Include="Models\UniqueSchoolIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

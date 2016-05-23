@@ -5,6 +5,7 @@ using System.Web.Http;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using EdFi.Common.Identity;
+using EdFi.Common.SchoolIdentity;
 using EdFi.Common.Security.Claims;
 using EdFi.Common._Installers;
 using EdFi.Identity.Models;
@@ -150,6 +151,11 @@ namespace EdFi.Ods.Api._Installers
             container.Register(Component
                 .For<IUniqueIdentity>()
                 .ImplementedBy<EdFi.Identity.Models.UnimplementedUniqueIdentity>());
+
+            // Unique Identity System Integration
+            container.Register(Component
+                .For<IUniqueSchoolIdentity>()
+                .ImplementedBy<EdFi.Identity.Models.UniqueSchoolIdentity>());
             
             // Sample Unique Identity class registration
             //container.Register(Component
@@ -163,6 +169,14 @@ namespace EdFi.Ods.Api._Installers
             container.Register(Component
                 .For<IIdentityMapper>()
                 .ImplementedBy<IdentityMapper>());
+
+            container.Register(Component
+                .For<IValidator<SchoolIdentityResource>>()
+                .ImplementedBy<SchoolIdentityResourceCreateValidator>());
+
+            container.Register(Component
+                .For<ISchoolIdentityMapper>()
+                .ImplementedBy<SchoolIdentityMapper>());
         }
     }
 }

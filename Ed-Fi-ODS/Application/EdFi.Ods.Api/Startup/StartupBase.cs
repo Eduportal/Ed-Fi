@@ -224,7 +224,7 @@ namespace EdFi.Ods.Api.Startup
                 },
                 constraints: new
                 {
-                    controller = @"^(?i)(identities)$",
+                    controller = @"^(?i)(identities|schoolidentities)$",
                 }
             );
 
@@ -239,7 +239,7 @@ namespace EdFi.Ods.Api.Startup
                 constraints: new
                 {
                     //do not use this path for the swagger, and other controllers not needing school year
-                    controller = @"^((?!(swagger|identities)).)*$",
+                    controller = @"^((?!(swagger|identities|schoolidentities)).)*$",
                     schoolYearFromRoute = @"^\d{4}$"
                 });
         }

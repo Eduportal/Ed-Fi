@@ -106,6 +106,9 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Inflection\CompositeTermInflector.cs" />
     <Compile Include="Inflection\Inflector.cs" />
+    <Compile Include="SchoolIdentity\ISchoolIdentity.cs" />
+    <Compile Include="SchoolIdentity\IUniqueSchoolIdentity.cs" />
+    <Compile Include="SchoolIdentity\SchoolIdentity.cs" />
     <Compile Include="Security\Authorization\AuthorizationSegmentCollection.cs" />
     <Compile Include="Security\Authorization\AuthorizationSegmentEndpointWithValue.cs" />
     <Compile Include="Security\Authorization\ClaimsAuthorizationSegment.cs" />
