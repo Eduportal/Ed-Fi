@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  Order of the Interchange elements and the Element elements is important. 
+  Unlike the current order provider, this metadata will list all aggregate types that are part of the interchange. 
+  The extension metadata will replace the core metadata and contain all interchanges and elements for the implementation.
+-->
+<Interchanges>
+
+  <Interchange name="Descriptors" order="10">
+    <Element name="GradeLevelDescriptor"/>
+    <Element name="AcademicSubjectDescriptor"/>
+  </Interchange>
+
+  <Interchange name="Standards" order="20">
+    <Element name="LearningStandard"/>
+    <Element name="LearningObjective"/>
+  </Interchange>
+  
+  <Interchange name="EducationOrganization" order="30">
+    <Element name="StateEducationAgency"/>
+    <Element name="EducationServiceCenter"/>
+    <Element name="LocalEducationAgency"/>
+    <Element name="School"/>
+    <Element name="EducationOrganizationNetwork"/>
+    <Element name="AccountabilityRating"/>
+    <Element name="Location"/>
+    <Element name="ClassPeriod"/>
+    <Element name="Course"/>
+    <Element name="Program"/>
+    <Element name="FeederSchoolAssociation"/>
+    <Element name="EducationOrganizationPeerAssociation"/>
+    <Element name="EducationOrganizationNetworkAssociation"/>
+  </Interchange>
+
+  <Interchange name="EducationOrgCalendar" order="40">
+    <Element name="CalendarDate"/>
+    <Element name="GradingPeriod"/>
+    <Element name="AcademicWeek"/>
+    <Element name="Session"/>
+  </Interchange>
+
+  <Interchange name="MasterSchedule" order="50">
+    <Element name="CourseOffering"/>
+  </Interchange>
+
+  <Interchange name="StaffAssociation" order="60">
+    <Element name="Staff"/>
+  </Interchange>
+  
+  <Interchange name="Student" order="70">
+	<Element name="Student"/>
+  </Interchange>
+  
+  <Interchange name="Parent" order="80">
+	<Element name="Parent"/>
+	<Element name="StudentParentAssociation"/>
+  </Interchange>  
+  
+  <Interchange name="AssessmentMetadata" order="90">
+    <Element name="AssessmentFamily"/>
+    <Element name="Assessment"/>
+    <Element name="AssessmentItem"/>
+    <Element name="ObjectiveAssessment"/>
+  </Interchange>
+
+  <Interchange name="StudentCohort" order="100">
+    <Element name="Cohort"/>
+    <Element name="StudentCohortAssociation"/>
+    <Element name="StaffCohortAssociation"/>
+  </Interchange>
+
+  <Interchange name="StudentAssessment" order="110">
+    <Element name="StudentAssessment"/>
+  </Interchange>
+
+  <Interchange name="StudentIntervention" order="120">
+    <Element name="Intervention"/>
+    <Element name="StudentInterventionAssociation"/>
+    <Element name="EducationContent"/>
+    <Element name="InterventionPrescription"/>
+    <Element name="InterventionStudy"/>
+  </Interchange>
+
+  <Interchange name="StudentTranscript" order="130">
+    <Element name="StudentAcademicRecord"/>
+    <Element name="CourseTranscript"/>
+  </Interchange>
+
+  <Interchange name="StudentProgram" order="140">
+    <Element name="StudentProgramAssociation"/>
+    <Element name="RestraintEvent"/>
+    <Element name="StudentSpecialEducationProgramAssociation"/>
+  </Interchange>
+
+  <Interchange name="StudentEnrollment" order="150">
+    <Element name="GraduationPlan"/>
+  </Interchange>
+
+  <Interchange name="StudentDiscipline" order="160">
+    <Element name="DisciplineIncident"/>
+    <Element name="StudentDisciplineIncidentAssociation"/>
+    <Element name="DisciplineAction"/>
+  </Interchange>
+
+  <Interchange name="PostSecondaryEvent" order="170">
+    <Element name="PostSecondaryEvent"/>
+  </Interchange>
+
+  <Interchange name="StudentAttendance" order="180">
+  </Interchange>
+
+  <Interchange name="StudentGrade" order="190">
+    <Element name="Grade"/>
+    <Element name="ReportCard"/>
+    <Element name="CompetencyObjective"/>
+    <Element name="LearningObjective"/>
+    <Element name="StudentCompetencyObjective"/>
+  </Interchange>
+
+  <Interchange name="StudentGradebook" order="200">
+    <Element name="GradebookEntry"/>
+  </Interchange>
+  
+  <Interchange name="Finance" order="210">
+    <Element name="Account"/>
+    <Element name="Budget"/>
+    <Element name="ContractedStaff"/>
+    <Element name="Budget"/>
+    <Element name="Actual"/>
+    <Element name="Payroll"/>
+  </Interchange>
+
+</Interchanges>

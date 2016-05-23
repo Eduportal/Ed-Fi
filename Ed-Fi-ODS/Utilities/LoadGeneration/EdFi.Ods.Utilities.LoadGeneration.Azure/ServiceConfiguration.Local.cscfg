@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="EdFi.Ods.Utilities.LoadGeneration.Azure" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2014-01.2.3">
+  <Role name="EdFiAzureLoadGeneration">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=tnrestdev;AccountKey=qLDHSRzI7ZgtktNi57zA0d+FhlROZfO0CdItbHhPDW6EGICtElEiXNoqmDaNH9N+l8jfolw/vpBtx4G/xS+BlQ==" />
+      <Setting name="Microsoft.ServiceBus.ConnectionString" value="Endpoint=sb://tn-rest-load-generation.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=hy+QLip9fa21JzUcWjt1BmFxO6ZGbrkKq3Cwo8JHKbQ=" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="geoff" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBpQYJKoZIhvcNAQcDoIIBljCCAZICAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEBH+qG/5K/OSRyIbkuA6bKwwDQYJKoZIhvcNAQEBBQAEggEAIse/NRxIB+KmWN20G0wwR3xnqCEpfIDqKYAsUJu3j5CaRQ3OOTcdXyZUZgPcr5SU/Duwsr8addVpYfL9xrleO15bIfznUD/OxbQeTymzuv7oBOuscRfrt/L9OA5YCOCqivhtHLKjK3DiSBlLrQ+guhMbkZvDtPcCRaSoscxWlFItP30egFisS8Z1xX0xdEGTdrurmRwG1cyVXTqBbuajlmd4F37TYHwEU5ZxotV8E/0EDzs51zIs0MpE+0J2Jmb/SIS5iTWbw7w9YWNuNIC0T9+sjCuhN+Fa4rH3JJVFVn2ujPcZIXD6MjX72be9f4T99WvUIrP7O0ak4hhGkC9vEjA7BgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECEO1247Lrqu9gBiOXMWdA4fianiDP2S2wxZ6HKsxXCMcXWE=" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2015-12-02T23:59:59.0000000-06:00" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" value="true" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="4C244718B2814D35FE179616F56F915DE7311F0F" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+</ServiceConfiguration>

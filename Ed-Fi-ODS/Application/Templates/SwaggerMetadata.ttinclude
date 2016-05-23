@@ -1,0 +1,1015 @@
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Common.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.Common.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="EdFi.Common.Inflection" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.Models" #>
+<#@ import namespace="EdFi.Ods.CodeGen.Models.ProfileMetadata" #>
+<#@ import namespace="EdFi.Ods.Common.Utils.Profiles" #>
+<#@ include file="SwaggerMetadataModels.ttinclude" #> 
+<#@ output extension=".generated.resx" #>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+    <#
+    string projectPath = GetProjectPath();
+
+    // Load the current assembly's profiles
+    var profiles = MetadataHelper.GetProfiles(projectPath);
+
+    string apiVersion = "2.0";
+    string swaggerVersion = "1.2";
+
+    var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath()); 
+
+    var databaseSchemaProvider = 
+        new UsiToUniqueIdTransformingDatabaseSchemaProviderDecorator(
+            new EdFiExtensionsDatabaseSchemaProviderDecorator(
+                new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath())));
+
+    var codeGenHelper = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+
+    MetadataValidator.ValidateProfileMetadata(codeGenHelper, profiles, MetadataHelper.GetProfilesXDocument(projectPath));
+
+    var tables = databaseSchemaProvider.LoadTables();
+
+    var tablesByName = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
+
+    foreach (var t in tables)
+        tablesByName[t.Name] = t;
+
+    // Determine what tables in the database have not been explicitly handled
+    var unhandledTableNames = 
+        tablesByName.Keys
+        .Except(domainMetadataDoc.Descendants("Entity").Select(x => x.Attribute("table").Value))
+        .Where(x => !codeGenHelper.IsExcluded(x) && !x.EndsWith("Extension")) // Extension tables don't need to be explicitly handled, they are joined by convention
+        .ToList();
+
+    // Provide explicit message related to any unhandled tables
+    if (unhandledTableNames.Any())
+        throw new Exception(string.Format("The following tables have not been explicitly handled:\r\n{0}", string.Join("\r\n\t", unhandledTableNames)));
+
+    var aggregatesElts = domainMetadataDoc.Descendants("Aggregate");
+
+    List<string> propertiesWithCollidingJsonNames = codeGenHelper.GetCollidingPropertyNames(tablesByName, aggregatesElts);
+
+    if (!projectPath.Contains("Profiles"))
+    {
+        // Group the resources based on suffixes (Type, Descriptor, and other)
+        var apiSectionNamesAndResourceInclusionPredicates = new List<Tuple<string, Func<string, bool>>>()
+        {
+            // Define the standard API sections
+            new Tuple<string, Func<string, bool>>("resources",   aggregateName => !aggregateName.EndsWith("Type") && !aggregateName.EndsWith("Descriptor")),
+            new Tuple<string, Func<string, bool>>("types",       aggregateName => aggregateName.EndsWith("Type")),
+            new Tuple<string, Func<string, bool>>("descriptors", aggregateName => aggregateName.EndsWith("Descriptor")),
+        };
+
+        GenerateMetadata(
+            null, 
+            aggregatesElts, 
+            apiVersion, swaggerVersion, 
+            tablesByName, 
+            propertiesWithCollidingJsonNames,
+            apiSectionNamesAndResourceInclusionPredicates,
+            codeGenHelper);
+    }
+
+    foreach (var profile in profiles.Profile) {
+        //var profileContexts = new List<ProfileContext>();
+        //
+        var profileResources = (profile.Resource ?? new Resource[0]).ToList();
+//
+        //if (profileResources.Any(x => x.ReadContentType != null))
+            //profileContexts.Add(new ProfileContext { Profile = profile, ContentTypeUsage = ContentTypeUsage.Readable });
+//
+        //if (profileResources.Any(x => x.WriteContentType != null))
+            //profileContexts.Add(new ProfileContext { Profile = profile, ContentTypeUsage = ContentTypeUsage.Writable });
+//
+        //foreach (var profileContext in profileContexts) {
+            //var profileContentTypeUsage = profileContext.ContentTypeUsage;
+//
+            //var profileSectionNamesAndPredicates = new List<Tuple<string, Func<string, ContentTypeUsage?, bool>>>()
+                //{
+                    //new Tuple<string, Func<string, ContentTypeUsage, bool>>(
+                        //profile.name, 
+                        //(aggregateName, contentTypeUsage) => 
+                            //(contentTypeUsage == profileContentTypeUsage)
+                                //&& profileResources.Any(
+                                    //r => r.name.Equals(aggregateName, StringComparison.InvariantCultureIgnoreCase)))
+                //};
+
+            //var currentProfile = profile;
+
+            var profileSectionNamesAndPredicates = new List<Tuple<string, Func<string, bool>>>()
+                {
+                    new Tuple<string, Func<string, bool>>(
+                        profile.name, 
+                        aggregateName => 
+                            profileResources.Any(r => 
+                                r.name.Equals(aggregateName, StringComparison.InvariantCultureIgnoreCase)))
+                };
+
+            GenerateMetadata(
+                profile, 
+                aggregatesElts, 
+                apiVersion, swaggerVersion, 
+                tablesByName,
+                propertiesWithCollidingJsonNames,
+                profileSectionNamesAndPredicates,
+                codeGenHelper);
+        //}
+    }
+#>
+</root>
+<#+
+void GenerateMetadata(Profile profile, IEnumerable<XElement> aggregatesElts, 
+    string apiVersion, string swaggerVersion,
+    Dictionary<string, Table> tablesByName, 
+    List<string> propertiesWithCollidingJsonNames,
+    List<Tuple<string, Func<string, bool>>> apiSectionNamesAndResourceInclusionPredicates,
+    ICodeGenHelper coreCodeGenHelper)
+{
+    var readCodeGenHelper = profile == null 
+        ? coreCodeGenHelper 
+        : new ProfilesCodeGenHelper(new ProfileContext { Profile = profile, ContentTypeUsage = ContentTypeUsage.Readable}, coreCodeGenHelper);
+
+    var writeCodeGenHelper = profile == null 
+        ? coreCodeGenHelper 
+        : new ProfilesCodeGenHelper(new ProfileContext { Profile = profile, ContentTypeUsage = ContentTypeUsage.Writable}, coreCodeGenHelper);
+
+    var arbitraryCodeGenHelper = readCodeGenHelper;
+
+    foreach (var apiSectionNameAndResourceInclusionPredicate in apiSectionNamesAndResourceInclusionPredicates)
+    {
+#>
+    <data name="<#=apiSectionNameAndResourceInclusionPredicate.Item1 + @".api-docs.json"#>" xml:space="preserve">
+        <value>
+{
+    "apiVersion": "<#= apiVersion #>",
+    "swaggerVersion": "<#= swaggerVersion #>",
+    "basePath":"%BASE_URL%/metadata/%SECTION%/api-docs",
+    "apis": [
+<#+
+        var aggregateRootNames =
+            (from elt in aggregatesElts
+                let name = elt.Attribute("root").Value
+                where
+                    // Only include if it is supposed to be in the api section
+                    apiSectionNameAndResourceInclusionPredicate.Item2(name)
+                    // Include only if neither helper indicates it is to be excluded
+                    && !(readCodeGenHelper.IsExcluded(name)
+                        || writeCodeGenHelper.IsExcluded(name))
+                    // Include if either helper indicates it should be generated
+                    && (readCodeGenHelper.ShouldGenerateAggregate(name, null)
+                        || writeCodeGenHelper.ShouldGenerateAggregate(name, null))
+                orderby name
+                select name)
+            .ToList();
+
+        foreach (var aggregateRootName in aggregateRootNames)
+        {
+            bool isLast = (aggregateRootName == aggregateRootNames.Last());
+
+            Table tbl;
+            
+            if (!tablesByName.TryGetValue(aggregateRootName, out tbl))
+                throw new Exception("Table not found: " + aggregateRootName);
+
+            // TODO: Remove if confirmed to be redundant to filter on aggregateNames above
+            //if (readCodeGenHelper.IsExcluded(tbl.Name)
+                //|| writeCodeGenHelper.IsExcluded(tbl.Name))
+                //continue;
+//
+            //if (!(readGenHelper.ShouldGenerateAggregate(aggregateRootName)
+                //|| writeCodeGenHelper.ShouldGenerateAggregate(aggregateRootName)))
+                //continue;
+
+            var aggregateElt = aggregatesElts.Where(a => a.Attribute("root").Value == aggregateRootName);
+
+            bool isAbstract = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name 
+                                        && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                                .Any();
+
+            if (isAbstract)
+                continue;
+
+#>
+        {
+            "path": "/<#= arbitraryCodeGenHelper.CamelCase(CompositeTermInflector.MakePlural(aggregateRootName)) #>",
+            "description": "<#= arbitraryCodeGenHelper.CleanForSwaggerAttribute(tbl.Description) #>"
+        }<#= !isLast ? "," : string.Empty #>
+<#+
+        }
+  #>
+    ],
+    "info": {
+        "title": "Ed-Fi Operational Data Store API<#= profile == null ? string.Empty : " (Profile: " + profile.name + ")" #>",
+        "description": "The Ed-Fi ODS API enables applications to read and write education data stored in an Ed-Fi ODS through a secure REST interface. The Ed-Fi ODS API supports both transactional and bulk modes of operation.",
+        "termsOfServiceUrl": "",
+        "contact": "",
+        "license": "",
+        "licenseUrl": "http://www.ed-fi.org/license/"
+    }
+}
+</value>
+    </data>
+<#+
+        foreach (var aggregateRootName in aggregateRootNames)
+        { 
+            Table tbl;
+
+            if (!tablesByName.TryGetValue(aggregateRootName, out tbl))
+                continue;
+
+            var contexts = arbitraryCodeGenHelper.GetGenerationContexts(aggregateRootName);
+
+            if (contexts == null || contexts.Count == 0)
+                contexts = new List<string>{ null };
+
+            foreach (string context in contexts)
+            {
+
+            var aggregateElt = aggregatesElts.Where(a => a.Attribute("root").Value == aggregateRootName);
+
+            string resourceCollectionName = arbitraryCodeGenHelper.CamelCase(CompositeTermInflector.MakePlural(aggregateRootName));
+
+            List<string> aggregateTableNames = 
+                (from e in aggregateElt.Descendants("Entity")
+                select e.Attribute("table").Value)
+                .ToList();
+
+            // TODO: GKM - Profiles - Should these be read/write specific?
+            var navigableParentFKs = arbitraryCodeGenHelper.GetNavigableParentRelationships(tbl, aggregateTableNames);
+            var navigableChildFKs = tbl.GetNavigableChildTables(tablesByName).Where(ct => arbitraryCodeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable)).ToList();
+            var navigableOneToOneParentFKs = tbl.GetNavigableOneToOneParentTables(tablesByName).Where(ct => arbitraryCodeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !arbitraryCodeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+            var navigableOneToOneChildFKs = tbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => arbitraryCodeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !arbitraryCodeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+          
+            bool isRootTable = true; // TODO: In this context, this is always true. --> tbl.Name.Equals(aggregateRootName, StringComparison.InvariantCultureIgnoreCase); 
+
+            bool isAbstract = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name 
+                                        && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                                .Any();
+
+            if (isAbstract)
+                continue;
+
+            var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name)
+                                .Select(e => e.Attribute("isA"))
+                                .SingleOrDefault();
+
+            string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+
+            Table baseTbl = null;
+
+            if (baseTableName != null)
+                tablesByName.TryGetValue(baseTableName, out baseTbl);
+
+            bool isDerived = baseTableName != null;
+
+            string baseAggregateRootName =
+                    (from a in aggregatesElts
+                    from e in a.Descendants("Entity")
+                    where e.Attribute("table").Value == baseTableName
+                    select a.Attribute("root").Value)
+                    .SingleOrDefault();
+
+            List<string> baseAggregateTableNames = 
+                (from a in aggregatesElts
+                where a.Attribute("root").Value == baseAggregateRootName
+                from e in a.Descendants("Entity")
+                select e.Attribute("table").Value)
+                .ToList();
+
+            var baseNavigableChildFKs = baseTbl == null ? 
+                new List<FKTable>()
+                : baseTbl.GetNavigableChildTables(tablesByName).Where(ct => arbitraryCodeGenHelper.IsInAggregate(baseAggregateTableNames, ct.OtherTable)).ToList();
+
+            if (!isRootTable && navigableParentFKs.Count() != 1) { #>
+// WARNING: Unexpected parent FK count! <#= string.Join("|", navigableParentFKs.Select(x => x.OtherTable)) 
+#>
+<#+
+            }
+
+            FKTable parentFK = isRootTable ? null : navigableParentFKs.FirstOrDefault(); 
+
+#>
+    <data name="<#= apiSectionNameAndResourceInclusionPredicate.Item1 + @"." + arbitraryCodeGenHelper.CamelCase(CompositeTermInflector.MakePlural(tbl.Name)) + ".json" #>" xml:space="preserve">
+        <value>
+{
+  "apiVersion": "<#= apiVersion #>",
+  "swaggerVersion":"<#= swaggerVersion #>",
+  "basePath": "%BASE_URL%/api/v<#= apiVersion #>/<#=DateTime.Now.Year.ToString()#>",
+  "resourcePath":"/<#= resourceCollectionName #>",
+  "produces": [
+    "application/json"
+  ],
+  "apis" : [
+        {
+            "path":"/<#= resourceCollectionName #>",
+            "description":"<#= arbitraryCodeGenHelper.CleanForSwaggerAttribute(tbl.Description.Trim()) #>",
+            "operations":[
+<#+             if (readCodeGenHelper.ShouldGenerateAggregate(aggregateRootName, context)) { #>
+                {
+                    "method":"GET",
+                    "nickname":"get<#= CompositeTermInflector.MakePlural(tbl.Name) #>All",
+                    "type":"array",
+                    "items":{"$ref":"<#= GetContextualTypeName(readCodeGenHelper.CamelCase(tbl.Name), profile, ContentTypeUsage.Readable, context) #>"},
+                    "parameters":[
+                       <#= boilerPlateGetParameters #>
+                    ],
+<#+             if (profile != null) { #>
+                    "produces":[
+                        "<#= ProfilesContentTypeHelper.CreateContentType(CompositeTermInflector.MakePlural(tbl.Name), profile.name, ContentTypeUsage.Readable)  #>"
+                    ],
+<#+             } #>
+                    "summary":"Retrieves resources based with paging capabilities (using the \"Get All\" pattern).",
+                    "notes":"This GET operation provides access to resources using the \"Get All\" pattern. In this version of the API there is support for paging.",
+                    "responseMessages":[
+                        {
+                            "code":200,
+                            "message":"The matching resource(s) were successfully retrieved.  If no instances are found will return an empty collection.",
+                            "responseModel":"array",
+                            "items":{"$ref":"<#= GetContextualTypeName(readCodeGenHelper.CamelCase(tbl.Name), profile, ContentTypeUsage.Readable, context) #>"} <#+ // this property probably doesn't match expected content #>
+                        },
+                        {
+                            "code":400,
+                            "message":"Bad Request.  The request was invalid and cannot be completed.  See the response body for specific validation errors.  This will typically be an issue with the query parameters or their values."
+                        },
+                        {
+                            "code":401,
+                            "message":"Unauthorized.  The request requires authentication.  The OAuth bearer token was either not provided or is invalid.  The operation may succeed once authenication has been successfully completed."
+                        },
+                        {
+                            "code":403,
+                            "message":"Forbidden.  The request cannot be completed in the current authorization context.  Contact your administrator if you believe this operation should be allowed."
+                        },
+                        {
+                            "code":500,
+                            "message":"An unhandled error occurred on the server. See the response body for details.",
+                            "responseModel":"webServiceError"
+                        }
+                    ]
+                },
+                {
+                    "method":"GET",
+                    "nickname":"get<#= CompositeTermInflector.MakePlural(tbl.Name) #>All",
+                    "type":"array",
+                    "items":{"$ref":"<#= GetContextualTypeName(readCodeGenHelper.CamelCase(tbl.Name), profile, ContentTypeUsage.Readable, context) #>"},
+                    "parameters":[
+                        <#= boilerPlateGetParameters #>,
+<#+
+                var allCols = tbl.ExampleSpecificationColumns.Where(x => parentFK == null || !parentFK.ThisColumns.Contains(x.Name)).ToList();
+                bool isFirstCol = true;
+
+                foreach (var col in allCols)
+                { #>
+                        <#= isFirstCol ? string.Empty : ","#>{
+                            "paramType":"query",
+<#+                 if (!readCodeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) { #>
+                            "name":"<#= readCodeGenHelper.ApplyPropertyNameConventions(col.CleanName, tbl.Name, propertiesWithCollidingJsonNames) #>",
+                            "type":"<#= GetSwaggerType(col.SysType) #>",
+<#+                 } else { #>
+                            "name":"<#= readCodeGenHelper.ApplyPropertyNameConventions(TrimSuffix(col.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames) #>",
+                            "type":"string", 
+<#+                 } #>
+                            "description":"<#= readCodeGenHelper.CleanForSwaggerAttribute(col.Description) #>",
+                            "required":false
+                        }
+<#+                 isFirstCol = false;
+                } #>
+                    ],
+<#+             if (profile != null) { #>
+                    "produces":[
+                        "<#= ProfilesContentTypeHelper.CreateContentType(CompositeTermInflector.MakePlural(tbl.Name), profile.name, ContentTypeUsage.Readable) #>"
+                    ],
+<#+             } #>
+                    "summary":"Retrieves resources matching values of an example resource (using the \"Get By Example\" pattern).",
+                    "notes":"This GET operation provides access to resources using the \"Get by Example\" search pattern.  The values of any properties of the resource that are specified will be used to return all matching results (if it exists).",
+                    "responseMessages":[
+                        {
+                            "code":200,
+                            "message":"The resource(s) were successfully retrieved.  If no instances are found will return an empty collection.",
+                            "responseModel":"<#= readCodeGenHelper.CamelCase(tbl.Name) #>"
+                        },
+                        {
+                            "code":400,
+                            "message":"Bad Request.  The request was invalid and cannot be completed.  See the response body for specific validation errors."
+                        },
+                        {
+                            "code":401,
+                            "message":"Unauthorized.  The request requires authentication.  The OAuth bearer token was either not provided or is invalid.  The operation may succeed once authenication has been successfully completed."
+                        },
+                        {
+                            "code":403,
+                            "message":"Forbidden.  The request cannot be completed in the current authorization context.  Contact your administrator if you believe this operation should be allowed."
+                        },
+                        {
+                            "code":404,
+                            "message":"The resource could not be found."
+                        },
+                        {
+                            "code":500,
+                            "message":"An unhandled error occurred on the server. See the response body for details.",
+                            "responseModel":"webServiceError"
+                        }
+                    ]
+                },
+                {
+                    "method":"GET",
+                    "nickname":"get<#= tbl.Name #>ByKey",
+                    "type":"<#= GetContextualTypeName(readCodeGenHelper.CamelCase(tbl.Name), profile, ContentTypeUsage.Readable, context) #>",
+                    "parameters":[
+<#+             
+                var pkCols = tbl.PKs.Where(x => parentFK == null || !parentFK.ThisColumns.Contains(x.Name)).ToList();
+                bool isFirstPkCol = true;
+
+                foreach (var pkCol in pkCols)
+                { #>
+                        <#= isFirstPkCol ? string.Empty : ","#>{
+                            "paramType":"query",
+<#+                 if (!readCodeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) { #>
+                            "name":"<#= readCodeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames) #>",
+                            "type":"<#= GetSwaggerType(pkCol.SysType) #>",
+<#+                 } else { #>
+                            "name":"<#= readCodeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames) #>",
+                            "type":"string", 
+<#+                 } #>
+                            "description":"<#= readCodeGenHelper.CleanForSwaggerAttribute(pkCol.Description) #>",
+                            "required":true
+                        }
+<#+                 isFirstPkCol = false;
+                } #>
+                        ,{
+                            "paramType":"header",
+                            "name":"If-None-Match",
+                            "description":"The previously returned ETag header value, used here to prevent the unnecessary data transfer of an unchanged resource.",
+                            "required":false,
+                            "type":"string"
+                        }
+                    ],
+<#+             if (profile != null) { #>
+                    "produces":[
+                        "<#= ProfilesContentTypeHelper.CreateContentType(CompositeTermInflector.MakePlural(tbl.Name), profile.name, ContentTypeUsage.Readable) #>"
+                    ],
+<#+             } #>
+                    "summary":"Retrieves a specific resource using the values of the resource's natural key (using the \"Get By Key\" pattern).",
+                    "notes":"This GET operation provides access to resources using the \"Get by Key\" search pattern. The values of the natural key of the resource must be fully specified, and the service will return the matching result (if it exists).",
+                    "responseMessages":[
+                        {
+                            "code":200,
+                            "message":"The resource was successfully retrieved.",
+                            "responseModel":"<#= readCodeGenHelper.CamelCase(tbl.Name) #>"
+                        },
+                        {
+                            "code":304,
+                            "message":"The resource's current server-side ETag value matched the If-None-Match header value supplied with the request indicating the resource has not been modified."
+                        },
+                        {
+                            "code":400,
+                            "message":"Bad Request.  The request was invalid and cannot be completed.  See the response body for specific validation errors."
+                        },
+                        {
+                            "code":401,
+                            "message":"Unauthorized.  The request requires authentication.  The OAuth bearer token was either not provided or is invalid.  The operation may succeed once authenication has been successfully completed."
+                        },
+                        {
+                            "code":403,
+                            "message":"Forbidden.  The request cannot be completed in the current authorization context.  Contact your administrator if you believe this operation should be allowed."
+                        },
+                        {
+                            "code":404,
+                            "message":"The resource could not be found."
+                        },
+                        {
+                            "code":500,
+                            "message":"An unhandled error occurred on the server. See the response body for details.",
+                            "responseModel":"webServiceError"
+                        }
+                    ]
+                }<#+} // Should generate aggregate for Read usage #><#+if (writeCodeGenHelper.ShouldGenerateAggregate(aggregateRootName, context)) { if (readCodeGenHelper.ShouldGenerateAggregate(aggregateRootName, context)) { #>,
+                <#+ } #>
+                {
+                    "method":"POST",
+                    "nickname":"post<#= CompositeTermInflector.MakePlural(tbl.Name) #>",
+                    "type":"void",
+                    "parameters":[
+                        {
+                            "paramType":"body",
+                            "name":"<#= writeCodeGenHelper.CamelCase(tbl.Name) #>",
+                            "description":"The JSON representation of the \"<#= writeCodeGenHelper.CamelCase(tbl.Name) #>\" resource to be created or updated.",
+                            "required":true,
+                            "type":"<#= GetContextualTypeName(writeCodeGenHelper.CamelCase(tbl.Name), profile, ContentTypeUsage.Writable, context) #>"
+                        }
+                    ],
+<#+             if (profile != null) { #>
+                    "consumes":[
+                        "<#= ProfilesContentTypeHelper.CreateContentType(CompositeTermInflector.MakePlural(tbl.Name), profile.name, ContentTypeUsage.Writable)  #>"
+                    ],
+<#+             } #>
+                    "summary":"Creates or updates resources based on the natural key values of the supplied resource.",
+                    "notes":"The POST operation can be used to create or update resources. In database terms, this is often referred to as an \"upsert\" operation (insert + update).  Clients should NOT include the resource \"id\" in the JSON body because it will result in an error (you must use a PUT operation to update a resource by \"id\"). The web service will identify whether the resource already exists based on the natural key values provided, and update or create the resource appropriately.",
+                    "responseMessages":[
+                        {
+                            "code":201,
+                            "message":"The resource was created.  An ETag value is available in the ETag header, and the location of the resource is available in the Location header of the response."
+                        },
+                        {
+                            "code":202,
+                            "message":"The resource has been validated and accepted by the service, but processing has not yet completed due to current system load. Processing may still fail due to violation of referential integrity requirements."
+                        },
+                        {
+                            "code":204,
+                            "message":"The resource was updated.  An updated ETag value is available in the ETag header of the response."
+                        },
+                        {
+                            "code":400,
+                            "message":"Bad Request.  The request was invalid and cannot be completed.  See the response body for specific validation errors."
+                        },
+                        {
+                            "code":401,
+                            "message":"Unauthorized.  The request requires authentication.  The OAuth bearer token was either not provided or is invalid.  The operation may succeed once authenication has been successfully completed."
+                        },
+                        {
+                            "code":403,
+                            "message":"Forbidden.  The request cannot be completed in the current authorization context.  Contact your administrator if you believe this operation should be allowed."
+                        },
+                        {
+                            "code":409,
+                            "message":"Conflict.  The request cannot be completed because it would result in an invalid state.  See the response body for details."
+                        },
+                        {
+                            "code":412,
+                            "message":"The resource's current server-side ETag value does not match the supplied If-Match header value in the request.  This indicates the resource has been modified by another consumer."
+                        },
+                        {
+                            "code":500,
+                            "message":"An unhandled error occurred on the server. See the response body for details.",
+                            "responseModel":"webServiceError"
+                        }
+                    ]
+                }
+<#+             } // Should generate aggregate for Write usage #>
+            ]
+        },
+        {
+            "path":"/<#= resourceCollectionName #>/{id}",
+            "description":"<#= arbitraryCodeGenHelper.CleanForSwaggerAttribute(tbl.Description.Trim()) #>",
+            "operations":[
+<#+             if (readCodeGenHelper.ShouldGenerateAggregate(aggregateRootName, context)) { #>
+                {
+                    "method":"GET",
+                    "nickname":"get<#= CompositeTermInflector.MakePlural(tbl.Name) #>ById",
+                    "type":"<#= GetContextualTypeName(readCodeGenHelper.CamelCase(tbl.Name), profile, ContentTypeUsage.Readable, context) #>",
+                    "parameters":[
+                        {
+                            "paramType":"path",
+                            "name":"id",
+                            "description":"A resource identifier specifying the resource to be retrieved.",
+                            "required":true,
+                            "type":"string"
+                        },
+                        {
+                            "paramType":"header",
+                            "name":"If-None-Match",
+                            "description":"The previously returned ETag header value, used here to prevent the unnecessary data transfer of an unchanged resource.",
+                            "required":false,
+                            "type":"string"
+                        }
+                    ],
+<#+             if (profile != null) { #>
+                    "produces":[
+                        "<#= ProfilesContentTypeHelper.CreateContentType(CompositeTermInflector.MakePlural(tbl.Name), profile.name, ContentTypeUsage.Readable)  #>"
+                    ],
+<#+             } #>
+                    "summary":"Retrieves a specific resource using the resource's identifier (using the \"Get By Id\" pattern).",
+                    "notes":"This GET operation retrieves a resource by the specified resource identifier.",
+                    "responseMessages":[
+                        {
+                            "code":200,
+                            "message":"The resource was successfully retrieved.",
+                            "responseModel":"<#= readCodeGenHelper.CamelCase(tbl.Name) #>"
+                        },
+                        {
+                            "code":304,
+                            "message":"The resource's current server-side ETag value matched the If-None-Match header value supplied with the request indicating the resource has not been modified."
+                        },
+                        {
+                            "code":400,
+                            "message":"Bad Request.  The request was invalid and cannot be completed.  See the response body for specific validation errors."
+                        },
+                        {
+                            "code":401,
+                            "message":"Unauthorized.  The request requires authentication.  The OAuth bearer token was either not provided or is invalid.  The operation may succeed once authenication has been successfully completed."
+                        },
+                        {
+                            "code":403,
+                            "message":"Forbidden.  The request cannot be completed in the current authorization context.  Contact your administrator if you believe this operation should be allowed."
+                        },
+                        {
+                            "code":404,
+                            "message":"The resource could not be found."
+                        },
+                        {
+                            "code":500,
+                            "message":"An unhandled error occurred on the server. See the response body for details.",
+                            "responseModel":"webServiceError"
+                        }
+                    ]
+                },
+<#+             } // End of "Should generate aggregate for Read usage" #>
+<#+             if (writeCodeGenHelper.ShouldGenerateAggregate(aggregateRootName, context)) { #>
+                {
+                    "method":"PUT",
+                    "nickname":"put<#= tbl.Name #>",
+                    "type":"void",
+                    "parameters":[
+                        {
+                            "paramType":"path",
+                            "name":"id",
+                            "description":"A resource identifier specifying the resource to be updated.",
+                            "required":true,
+                            "type":"string"
+                        },
+                        {
+                          "paramType": "header",
+                          "name": "If-Match",
+                          "description": "The ETag header value used to prevent the PUT from updating a resource modified by another consumer.",
+                          "type": "string",
+                          "required": false
+                        },
+                        {
+                            "paramType":"body",
+                            "name":"<#= writeCodeGenHelper.CamelCase(tbl.Name) #>",
+                            "description":"The JSON representation of the \"<#= writeCodeGenHelper.CamelCase(tbl.Name) #>\" resource to be updated.",
+                            "required":true,
+                            "type":"<#= GetContextualTypeName(writeCodeGenHelper.CamelCase(tbl.Name), profile, ContentTypeUsage.Writable, context) #>"
+                        }
+                    ],
+<#+             if (profile != null) { #>
+                    "consumes":[
+                        "<#= ProfilesContentTypeHelper.CreateContentType(CompositeTermInflector.MakePlural(tbl.Name), profile.name, ContentTypeUsage.Writable)  #>"
+                    ],
+<#+             } #>
+                    "summary":"Updates or creates a resource based on the resource identifier.",
+                    "notes":"The PUT operation is used to update or create a resource by identifier.  If the resource doesn't exist, the resource will be created using that identifier.  Additionally, natural key values cannot be changed using this operation, and will not be modified in the database.  If the resource \"id\" is provided in the JSON body, it will be ignored as well.",
+                    "responseMessages":[
+                        {
+                            "code":201,
+                            "message":"The resource was created.  An ETag value is available in the ETag header, and the location of the resource is available in the Location header of the response."
+                        },
+                        {
+                            "code":202,
+                            "message":"The resource has been validated and accepted by the service, but processing has not yet completed due to current system load. Processing may still fail due to violation of referential integrity requirements."
+                        },
+                        {
+                            "code":204,
+                            "message":"The resource was updated.  An updated ETag value is returned in a response header."
+                        },
+                        {
+                            "code":400,
+                            "message":"Bad Request.  The request was invalid and cannot be completed.  See the response body for specific validation errors."
+                        },
+                        {
+                            "code":401,
+                            "message":"Unauthorized.  The request requires authentication.  The OAuth bearer token was either not provided or is invalid.  The operation may succeed once authenication has been successfully completed."
+                        },
+                        {
+                            "code":403,
+                            "message":"Forbidden.  The request cannot be completed in the current authorization context.  Contact your administrator if you believe this operation should be allowed."
+                        },
+                        {
+                            "code":404,
+                            "message":"The resource could not be found."
+                        },
+                        {
+                            "code":409,
+                            "message":"Conflict.  The request cannot be completed because it would result in an invalid state.  See the response body for details."
+                        },
+                        {
+                            "code":412,
+                            "message":"The resource's current server-side ETag value does not match the supplied If-Match header value in the request.  This indicates the resource has been modified by another consumer."
+                        },
+                        {
+                            "code":500,
+                            "message":"An unhandled error occurred on the server. See the response body for details.",
+                            "responseModel":"webServiceError"
+                        }
+                    ]
+                },
+<#+             } // Should generate aggregate for Write usage #>
+                {
+                    "method":"DELETE",
+                    "nickname":"delete<#= tbl.Name #>ById",
+                    "type":"void",
+                    "parameters":[
+                        {
+                            "paramType":"path",
+                            "name":"id",
+                            "description":"A resource identifier specifying the resource to be deleted.",
+                            "required":true,
+                            "type":"string"
+                        },
+                        {
+                          "paramType": "header",
+                          "name": "If-Match",
+                          "description": "The ETag header value used to prevent the DELETE from removing a resource modified by another consumer.",
+                          "type": "string",
+                          "required": false,
+                          "allowMultiple": false
+                        }
+                    ],
+                    "summary":"Deletes an existing resource using the resource identifier.",
+                    "notes":"The DELETE operation is used to delete an existing resource by identifier.  If the resource doesn't exist, an error will result (the resource will not be found).",
+                    "responseMessages":[
+                        {
+                            "code":202,
+                            "message":"The request has accepted by the service, but processing has not yet completed due to current system load. Processing may still fail due to violation of referential integrity requirements."
+                        },
+                        {
+                            "code":204,
+                            "message":"The resource was successfully deleted."
+                        },
+                        {
+                            "code":400,
+                            "message":"Bad Request.  The request was invalid and cannot be completed.  See the response body for specific validation errors."
+                        },
+                        {
+                            "code":401,
+                            "message":"Unauthorized.  The request requires authentication.  The OAuth bearer token was either not provided or is invalid.  The operation may succeed once authenication has been successfully completed."
+                        },
+                        {
+                            "code":403,
+                            "message":"Forbidden.  The request cannot be completed in the current authorization context.  Contact your administrator if you believe this operation should be allowed."
+                        },
+                        {
+                            "code":404,
+                            "message":"The resource could not be found."
+                        },
+                        {
+                            "code":409,
+                            "message":"Conflict.  The request cannot be completed because it would result in an invalid state.  See the response body for details."
+                        },
+                        {
+                            "code":412,
+                            "message":"The resource's current server-side ETag value does not match the supplied If-Match header value in the request.  This indicates the resource has been modified by another consumer."
+                        },
+                        {
+                            "code":500,
+                            "message":"An unhandled error occurred on the server. See the response body for details.",
+                            "responseModel":"webServiceError"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "models": {
+<#+ 
+    var aggregateRootClassModel = arbitraryCodeGenHelper.DomainModel.GetClassModel(aggregateRootName);
+
+    CodeGenClassModel aggregateRootBaseClassModel = !isDerived ? null : aggregateRootClassModel.BaseClass;
+    string aggregateRootBaseName                  = !isDerived ? null : aggregateRootBaseClassModel.Name;
+    IEnumerable<XElement> aggregateBaseElt        = !isDerived ? null : aggregatesElts.Where(x => x.Attribute("root").Value == aggregateRootBaseName);
+    List<string> aggregateBaseTableNames          = !isDerived ? null : aggregateBaseElt.Descendants("Entity").Select(e => e.Attribute("table").Value).ToList();
+
+    if (profile == null)
+    {
+        RenderModels(arbitraryCodeGenHelper, tablesByName, aggregatesElts, aggregateElt, aggregateRootName, aggregateTableNames, propertiesWithCollidingJsonNames, null, null, null);
+
+        if (!isDerived)
+            RenderLinkAndErrorModels();
+
+        // Render artifacts for base type's child collections
+        if (isDerived && aggregateBaseTableNames.Count > 1) {
+#>, <#+
+            // Generate additional models for the base class' children
+            RenderModels(arbitraryCodeGenHelper, tablesByName, aggregatesElts, aggregateBaseElt, aggregateRootBaseName, aggregateBaseTableNames, propertiesWithCollidingJsonNames, null, null, null);
+            RenderLinkAndErrorModels();
+        }
+    }
+    else 
+    {
+        if (isDerived)
+        {
+            // Generate models for the read content type
+            RenderModels(readCodeGenHelper, tablesByName, aggregatesElts, aggregateElt, aggregateRootName, aggregateTableNames, propertiesWithCollidingJsonNames, profile, ContentTypeUsage.Readable, null);
+#>, <#+
+            // Generate models for the read content type's base class' children
+            RenderModels(readCodeGenHelper, tablesByName, aggregatesElts, aggregateBaseElt, aggregateRootBaseName, aggregateBaseTableNames, propertiesWithCollidingJsonNames, profile, ContentTypeUsage.Readable, aggregateRootName);
+#>, <#+
+            // Generate models for the write content type
+            RenderModels(writeCodeGenHelper, tablesByName, aggregatesElts, aggregateElt, aggregateRootName, aggregateTableNames, propertiesWithCollidingJsonNames, profile, ContentTypeUsage.Writable, null);
+#>, <#+
+            // Generate models for the write content type's base class' children
+            RenderModels(writeCodeGenHelper, tablesByName, aggregatesElts, aggregateBaseElt, aggregateRootBaseName, aggregateBaseTableNames, propertiesWithCollidingJsonNames, profile, ContentTypeUsage.Writable, aggregateRootName);
+        }
+        else {
+            // Generate models for the read content type
+            RenderModels(readCodeGenHelper, tablesByName, aggregatesElts, aggregateElt, aggregateRootName, aggregateTableNames, propertiesWithCollidingJsonNames, profile, ContentTypeUsage.Readable, null);
+#>, <#+
+            // Generate models for the read content type
+            RenderModels(writeCodeGenHelper, tablesByName, aggregatesElts, aggregateElt, aggregateRootName, aggregateTableNames, propertiesWithCollidingJsonNames, profile, ContentTypeUsage.Writable, null);
+        }
+
+        RenderLinkAndErrorModels();
+    }
+#>
+    }
+}
+        </value>
+    </data>
+<#+
+        } // Context
+      } // Aggregate
+    }
+} // GenerateMetadata
+
+    string GetContextualTypeName(string typeName, Profile profile, ContentTypeUsage? contentTypeUsage, string context)
+    {
+        string contextualTypeName = 
+            typeName 
+            + (string.IsNullOrEmpty(context) ? string.Empty : "_" + context)
+            + (profile == null ? string.Empty : "_" + contentTypeUsage.Value.ToString());
+   
+        return contextualTypeName;
+    }
+
+
+    const string boilerPlateGetParameters = 
+                        @"{
+                            ""paramType"":""query"",
+                            ""name"":""offset"",
+                            ""description"":""Indicates how many items should be skipped before returning results."",
+                            ""type"":""integer"",
+                            ""required"":false
+                        },
+                        {
+                            ""paramType"":""query"",
+                            ""name"":""limit"",
+                            ""description"":""Indicates the maximum number of items that should be returned in the results (defaults to 25)."",
+                            ""type"":""integer"",
+                            ""required"":false,
+                            ""minimum"":1,
+                            ""maximum"":250
+                        }";
+
+    public void AppendPropertiesWithCollidingJsonNames(ICodeGenHelper codeGenHelper, List<string> collidingPropertyNames, Table tbl, Table baseTbl, IEnumerable<FKTable> navigableChildFKs, IEnumerable<FKTable> baseNavigableChildFKs)
+    {
+        //Write("// DEBUG: Searching for JSON collisions in " + tbl.Name + "\r\n");
+
+        // List<string> collidingPropertyNames = new List<string>();
+        var propertyNameByJsonName = new Dictionary<string, string>();
+
+        // Determine the JSON names for the columns of the derived table
+        foreach (var column in tbl.Columns)
+        {
+            string jsonName = codeGenHelper.ApplyPropertyNameConventions(column.CleanName, tbl.Name, null);
+            propertyNameByJsonName[jsonName] = column.CleanName;
+
+            //Write("// DEBUG: Deriving JSON column name (" + tbl.Name + "): " + column.CleanName + " -> " + jsonName + "\r\n");
+        }
+
+        // Determine the JSON names for the navigable children of the derived table
+        foreach (var fkt in navigableChildFKs)
+        {
+            string jsonName = codeGenHelper.ApplyPropertyNameConventions(fkt.OtherQueryable, tbl.Name, null);
+            propertyNameByJsonName[jsonName] = fkt.OtherQueryable;
+        }
+
+        // Determine the JSON names for the columns of the base table
+        foreach (var column in baseTbl.Columns)
+        {
+            string jsonName = codeGenHelper.ApplyPropertyNameConventions(column.CleanName, baseTbl.Name, null);
+
+            //Write("// DEBUG: Deriving JSON column name (" + baseTbl.Name + "): " + column.CleanName + " -> " + jsonName + "\r\n");
+
+            string columnName = null;
+
+            if (propertyNameByJsonName.TryGetValue(jsonName, out columnName))
+            {
+                //Write("// WARNING: JSON collision detected: " + columnName + "\r\n");
+
+                // Add both columns to the list, using <tbl>.<col> syntax
+                collidingPropertyNames.Add(baseTbl.Name + "." + column.Name);
+                collidingPropertyNames.Add(tbl.Name + "." + columnName);
+            }
+        }
+
+        // Determine the JSON names for the navigable children of the base table
+        foreach (var fkt in baseNavigableChildFKs)
+        {
+            string jsonName = codeGenHelper.ApplyPropertyNameConventions(fkt.OtherQueryable, baseTbl.Name, null);
+
+            //Write("// DEBUG: Deriving JSON column name (" + baseTbl.Name + "): " + fkt.OtherQueryable + " -> " + jsonName + "\r\n");
+
+            string otherQueryable = null;
+
+            if (propertyNameByJsonName.TryGetValue(jsonName, out otherQueryable))
+            {
+                //Write("// WARNING: JSON collision detected: " + otherQueryable + "\r\n");
+
+                // Add both columns to the list, using <tbl>.<col> syntax
+                collidingPropertyNames.Add(baseTbl.Name + "." + fkt.OtherQueryable);
+                collidingPropertyNames.Add(tbl.Name + "." + otherQueryable);
+            }
+        }
+
+        //return collidingPropertyNames;
+    }
+
+    public string GetSwaggerType(string sysType)
+    {
+        // Trim trailing "nullable" indicator from type before converting to Swagger type
+        if (sysType.EndsWith("?"))
+            sysType = sysType.TrimEnd(new [] {'?'});
+
+        switch (sysType)
+        {
+            case "string":
+                return "string";
+            case "bool":
+                return "boolean";
+            case "short":
+                return "integer";
+            case "int":
+                return "integer";
+            case "long":
+                return "long";
+            case "float":
+            case "double":
+            case "decimal":
+                return "number";
+            case "DateTime":
+                return "date-time";
+            case "TimeSpan":
+                return "string";
+            case "Guid":
+                return "string";
+            default:
+                throw new Exception(string.Format("Unhandled .NET data type to Swagger conversion: '{0}'.", sysType));
+        }
+    }
+ #>

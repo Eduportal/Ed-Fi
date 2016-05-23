@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7353C9F5-B0A7-4779-BBAD-F547075EC147}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.Admin.UITests</RootNamespace>
+    <AssemblyName>EdFi.Ods.Admin.UITests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureTest|AnyCPU'">
+    <OutputPath>bin\AzureTest\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalTest|AnyCPU'">
+    <OutputPath>bin\LocalTest\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalUiTest|AnyCPU'">
+    <OutputPath>bin\LocalUiTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AE.Net.Mail">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\AE.Net.Mail.1.7.9.2\lib\net45\AE.Net.Mail.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Coypu, Version=2.9.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Coypu.2.9.1\lib\net40\Coypu.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Coypu.NUnit, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Coypu.NUnit.1.1.0\lib\net40\Coypu.NUnit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="NCrunch.Framework, Version=2.15.0.9, Culture=neutral, PublicKeyToken=01d101bf6f3e0aea, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\NCrunch.Framework.2.15.0.9\lib\portable-windows8+net45\NCrunch.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="NDevConfig">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Scripts\lib\nDevConfig\NDevConfig.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, proc쥥ssorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Should">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Should.1.1.20\lib\Should.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="TechTalk.SpecFlow">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\SpecFlow.1.9.0\lib\net35\TechTalk.SpecFlow.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver, Version=2.47.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Selenium.WebDriver.2.47.0\lib\net40\WebDriver.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebDriver.Support, Version=2.47.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Selenium.Support.2.47.0\lib\net40\WebDriver.Support.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\AssociatedUrlAttribute.cs" />
+    <Compile Include="DirectoryInfoExtensions.cs" />
+    <Compile Include="Features\01_Cleanup.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>01_Cleanup.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\ClientApplications.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ClientApplications.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\CreateAnAccount.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CreateAnAccount.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\ForgotPassword.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForgotPassword.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\PasswordChange.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PasswordChange.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ActivationPage.cs" />
+    <Compile Include="Pages\OrphanReportPage.cs" />
+    <Compile Include="Pages\ForgotPasswordPage.cs" />
+    <Compile Include="Pages\GlobalPages\MainContentPage.cs" />
+    <Compile Include="Pages\ClientPage.cs" />
+    <Compile Include="Pages\ResendActivationPage.cs" />
+    <Compile Include="Pages\CreateAccountPage.cs" />
+    <Compile Include="Pages\GlobalPages\MastheadPage.cs" />
+    <Compile Include="Pages\GlobalPages\PartialPageBase.cs" />
+    <Compile Include="Pages\HomePage.cs" />
+    <Compile Include="Pages\GlobalPages\LoginPage.cs" />
+    <Compile Include="Pages\PageBase.cs" />
+    <Compile Include="Pages\PasswordChangePage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Steps\AccountSteps.cs" />
+    <Compile Include="Steps\ClientSteps.cs" />
+    <Compile Include="Steps\EmailSteps.cs" />
+    <Compile Include="Steps\OrphanSteps.cs" />
+    <Compile Include="Steps\GeneralSteps.cs" />
+    <Compile Include="Steps\HomeSteps.cs" />
+    <Compile Include="Steps\Hooks.cs" />
+    <Compile Include="Steps\PasswordSteps.cs" />
+    <Compile Include="Support\Account\Account.cs" />
+    <Compile Include="Support\Account\AccountManager.cs" />
+    <Compile Include="Support\Account\GMailReader.cs" />
+    <Compile Include="Support\Account\IEmailReader.cs" />
+    <Compile Include="Support\Account\FileSystemEmailReader.cs" />
+    <Compile Include="Support\Account\MailinatorEmailReader.cs" />
+    <Compile Include="Support\Account\TestUserInitializer.cs" />
+    <Compile Include="Support\Configuration\ConfigurationKeys.cs" />
+    <Compile Include="Support\Configuration\IAdminUiTestConfiguration.cs" />
+    <Compile Include="Support\Coypu\BrowserSessionExtensions.cs" />
+    <Compile Include="Support\Coypu\ElementScopeExtensions.cs" />
+    <Compile Include="Support\Coypu\Make.cs" />
+    <Compile Include="Support\DebugMarker.cs" />
+    <Compile Include="Support\ElementGeometry.cs" />
+    <Compile Include="Support\Extensions\BrowserExtensions.cs" />
+    <Compile Include="Support\Extensions\FeatureContextExtensions.cs" />
+    <Compile Include="Support\Navigation\PageRegistry.cs" />
+    <Compile Include="Support\SpecFlow\EmailBinding.cs" />
+    <Compile Include="Support\SpecFlow\IISExpressBinding.cs" />
+    <Compile Include="Support\SpecFlow\TestEnvironment.cs" />
+    <Compile Include="Support\TestConfiguration.cs" />
+    <Compile Include="Support\TestSessionContext.cs" />
+    <Compile Include="Support\TestUrlBuilder.cs" />
+    <Compile Include="Support\Try.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.AzureTest.config">
+      <DependentUpon>App.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App.config">
+      <TransformOnBuild>true</TransformOnBuild>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Features\01_Cleanup.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>01_Cleanup.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\ClientApplications.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>ClientApplications.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\CreateAnAccount.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>CreateAnAccount.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\ForgotPassword.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>ForgotPassword.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Features\PasswordChange.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>PasswordChange.feature.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Ed-Fi-ODS-Implementation\Application\EdFi.Ods.Admin.DeployedUsers\EdFi.Ods.Admin.DeployedUsers.csproj">
+      <Project>{3B638150-7DB3-4324-972C-0686EFD6BA20}</Project>
+      <Name>EdFi.Ods.Admin.DeployedUsers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Common\EdFi.Common.csproj">
+      <Project>{C545A7D1-4054-4279-9723-F06DA524E122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Admin.Models\EdFi.Ods.Admin.Models.csproj">
+      <Project>{86bec77a-1eea-4570-8af7-daa4e7818353}</Project>
+      <Name>EdFi.Ods.Admin.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Admin\EdFi.Ods.Admin.csproj">
+      <Project>{D0335B4F-B79B-4CCB-AB11-A4106C070513}</Project>
+      <Name>EdFi.Ods.Admin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Common\EdFi.Ods.Common.csproj">
+      <Project>{8d7cb143-8818-47a8-89e8-702d485e8da0}</Project>
+      <Name>EdFi.Ods.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Common\Test.Common.csproj">
+      <Project>{df5439df-3b96-4e6e-970a-f9afed6bd482}</Project>
+      <Name>Test.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\Ed-Fi-ODS-Implementation\Application\packages\PhantomJS.2.0.0\tools\phantomjs\phantomjs.exe">
+      <Link>phantomjs.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="phantomjs-license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+</Project>

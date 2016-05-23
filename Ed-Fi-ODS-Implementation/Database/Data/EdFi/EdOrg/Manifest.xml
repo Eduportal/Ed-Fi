@@ -1,0 +1,10 @@
+<Interchanges>
+	<Interchange>
+		<Filename>Standards.xml</Filename>
+		<Type>standards</Type>
+	</Interchange>
+		<Interchange>
+		<Filename>EducationOrganization.xml</Filename>
+		<Type>educationorganization</Type>
+	</Interchange>
+</Interchanges>

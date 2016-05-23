@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AFCE2D31-CE65-44ED-92F3-757C64E4AD6E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.CodeGen.Generated</RootNamespace>
+    <AssemblyName>EdFi.Ods.CodeGen.Generated</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\Ed-Fi-ODS-Implementation\Application\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EdFi.Ods.BulkLoad.Common\OrderProviders.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OrderProviders.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EdFi.Ods.Common\InterchangeType.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>InterchangeType.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="EdFi.Ods.BulkLoad.Common\OrderProviders.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>OrderProviders.generated.cs</LastGenOutput>
+    </None>
+    <None Include="EdFi.Ods.Common\InterchangeType.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>InterchangeType.generated.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdFi.Common\EdFi.Common.csproj">
+      <Project>{c545a7d1-4054-4279-9723-f06da524e122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Models\EdFi.Ods.Api.Models.csproj">
+      <Project>{28504282-cafb-499b-9919-c8458ac7a27d}</Project>
+      <Name>EdFi.Ods.Api.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Common\EdFi.Ods.Common.csproj">
+      <Project>{8D7CB143-8818-47A8-89E8-702D485E8DA0}</Project>
+      <Name>EdFi.Ods.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Entities.Common\EdFi.Ods.Entities.Common.csproj">
+      <Project>{DA329E1E-BBCA-4C8F-9B4C-313635D49BB5}</Project>
+      <Name>EdFi.Ods.Entities.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Import Project="../T4TextTemplating.Targets" />
+  <ItemGroup>
+    <myLibraries Include="$(TargetPath); $(TargetDir)$(TargetName).pdb">
+      <InProject>false</InProject>
+    </myLibraries>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\libs.codegen\EdFi.Ods.CodeGen.dll">
+      <Link>ReferencedFiles\EdFi.Ods.CodeGen.dll</Link>
+    </None>
+    <None Include="..\libs.codegen\EdFi.Common.dll">
+      <Link>ReferencedFiles\EdFi.Common.dll</Link>
+    </None>
+    <None Include="..\schema.codegen\Ed-Fi-Core.xsd">
+      <Link>ReferencedFiles\schema.codegen\Ed-Fi-Core.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\SchemaAnnotation.xsd">
+      <Link>ReferencedFiles\schema.codegen\SchemaAnnotation.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Finance.xsd">
+      <Link>ReferencedFiles\schema.codegen\Ed-Fi-Core.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-MasterSchedule.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-MasterSchedule.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Parent.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Parent.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-PostSecondaryEvent.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-PostSecondaryEvent.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StaffAssociation.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StaffAssociation.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Standards.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Standards.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Student.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Student.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentAssessment.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentAssessment.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentAttendance.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentAttendance.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentCohort.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentCohort.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentDiscipline.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentDiscipline.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentEnrollment.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentEnrollment.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentGrade.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentGrade.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentGradebook.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentGradebook.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentIntervention.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentIntervention.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentProgram.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentProgram.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentTranscript.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentTranscript.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-AssessmentMetadata.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-AssessmentMetadata.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Descriptors.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Descriptors.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-EducationOrganization.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-EducationOrganization.xsd</Link>
+    </None>
+    <None Include="..\schema.codegen\Interchange-EducationOrgCalendar.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-EducationOrgCalendar.xsd</Link>
+    </None>
+  </ItemGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(myLibraries)" DestinationFolder="$(ttLibsFolder)" SkipUnchangedFiles="true"/>
+  </Target>
+</Project>

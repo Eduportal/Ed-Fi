@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8D7CB143-8818-47A8-89E8-702D485E8DA0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.Common</RootNamespace>
+    <AssemblyName>EdFi.Ods.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <RestorePackages>true</RestorePackages>
+    <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\Ed-Fi-ODS-Implementation\Application\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureDev|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\AzureDev\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureProd|AnyCPU'">
+    <OutputPath>bin\AzureProd\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalTest|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\AzureTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalMinimal|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LocalMinimal\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalUiTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LocalUiTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Constants\Permissions.cs" />
+    <Compile Include="Context\ISchoolYearContextProvider.cs" />
+    <Compile Include="Context\SchoolYearContextProvider.cs" />
+    <Compile Include="Database\PrototypeWithDatabaseNameOverrideDatabaseConnectionStringProvider.cs" />
+    <Compile Include="Database\YearSpecificOdsDatabaseNameProvider.cs" />
+    <Compile Include="IHasCascadableKeyValues.cs" />
+    <Compile Include="IHasPrimaryKeyValues.cs" />
+    <Compile Include="Repositories\IGetEntitiesBySpecification.cs" />
+    <Compile Include="Security\IApiKeyContextProvider.cs" />
+    <Compile Include="Security\ApiKeyContextProvider.cs" />
+    <Compile Include="Database\SandboxDatabaseNameProvider.cs" />
+    <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="ExceptionExtensions.cs" />
+    <Compile Include="ExceptionHandling\RESTError.cs" />
+    <Compile Include="ExceptionHandling\IExceptionTranslator.cs" />
+    <Compile Include="Exceptions\ConcurrencyException.cs" />
+    <Compile Include="Exceptions\NotFoundException.cs" />
+    <Compile Include="Exceptions\NotModifiedException.cs" />
+    <Compile Include="GuidConverter.cs" />
+    <Compile Include="IChildEntity.cs" />
+    <Compile Include="IDateVersionedEntity.cs" />
+    <Compile Include="IHasIdentifier.cs" />
+    <Compile Include="IHasIdentifiers.cs" />
+    <Compile Include="IHasLookupColumnPropertyMap.cs" />
+    <Compile Include="IHasNonPrimaryKeyUniqueValues.cs" />
+    <Compile Include="InterchangeFileFormat.cs" />
+    <Compile Include="IQueryCriteriaBase.cs" />
+    <Compile Include="IQueryParameters.cs" />
+    <Compile Include="IUploadFileSourcingResults.cs" />
+    <Compile Include="IValidateAndSourceFiles.cs" />
+    <Compile Include="JsonObjectExtensions.cs" />
+    <Compile Include="ObjectExtensions.cs" />
+    <Compile Include="OrderedDictionaryExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\ICreateEntity.cs" />
+    <Compile Include="Repositories\IDeleteEntityById.cs" />
+    <Compile Include="Repositories\IDeleteEntityByKey.cs" />
+    <Compile Include="Repositories\IGetEntitiesByIds.cs" />
+    <Compile Include="Repositories\IGetEntityById.cs" />
+    <Compile Include="Repositories\IGetEntityByKey.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Repositories\IUpdateEntity.cs" />
+    <Compile Include="Repositories\IUpsertEntity.cs" />
+    <Compile Include="Specifications\EdFiDescriptorEntitySpecification.cs" />
+    <Compile Include="Specifications\EducationOrganizationEntitySpecification.cs" />
+    <Compile Include="Specifications\PersonEntitySpecification.cs" />
+    <Compile Include="Specifications\PrimaryRelationshipEntitySpecification.cs" />
+    <Compile Include="Specifications\EdFiTypeEntitySpecification.cs" />
+    <Compile Include="UploadFileSourcingResults.cs" />
+    <Compile Include="UtcTimeConverter.cs" />
+    <Compile Include="Utils\ConsoleOutput.cs" />
+    <Compile Include="Utils\DatabaseNameBuilder.cs" />
+    <Compile Include="Utils\Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Utils\Extensions\EnumExtensions.cs" />
+    <Compile Include="Utils\Extensions\ExpressionExtensions.cs" />
+    <Compile Include="Utils\Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Utils\Extensions\IntExtensions.cs" />
+    <Compile Include="Utils\Extensions\StringExtensions.cs" />
+    <Compile Include="Utils\Extensions\TypeExtensions.cs" />
+    <Compile Include="Utils\IOutput.cs" />
+    <Compile Include="Utils\IRandomUtil.cs" />
+    <Compile Include="Utils\Profiles\ContentTypeUsage.cs" />
+    <Compile Include="Utils\Profiles\ProfileContentTypeDetails.cs" />
+    <Compile Include="Utils\Profiles\ProfilesContentTypeHelper.cs" />
+    <Compile Include="Utils\RandomUtil.cs" />
+    <Compile Include="Utils\Resources\EmbeddedResourceReader.cs" />
+    <Compile Include="Utils\SystemClock.cs" />
+    <Compile Include="ValidationState.cs" />
+    <Compile Include="IObjectValidator.cs" />
+    <Compile Include="ValidatorExtensions.cs" />
+    <Compile Include="XmlReaderExtensions.cs" />
+    <Compile Include="_Installers\ComponentNaming\ComponentNameHelper.cs" />
+    <Compile Include="_Installers\ComponentNaming\ConnectionStringNameAttribute.cs" />
+    <Compile Include="_Installers\CommonConfigurationSpecificInstallerBase.cs" />
+    <Compile Include="_Installers\CommonDatabaseConnectionStringProvidersInstallerBase.cs" />
+    <Compile Include="_Installers\ComponentNaming\DatabaseNameStrategyRegistrationKeys.cs" />
+    <Compile Include="_Installers\ComponentNaming\Databases.cs" />
+    <Compile Include="_Installers\ComponentNaming\DatabasesEnumExtensions.cs" />
+    <Compile Include="_Installers\EdFiOdsCommonInstaller.cs" />
+    <Compile Include="_Installers\SandboxEnvironmentDatabaseConnectionStringsInstaller.cs" />
+    <Compile Include="_Installers\SharedInstanceEnvironmentDatabaseConnectionStringInstaller.cs" />
+    <Compile Include="_Installers\YearSpecificSharedInstanceEnvironmentDatabaseConnectionStringInstaller.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Implementations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdFi.Common\EdFi.Common.csproj">
+      <Project>{C545A7D1-4054-4279-9723-F06DA524E122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="../T4TextTemplating.Targets" />
+  <ItemGroup>
+    <myLibraries Include="$(TargetPath); $(TargetDir)$(TargetName).pdb;">
+      <InProject>false</InProject>
+    </myLibraries>
+  </ItemGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(myLibraries)" DestinationFolder="$(ttLibsFolder)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>EdFi.Ods.BulkLoad.Console.EFA</id>
+    <version>0.1.0</version>
+    <title></title>
+    <authors>Double Line</authors>
+    <owners>Double Line</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>EdFi Bulk Loader Console App</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags></tags>
+  </metadata>
+  <files>
+    <file src="bin\AzureTest\*.dll" target="lib\net45" />
+    <file src="bin\AzureTest\*.exe" target="lib\net45" />
+    <file src="bin\AzureTest\*.config" target="lib\net45" />
+  </files>
+</package>

@@ -1,0 +1,88 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="$(ttLibsFolder)EdFi.Common.dll" #>
+<#@ assembly name="$(ttLibsFolder)EdFi.Ods.Common.dll" #>
+<#@ assembly name="$(ttLibsFolder)EdFi.Ods.Api.Models.dll" #>
+<#@ assembly name="$(ttLibsFolder)EdFi.Ods.Entities.Common.dll" #>
+<#@ assembly name="$(ttLibsFolder)EdFi.Ods.Codegen.Generated.dll" #>
+<#@ assembly name="$(ttLibsFolder)EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="EdFi.Common.IO" #>
+<#@ import namespace="EdFi.Ods.Common" #>
+<#@ import namespace="EdFi.Ods.BulkLoad.Common" #>
+<#@ import namespace="EdFi.Ods.BulkLoad.Common.OrderProviders" #>
+<#@ import namespace="EdFi.Ods.CodeGen.XmlShredding" #>
+<#@ import namespace="EdFi.Ods.CodeGen.XsdToWebApi" #>
+<#@ include file="$(ttIncludeFolder)\Settings.ttinclude" #>
+<#@ include file="InterchangeSpecificLoaderCollectionTemplateModel.cs" #>
+<#@ output extension=".generated.cs" #>
+<#
+var schemaDir = Host.ResolveAssemblyReference("$(schemaDir)");
+var files = new InterchangeXsdFileProvider(schemaDir).GetInterchangeFilePaths();
+
+var dictionary = new Dictionary<string, IOrderedCollectionofAggregateSetsBuilder>(EdFi.Ods.BulkLoad.Common.OrderProviders.AggregateLoadOrderProviders.Dictionary);
+
+var model = new InterchangeSpecificLoaderCollectionTemplateModel(files, dictionary);
+#>
+using System;
+using System.Collections.Generic;
+using EdFi.Common.InversionOfControl;
+using EdFi.Ods.Common;
+using EdFi.Ods.Pipelines;
+using EdFi.Ods.Pipelines.Factories;
+using EdFi.Ods.BulkLoad.Common;
+
+namespace EdFi.Ods.BulkLoad.Core.Controllers.Aggregates
+{    
+    public class GeneratedInterchangeSpecificLoaderCollections : IHaveInterchangeSpecificLoaderCollections
+    {
+        private IDictionary<string, Func<IPipelineFactory, OrderedCollectionOfSets<ILoadAggregates>>> _loadersByInterchangeName; 
+        private IPipelineFactory _pipelineFactory;
+
+        public GeneratedInterchangeSpecificLoaderCollections(IPipelineFactory pipelineFactory)
+        {
+            _pipelineFactory = pipelineFactory;
+            _loadersByInterchangeName = new Dictionary<string, Func<IPipelineFactory, OrderedCollectionOfSets<ILoadAggregates>>>
+            {
+            <#
+            foreach(var interchange in model.Interchanges)
+            { #>
+                {"<#=interchange #>", <#=interchange #>Aggregates.Aggregates},
+            <#}#>
+            };
+        }
+
+        public OrderedCollectionOfSets<ILoadAggregates> GetCollectionFor(string interchangeName)
+        {
+            if (_loadersByInterchangeName.ContainsKey(interchangeName))
+                return _loadersByInterchangeName[interchangeName].Invoke(_pipelineFactory);
+            throw new Exception(string.Format(
+                "No aggregate loaders found for interchange {0}.  This should not happen.  Please check the HaveInterchangeSpecificLoaderCollections object, it's covering tests, and the InterchangeTypes object.", 
+                interchangeName));
+        }
+    }
+
+<# foreach(var interchange in model.Interchanges){#>
+    public static class <#=interchange #>Aggregates
+    {
+        public static OrderedCollectionOfSets<ILoadAggregates> Aggregates(IPipelineFactory factory) 
+        {
+            var collection = new OrderedCollectionOfSets<ILoadAggregates>();
+            <#
+            foreach(var aggregateSet in model.CollectionFor(interchange))
+            {#>
+collection.AddSet()
+<#
+                foreach(var aggregate in aggregateSet){
+#>
+            .AddMember(new <#=aggregate #>Loader(factory))
+<#}#>            ;
+            <#}#>
+return collection;
+        }
+    }
+<#}#>
+}
+
+

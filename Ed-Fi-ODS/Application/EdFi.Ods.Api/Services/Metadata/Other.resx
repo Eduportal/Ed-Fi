@@ -1,0 +1,670 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="other.api-docs.json" xml:space="preserve">
+    <value>
+{
+  "apiVersion": "1.0.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "%BASE_URL%/metadata/other/api-docs",
+  "apis": [
+    {
+      "path": "/bulkOperations",
+      "description": "Manage bulk operation sessions"
+    },
+    {
+      "path": "/bulkOperationsExceptions",
+      "description": "Retrieve bulk operations exceptions"
+    },
+    {
+      "path": "/identities",
+      "description": "Retrieve or create Unique Ids for a person, and add or update their information"
+    },
+    {
+      "path": "/uploads",
+      "description": "Upload interchange XML files"
+    }
+  ],
+  "info": {
+    "title": "Operational Data Store",
+    "description": "The Ed-Fi ODS API enables applications to read and write education data stored in an Ed-Fi ODS through a secure REST interface. The Ed-Fi ODS API supports both transactional and bulk modes of operation.",
+    "termsOfServiceUrl": "",
+    "contact": "support@ed-fi.org",
+    "licenseUrl": "http://www.ed-fi.org/license/"
+  }
+}
+    </value>
+  </data>
+  <data name="other.bulkOperations.json" xml:space="preserve">
+    <value>
+{
+  "apiVersion": "1.0.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "%BASE_URL%/api/v2.0",
+  "resourcePath": "/bulkoperations",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "/bulkOperations",
+      "description": "Manage bulk operation sessions",
+      "operations": [
+        {
+          "method": "POST",
+          "nickname": "post",
+          "notes": "This creates a session, during which XML interchange files are uploaded, committed, and processed. An Operation Identifier is returned that will be used for future calls.",
+          "summary": "Create a bulk operation session and retrieve an operation identifier",
+          "type": "bulkOperation",
+          "responseClass": "bulkOperation",
+          "parameters": [
+            {
+              "paramType": "body",
+              "name": "body",
+              "type": "bulkOperation",
+              "required": true,
+              "allowMultiple": false
+            }
+          ],
+          "responseMessages": []
+        }
+      ]
+    },
+    {
+      "path": "/bulkOperations/{id}",
+      "description": "Manage bulk operation sessions",
+      "operations": [
+        {
+          "method": "GET",
+          "nickname": "get",
+          "summary": "A summary of what this operation does",
+          "type": "bulkOperation",
+          "responseClass": "bulkOperation",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "description": "The operation identifier",
+              "type": "string",
+              "required": true,
+              "allowMultiple": false
+            }
+          ],
+          "responseMessages": []
+        }
+      ]
+    }
+  ],
+  "models": {
+    "uploadFile": {
+      "id": "uploadFile",
+      "properties": {
+        "id": {
+          "type": "string",
+          "required": true
+        }
+        , "size": {
+          "type": "integer",
+          "required": true
+        }
+        , "format": {
+          "type": "string",
+          "required": true
+        }
+        , "interchangeType": {
+          "type": "string",
+          "required": true
+        }
+        , "status": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "bulkOperation": {
+      "id": "bulkOperation",
+      "properties": {
+        "id": {
+          "type": "string",
+          "required": true
+        }
+        , "uploadFiles": {
+          "type": "array",
+          "required": true,
+          "items":{"$ref": "uploadFile"}
+        }
+        , "status" : {
+            "type": "string",
+            "required": true
+        }
+      }
+    }
+  }
+}
+    </value>
+  </data>
+  <data name="other.bulkOperationsExceptions.json" xml:space="preserve">
+    <value>
+{
+  "apiVersion": "1.0.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "%BASE_URL%/api/v2.0",
+  "resourcePath": "/bulkoperationsexceptions",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "/bulkoperations/{id}/exceptions/{uploadid}",
+      "description": "Retrieve bulk operations exceptions",
+      "operations": [
+        {
+          "method": "GET",
+          "nickname": "get",
+          "summary": "Retrieves collection of exceptions from a bulk operation.",
+          "type": "array",
+          "items": {
+            "$ref": "bulkOperationException"
+          },
+          "responseClass": "array",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "description": "id (string): required The unique ID of the operation. This value should be obtained from the operation created via the bulk operations API",
+              "type": "string",
+              "required": true,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "path",
+              "name": "uploadid",
+              "description": "uploadId (string): required The unique ID of the in-progress upload on the server. This value should be obtained from the operation created via the bulk operations API",
+              "type": "string",
+              "required": true,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "offset",
+              "description": "Indicates how many items should be skipped before returning results.",
+              "type": "integer",
+              "required": false,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "limit",
+              "description": "Indicates the maximum number of items that should be returned in the results (defaults to 25).",
+              "type": "integer",
+              "required": false,
+              "allowMultiple": false
+            }
+          ],
+          "responseMessages": []
+        }
+      ]
+    }
+  ],
+  "models": {
+    "bulkOperationException": {
+      "id": "bulkOperationException",
+      "properties": {
+        "id": {
+          "type": "string",
+          "required": true
+        }
+        , "uploadFileId": {
+          "type": "string",
+          "required": true
+        }
+        , "type": {
+          "type": "string",
+          "required": true
+        }
+        , "element": {
+          "type": "string",
+          "required": true
+        }
+        , "message": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  }
+}
+    </value>
+  </data>
+  <data name="other.identities.json" xml:space="preserve">
+    <value>{
+  "apiVersion": "1.0.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "%BASE_URL%/api/v2.0",
+  "resourcePath": "/identities",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "/identities/{id}",
+      "description": "Retrieve or create Unique Ids for a Identity, and add or update their information",
+      "operations": [
+        {
+          "method": "GET",
+          "nickname": "getById",
+          "summary": "Retrieve a single person record from their Unique Id.",
+          "type": "identity",
+          "responseClass": "identity",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "id",
+              "description": "Unique Id of the person to be retrieved",
+              "type": "string",
+              "required": true,
+              "allowMultiple": false
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "message": "The requested Identity matched the provided Unique Id.",
+              "responseModel": "identity"
+            },
+            {
+              "code": 404,
+              "message": "No Identity matching the provided Unique Id was found.",
+              "responseModel": "identity"
+            },
+			{
+              "code": 501,
+              "message": "There is no integrated Unique Identity System.",
+              "responseModel": "identity"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/identities",
+      "description": "Retrieve or create Unique Ids for a Identity, and add or update their information",
+      "operations": [
+        {
+          "method": "GET",
+          "nickname": "getByExample",
+          "summary": "Lookup an existing Unique Id for a person, or suggest possible matches.",
+          "type": "array",
+          "items":{"$ref":"identity"},
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "birthGender",
+              "description": "Gender of the identity",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "birthDate",
+              "description": "Birthdate of the identity",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "familyNames",
+              "description": "Family names of the identity",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "givenNames",
+              "description": "Given names of the identity",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "message": "One or more Identity matches were found",
+              "responseModel": "void"
+            },
+			{
+              "code": 501,
+              "message": "There is no integrated Unique Identity System.",
+              "responseModel": "identity"
+            }
+          ]
+        },
+        {
+          "method": "POST",
+          "nickname": "Post",
+          "notes": "A new identifier will be created",
+          "summary": "Creates a new Unique Id for the given Identity information. Assumption here is that the user has verified that possible matches are not correct matches.",
+          "type": "identity",
+          "responseClass": "identity",
+          "parameters": [
+            {
+              "paramType": "body",
+              "name": "request",
+              "description": "Identity object to be created",
+              "type": "identity",
+              "required": true,
+              "allowMultiple": false
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "message": "A Identity was created. The new Unique Id is returned in the returned Identity record",
+              "responseModel": "void"
+            },
+			{
+              "code": 501,
+              "message": "There is no integrated Unique Identity System.",
+              "responseModel": "identity"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "models": {
+    "identity": {
+      "id": "identity",
+      "properties": {
+        "uniqueId": {
+          "type": "string",
+          "required": true
+        }
+        , "birthGender": {
+          "type": "string",
+          "required": false
+        }
+        , "birthDate": {
+          "type": "dateTime",
+          "required": false
+        }
+        , "familyNames": {
+          "type": "string",
+          "required": true
+        }
+        , "givenNames": {
+          "type": "string",
+          "required": true
+        }
+        , "weight": {
+          "type": "decimal",
+          "required": true
+        }
+        , "schoolAssociations": {
+          "type": "schoolAssociation",
+          "required": false
+        }
+      }
+    },
+    "schoolAssociation": {
+      "id": "schoolAssociation",
+      "properties": {
+        "SchoolName": {
+          "type": "string",
+          "required": false
+        }
+        , "LocalEducationAgencyName": {
+          "type": "string",
+          "required": false
+        }
+        , "SchoolYear": {
+          "type": "string",
+          "required": false
+        }
+      }
+    }
+  }
+}</value>
+  </data>
+  <data name="other.uploads.json" xml:space="preserve">
+    <value>
+{
+  "apiVersion": "1.0.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "%BASE_URL%/api/v2.0",
+  "resourcePath": "/uploads",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "/uploads/{uploadid}/chunk",
+      "description": "Upload interchange XML files",
+      "operations": [
+        {
+          "method": "POST",
+          "nickname": "postChunk",
+          "summary": "Allows for the upload of files parts of a larger upload file.",
+          "type": "upload",
+          "responseClass": "upload",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "uploadId",
+              "description": "uploadId (string): required The unique ID of the in-progress upload on the server. This value should be obtained from the operation created via the bulk operations API",
+              "type": "string",
+              "required": true,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "offset",
+              "description": "The byte offset of this chunk, relative to the beginning of the full file. This value will be used along with the total expected file size and the bytes value to validate the action. If the offset + bytes &gt; expected bytes or if the bytes received do not match the bytes expected (for the chunk) a 400 Bad Request response will be sent.",
+              "type": "integer",
+              "format" : "int64",
+              "required": true,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "size",
+              "description": "The total bytes for this chunk. This value cannot exceed 157286400. If compression is used this should be compressed bytes and not uncompressed bytes",
+              "type": "integer",
+              "format": "int64",
+              "required": true,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "form",
+              "name": "upload",
+              "description": "The file upload object",
+              "type": "upload",
+              "required": true,
+              "allowMultiple": false
+            }
+          ],
+          "responseMessages": []
+        }
+      ]
+    },
+    {
+      "path": "/uploads/{uploadid}/commit",
+      "description": "Upload interchange XML files",
+      "operations": [
+        {
+          "method": "POST",
+          "nickname": "postCommit",
+          "summary": "Creates a Command to commit the uploaded chunks and validate the file appears composable.",
+          "type": "upload",
+          "responseClass": "upload",
+          "parameters": [
+            {
+              "paramType": "path",
+              "name": "uploadid",
+              "description": "The id of the upload to commit to the bulk operation.",
+              "type": "string",
+              "required": true,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "form",
+              "name": "upload",
+              "description": "The file upload object",
+              "type": "Upload",
+              "required": true,
+              "allowMultiple": false
+            }
+          ],
+          "responseMessages": []
+        }
+      ]
+    }
+  ],
+  "models": {
+    "upload": {
+      "id": "upload",
+      "properties": {
+        "Id": {
+          "type": "string",
+          "required": true
+        }
+        , "Offset": {
+          "type": "integer",
+          "required": true
+        }
+        , "Size": {
+          "type": "integer",
+          "required": true
+        }
+        , "FileBytes": {
+          "type": "array",
+          "required": true,
+          "items":{"$ref": "byte"}
+        }
+      }
+    }
+  }
+}
+    </value>
+  </data>
+</root>

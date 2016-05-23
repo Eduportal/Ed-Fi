@@ -1,0 +1,362 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ output extension=".generated.cs" #>
+using System;
+using EdFi.Ods.Common;
+<#
+    var templatesPath = GetTemplatesPath();
+
+    var databaseSchemaProvider = 
+        new UsiToUniqueIdTransformingDatabaseSchemaProviderDecorator(
+            new EdFiExtensionsDatabaseSchemaProviderDecorator(
+                new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath())));
+
+    var codeGenLogic = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+
+    var model = new DomainModelFactory(codeGenLogic, GetExtensionsMetadataPath()).GetModel();
+
+    foreach (var aggregateClasses in model.NonAbstractClassesByAggregate)
+    {
+#>
+// Aggregate: <#= aggregateClasses.Key #>
+
+namespace <#= codeGenLogic.Namespace #>.Common //.<#= aggregateClasses.Key #>Aggregate
+{ 
+<#
+    foreach (var tbl in aggregateClasses.Value)
+    {
+        var sourceSupportProperties = new List<string>();
+        var filterDelegateProperties = new List<string>();
+#>
+    public static class <#= tbl.Name #>Mapper 
+    {
+        public static bool SynchronizeTo(this I<#= tbl.Name #> source, I<#= tbl.Name #> target)
+        {
+            bool isModified = false;
+
+            var sourceSupport = source as I<#= tbl.Name #>SynchronizationSourceSupport;
+<#
+            if (tbl.AllowPrimaryKeyUpdates) 
+            { #>
+
+            // Allow PK column updates on <#= tbl.Name #>
+            if (
+<#              var pks = tbl.NonReferencedPKs.Where(pk => !pk.IsUniqueId).ToArray();
+
+                for (int i = 0; i < pks.Length; i++)
+                { 
+                    var col = pks[i]; #>
+                <#= i > 0 ? "||" : string.Empty #> (target.<#= col.ColNameToUse #> != source.<#= col.ColNameToUse #>)<#= i == (pks.Length - 1) ? ")" : string.Empty #>
+<#              } #>
+            {            
+                isModified = true;
+
+                var sourceWithPrimaryKeyValues = (source as IHasPrimaryKeyValues);
+
+                if (sourceWithPrimaryKeyValues != null)
+                {
+                    var targetWithNewKeyValues = target as IHasCascadableKeyValues;
+
+                    if (targetWithNewKeyValues != null)
+                        targetWithNewKeyValues.NewKeyValues = sourceWithPrimaryKeyValues.GetPrimaryKeyValues();
+                }
+            }
+<#          } #>
+
+            // Back synch non-reference portion of PK (PK properties cannot be changed, therefore they can be omitted in the resource payload, but we need them for proper comparisons for persistence)
+<#          foreach (var col in tbl.NonReferencedPKs.Where(pk => !pk.IsUniqueId))
+            {
+    #>
+            if (source.<#= col.ColNameToUse #> != target.<#= col.ColNameToUse #>)
+            {
+                source.<#= col.ColNameToUse #> = target.<#= col.ColNameToUse #>;
+            }
+<#          }
+
+        if (tbl.IsDerived)
+        { #>
+
+            // Copy inherited non-PK properties
+
+<#            
+            foreach (var col in tbl.BaseClass.NonPrimaryKeyColumns)
+                // Explicitly exclude the "Id" and "DateTime" columns property here
+            {
+                sourceSupportProperties.Add(col.ColNameToUse);
+                #>
+
+            if ((sourceSupport == null || sourceSupport.Is<#= col.ColNameToUse #>Supported)
+                && target.<#= col.ColNameToUse #> != source.<#= col.ColNameToUse #>)
+            {
+                target.<#= col.ColNameToUse #> = source.<#= col.ColNameToUse #>;
+                isModified = true;
+            }
+<# }
+        }
+#>
+
+            // Copy non-PK properties
+<#            
+            foreach (var col in tbl.NonPrimaryKeyColumnsToMap)
+            {
+                sourceSupportProperties.Add(col.ColNameToUse); #>
+
+            if ((sourceSupport == null || sourceSupport.Is<#= col.ColNameToUse #>Supported)
+                && target.<#= col.ColNameToUse #> != source.<#= col.ColNameToUse #>)
+            {
+                target.<#= col.ColNameToUse #> = source.<#= col.ColNameToUse #>;
+                isModified = true;
+            }
+<# } #>
+<#          
+            if (tbl.HasAnyOneToOneChildFKs)
+            { #>
+
+            // ----------------------------------            
+            //   Synch One-to-one relationships
+            // ----------------------------------            
+<#              foreach (var oneToOneFK in tbl.OneToOneChildFKs)
+                { 
+                    sourceSupportProperties.Add(oneToOneFK.OtherClass); #>
+            // <#= oneToOneFK.OtherClass #>
+            if (sourceSupport == null || sourceSupport.Is<#= oneToOneFK.OtherClass #>Supported)
+            {
+                if (source.<#= oneToOneFK.OtherClass #> == null)
+                {
+                    if (target.<#= oneToOneFK.OtherClass #> != null)
+                    {
+                        target.<#= oneToOneFK.OtherClass #> = null;
+                        isModified = true;
+                    }
+                }
+                else
+                {
+                    if (target.<#= oneToOneFK.OtherClass #> == null)
+                    {
+                        var itemType = target.GetType().GetProperty("<#= oneToOneFK.OtherClass #>").PropertyType;
+                        var newItem = Activator.CreateInstance(itemType);
+                        target.<#= oneToOneFK.OtherClass #> = (I<#= oneToOneFK.OtherClass #>) newItem;
+                    }
+
+                    isModified |= source.<#= oneToOneFK.OtherClass #>.Synchronize(target.<#= oneToOneFK.OtherClass #>);
+                }
+            }
+            
+<# } #>
+            // -------------------------------------------------------------
+<# } #>
+
+<#          if (tbl.IsDerived)
+            { #>
+            // Synch inherited lists
+<#
+                foreach (var childTable in tbl.BaseChildTables)
+                { 
+                    filterDelegateProperties.Add(childTable.OtherClass);
+                    sourceSupportProperties.Add(childTable.OtherQueryable); #>
+            if (sourceSupport == null || sourceSupport.Is<#= childTable.OtherQueryable #>Supported)
+                isModified |= source.<#= childTable.OtherQueryable #>.SynchronizeListTo(target.<#= childTable.OtherQueryable #>, child => child.<#= tbl.BaseClass.Name #> = target,
+                                sourceSupport == null ? null : sourceSupport.Is<#= childTable.OtherTable#>Included);
+
+<#              } #>
+<#          } #>
+
+
+            // Sync lists
+<#            
+            foreach (var childTable in tbl.ChildTables)
+            { 
+                filterDelegateProperties.Add(childTable.OtherClass);
+                sourceSupportProperties.Add(childTable.OtherQueryable); #>
+            if (sourceSupport == null || sourceSupport.Is<#= childTable.OtherQueryable #>Supported)
+                isModified |= source.<#= childTable.OtherQueryable #>.SynchronizeListTo(target.<#= childTable.OtherQueryable #>, child => child.<#= tbl.Name #> = target,
+                                sourceSupport == null ? null : sourceSupport.Is<#= childTable.OtherTable#>Included);
+
+<#          } #>
+
+            return isModified;
+        }
+
+        <#= (tbl.IsDerived && !tbl.IsBaseTableAbstract) ? "internal" : "public"
+    #> static void Map<#= (tbl.IsDerived && !tbl.IsBaseTableAbstract) ? "Derived" : string.Empty
+    #>To(this I<#= tbl.Name #> source, I<#= tbl.Name #> target, Action<I<#= tbl.Name #>, I<#= tbl.Name #>> onMapped)
+        {
+            var sourceSynchSupport = source as I<#= tbl.Name #>SynchronizationSourceSupport;
+            var targetSynchSupport = target as I<#= tbl.Name #>SynchronizationSourceSupport;
+
+<#          if (tbl.IsBaseTable)
+{ #>
+            // =======================================================================================
+            // Detect and map derived types (compiler is unable to correctly link to appropriate 
+            //      mapping methods when there are base/derived interfaces and a concrete base class)
+            // ---------------------------------------------------------------------------------------
+<#              foreach (var derivedTable in tbl.DerivedTables)
+{ #>
+            // Map derived type <#= derivedTable.Name #>
+            var source<#= derivedTable.Name #> = source as I<#= derivedTable.Name #>;
+
+            if (source<#= derivedTable.Name #> != null)
+            {
+                source<#= derivedTable.Name #>.MapDerivedTo((I<#= derivedTable.Name #>) target, onMapped);
+                return;
+            }
+<# } #>
+            // =======================================================================================
+
+<# } #>
+<#          if (tbl.IsRootTable)
+{ #>
+            // Copy resource Id
+            target.Id = source.Id;
+
+<# } #>
+            // Copy contextual primary key values
+<#          foreach (var col in tbl.NonReferencedPKs)
+{
+#>
+            target.<#= col.ColNameToUse #> = source.<#= col.ColNameToUse #>;
+<# } #>
+<#          if (tbl.IsDerived)
+{ #>
+
+            // Copy inherited non-PK properties
+<#            
+                foreach (var col in tbl.BaseClass.NonPrimaryKeyColumns)
+                    // Explicitly exclude the "Id" and "DateTime" columns property here
+                {
+#>
+
+            if (sourceSynchSupport.Is<#= col.ColNameToUse #>Supported)
+                target.<#= col.ColNameToUse #> = source.<#= col.ColNameToUse #>;
+            else
+                targetSynchSupport.Is<#= col.ColNameToUse #>Supported = false;
+<# } #>
+<# } #>
+
+            // Copy non-PK properties
+<#
+        //foreach (var col in tbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && (!isRootTable || c.Name != "LastModifiedDate"))) // Explicitly exclude the "Id" and "DateTime" columns property here
+        foreach (var col in tbl.NonPrimaryKeyColumnsToMap) // Explicitly exclude the "Id" and "DateTime" columns property here
+        {
+#>
+
+            if (sourceSynchSupport.Is<#= col.ColNameToUse #>Supported)
+                target.<#= col.ColNameToUse #> = source.<#= col.ColNameToUse #>;
+            else
+                targetSynchSupport.Is<#= col.ColNameToUse #>Supported = false;
+<# } #>
+<#          
+            if (tbl.HasAnyOneToOneChildFKs)
+            { #>
+
+            // ----------------------------------
+            //   Map One-to-one relationships
+            // ----------------------------------
+<#              foreach (var oneToOneFK in tbl.OneToOneChildFKs)
+                { #>
+            // <#= oneToOneFK.OtherClass #> (Source)
+            if (sourceSynchSupport.Is<#= oneToOneFK.OtherClass #>Supported)
+            {
+                var itemProperty = target.GetType().GetProperty("<#= oneToOneFK.OtherClass #>");
+                
+                if (itemProperty != null)
+                {                    
+                    if (source.<#= oneToOneFK.OtherClass #> == null)
+                    {
+                        target.<#= oneToOneFK.OtherClass #> = null;
+                    }
+                    else
+                    {
+                        var itemType = itemProperty.PropertyType;
+                        object target<#= oneToOneFK.OtherClass #> = Activator.CreateInstance(itemType);
+
+                        source.<#= oneToOneFK.OtherClass #>.Map(target<#= oneToOneFK.OtherClass #>);
+                        
+                        // Update the target reference appropriately
+                        target.<#= oneToOneFK.OtherClass #> = (I<#= oneToOneFK.OtherClass #>) target<#= oneToOneFK.OtherClass #>;
+                    }
+                }
+            }
+            else
+            {
+                targetSynchSupport.Is<#= oneToOneFK.OtherClass #>Supported = false;
+            }
+<#              } #>
+            // -------------------------------------------------------------
+<#          } #>
+<#          if (tbl.IsDerived)
+            { #>
+
+            // Map inherited lists
+<#            
+                foreach (var childTable in tbl.BaseChildTables)
+                { #>
+
+            if (sourceSynchSupport.Is<#= childTable.OtherQueryable #>Supported)
+            {
+                targetSynchSupport.Is<#= childTable.OtherTable #>Included = sourceSynchSupport.Is<#= childTable.OtherTable #>Included;
+                source.<#= childTable.OtherQueryable #>.MapListTo(target.<#= childTable.OtherQueryable #>);
+            }
+            else
+            {
+                targetSynchSupport.Is<#= childTable.OtherQueryable #>Supported = false;
+            }
+<#              } #>
+<#          } #>
+
+            // Map lists
+<#            
+            foreach (var childTable in tbl.ChildTables)
+            { #>
+
+            if (sourceSynchSupport.Is<#= childTable.OtherQueryable #>Supported)
+            {    
+                targetSynchSupport.Is<#= childTable.OtherTable #>Included = sourceSynchSupport.Is<#= childTable.OtherTable #>Included;
+                source.<#= childTable.OtherQueryable #>.MapListTo(target.<#= childTable.OtherQueryable #>);
+            }
+            else
+            {
+                targetSynchSupport.Is<#= childTable.OtherQueryable #>Supported = false;
+            }
+<#          } #>
+
+            var eTagProvider = new ETagProvider();
+
+            // Convert value to ETag, if appropriate
+            var entityWithETag = target as IHasETag;
+
+            if (entityWithETag != null)
+                entityWithETag.ETag = eTagProvider.GetETag(source);
+
+            // Convert value to LastModifiedDate, if appropriate
+            var dateVersionedEntity = target as IDateVersionedEntity;
+            var etagSource = source as IHasETag;
+
+            if (dateVersionedEntity != null && etagSource != null)
+                dateVersionedEntity.LastModifiedDate = eTagProvider.GetDateTime(etagSource.ETag);
+        }
+    }
+
+    /// <summary>
+    /// Defines properties that indicate whether a particular property of the model abstraction 
+    /// is supported by a model implementation being used as the source in a "synchronization"
+    /// operation.
+    /// </summary>
+    public interface I<#= tbl.Name #>SynchronizationSourceSupport
+    {
+<#          foreach (string propertyName in sourceSupportProperties) { #>
+        bool Is<#= propertyName #>Supported { get; set; }
+<#          }
+
+            foreach (string className in filterDelegateProperties) { #>
+        Func<I<#= className #>, bool> Is<#= className #>Included { get; set; }
+<#          } #>
+    }
+ 
+<# } #>
+}
+<# } // aggregate #>

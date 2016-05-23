@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0910CA09-B1F9-4988-B547-0B6A423BF831}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.Utilities.LoadGeneration</RootNamespace>
+    <AssemblyName>EdFi.Ods.Utilities.LoadGeneration</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.5.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CastleWindsorActivator.cs" />
+    <Compile Include="ContextSpecificReferenceValueBuilder.cs" />
+    <Compile Include="EdFiAwareDecimalRangeAttributeProviderDecorator.cs" />
+    <Compile Include="EdFi_Ods_Utilities_LoadGeneration_Marker.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="ExistingResourceReferenceProvider.cs" />
+    <Compile Include="IDictionaryExtensions.cs" />
+    <Compile Include="Infrastructure\FileWrapper.cs" />
+    <Compile Include="ApiSdkReflectionProvider.cs" />
+    <Compile Include="Interceptors\ValueBuilderLoggingInterceptor.cs" />
+    <Compile Include="IPropertyConstraintsCollectionFilter.cs" />
+    <Compile Include="IRandomStudentUniqueIdSelector.cs" />
+    <Compile Include="IStudentSchoolAssociationCache.cs" />
+    <Compile Include="IUniqueIdFactory.cs" />
+    <Compile Include="LoggerProgressNotifier.cs" />
+    <Compile Include="Marker_EdFi_Ods_Utilities_LoadGeneration.cs" />
+    <Compile Include="Persistence\IResourcePersister.cs" />
+    <Compile Include="Persistence\ResourcePersister.cs" />
+    <Compile Include="Persistence\StaffResourcePersisterDecorator.cs" />
+    <Compile Include="Persistence\StudentResourcePersisterDecorator.cs" />
+    <Compile Include="Persistence\StudentSchoolAssociationCache.cs" />
+    <Compile Include="RandomStaffUniqueIdSelector.cs" />
+    <Compile Include="RandomStudentUniqueIdSelector.cs" />
+    <Compile Include="ReferenceValueBuilders\IContextSpecificReferenceValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\SchoolYearTypeReferenceValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentAssessmentStudentObjectiveAssessment_ObjectiveAssessmentReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentAssessmentItem_AssessmentItemReference_ValueBuilder.cs" />
+    <Compile Include="ObjectExtensions.cs" />
+    <Compile Include="ReferenceValueBuilders\StaffEducationOrganizationAssignmentAssociation_EducationOrganizationReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StaffEducationOrganizationAssignmentAssociation_StaffEducationOrganizationEmploymentAssociationReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StaffEducationOrganizationAssignmentAssociation_StaffReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\ObjectiveAssessmentAssessmentItem_AssessmentItemReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\ObjectiveAssessmentLearningObjective_LearningObjectiveReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\CourseOffering_SchoolReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\CourseOffering_SessionReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentCompetencyObjective_StudentProgramAssociationReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentCompetencyObjective_StudentSectionAssociationReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\ReportCardStudentLearningObjective_StudentLearningObjectiveReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentAcademicRecordReportCard_ReportCardReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\Section_ClassPeriodReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\Section_CourseOfferingReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\Section_LocationReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\Section_SchoolReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\Section_SessionReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentLearningObjective_StudentProgramAssociationReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentLearningObjective_StudentSectionAssociationReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentGradebookEntry_StudentSectionAssociationReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentGradebookEntry_GradebookEntryReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentSchoolAttendanceEvent_SchoolReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StudentSchoolAttendanceEvent_SessionReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\BuildContextExtensions.cs" />
+    <Compile Include="ReferenceValueBuilders\BellSchedule_CalendarDateReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\SelfRecursiveRelationshipPropertySkipper.cs" />
+    <Compile Include="ReferenceValueBuilders\AcademicWeek_BeginCalendarDate_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\AcademicWeek_EndCalendarDate_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\BellSchedule_SchoolReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\GradingPeriod_BeginCalendarDate_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\GradingPeriod_EndCalendarDate_ValueBuilder.cs" />
+    <Compile Include="ReflectionExtensions.cs" />
+    <Compile Include="ResourceReferenceFactory.cs" />
+    <Compile Include="ReferenceValueBuilders\ReferenceValueBuilderBase.cs" />
+    <Compile Include="ReferenceValueBuilders\ReportCardGrade_GradeReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\ReportCardStudentCompetencyObjective_StudentCompetencyObjectiveReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\SectionAttendanceTakenEvent_CalendarDateReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\SectionAttendanceTakenEvent_SectionReference_ValueBuilder.cs" />
+    <Compile Include="ReferenceValueBuilders\StandardReferenceValueBuilder.cs" />
+    <Compile Include="RestClientLoggingInterceptor.cs" />
+    <Compile Include="Security\ApiSecurityContext.cs" />
+    <Compile Include="Security\ApiSecurityContextProvider.cs" />
+    <Compile Include="Security\IApiSecurityContextProvider.cs" />
+    <Compile Include="SequentialItemFromApiProvider.cs" />
+    <Compile Include="ApiSdkFacade.cs" />
+    <Compile Include="IApiSdkAssemblyProvider.cs" />
+    <Compile Include="IConfigurationProvider.cs" />
+    <Compile Include="IApiSdkReflectionProvider.cs" />
+    <Compile Include="IItemFromApiProvider.cs" />
+    <Compile Include="IApiSdkFacade.cs" />
+    <Compile Include="Infrastructure\IFile.cs" />
+    <Compile Include="CsvResourceDataProfileProvider.cs" />
+    <Compile Include="Infrastructure\IRandom.cs" />
+    <Compile Include="Infrastructure\RandomWrapper.cs" />
+    <Compile Include="IRestClientPool.cs" />
+    <Compile Include="ResourceSelector.cs" />
+    <Compile Include="LoadTestController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceCount.cs" />
+    <Compile Include="ResourceCountManager.cs" />
+    <Compile Include="RestClientPool.cs" />
+    <Compile Include="ResourceGenerationWorker.cs" />
+    <Compile Include="ResourceGenerationWorkerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SimpleGuidBasedUniqueIdFactory.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="ValueBuilders\EdFiAwareStringValueBuilder.cs" />
+    <Compile Include="ValueBuilders\EdFiDescriptorValueBuilder.cs" />
+    <Compile Include="ValueBuilders\EdFiTypeValueBuilder.cs" />
+    <Compile Include="ValueBuilders\EtagPropertySkipper.cs" />
+    <Compile Include="ValueBuilders\IdPropertySkipper.cs" />
+    <Compile Include="ValueBuilders\IEducationOrganizationIdentifiersProvider.cs" />
+    <Compile Include="ValueBuilders\GeneralReferenceStudentUniqueIdValueBuilder.cs" />
+    <Compile Include="ValueBuilders\EstablishEducationOrganizationAuthorizationContextForPersonUniqueId.cs" />
+    <Compile Include="ValueBuilders\BirthDateValueBuilder.cs" />
+    <Compile Include="ValueBuilders\PropertySkipperBase.cs" />
+    <Compile Include="ValueBuilders\ReferenceLinkPropertySkipper.cs" />
+    <Compile Include="ValueBuilders\SchoolYearValueBuilder.cs" />
+    <Compile Include="ValueBuilders\StringTimeSpanValueBuilder.cs" />
+    <Compile Include="ValueBuilders\PersonInstanceUniqueIdValueBuilder.cs" />
+    <Compile Include="ValueBuilders\RandomEducationOrganizationIdentifierValueBuilderBase.cs" />
+    <Compile Include="ValueBuilders\RandomEducationOrganizationIdValueBuilder.cs" />
+    <Compile Include="ValueBuilders\RandomLocalEducationAgencyIdValueBuilder.cs" />
+    <Compile Include="ValueBuilders\RandomSchoolIdValueBuilder.cs" />
+    <Compile Include="_Extensions\ExceptionExtensions.cs" />
+    <Compile Include="_Extensions\HashSetExtensions.cs" />
+    <Compile Include="_Extensions\IDictionaryExtensions.cs" />
+    <Compile Include="_Extensions\TypeExtensions.cs" />
+    <Compile Include="_Installers\ConfigurationSpecificInstaller.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Application\EdFi.Common\EdFi.Common.csproj">
+      <Project>{C545A7D1-4054-4279-9723-F06DA524E122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Application\EdFi.TestObjects\EdFi.TestObjects.csproj">
+      <Project>{d699fd99-71b6-47c4-8214-953f160cc338}</Project>
+      <Name>EdFi.TestObjects</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

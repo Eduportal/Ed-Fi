@@ -1,0 +1,58 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Ed-Fi ODS API</title>
+    <link href="Content/site.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <div class="content-wrapper">
+            <div class="float-left">
+                <p class="site-title">
+                    <a href="./">Explore the Ed-Fi Operational Data Store API</a>
+                </p>
+            </div>
+            <div class="float-right">
+                <nav>
+                    <ul id="menu">
+                        <li><a href="./">Home</a></li>
+
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div id="body">
+        <section class="featured">
+            <div class="content-wrapper">
+                <hgroup class="title">
+                    <h2>Welcome to the Ed-Fi Operational Data Store API</h2>
+                </hgroup><p>
+                    The Ed-Fi ODS Web API allows applications to read and write education data stored in an Ed-Fi ODS through a secure REST interface. The Ed-Fi ODS API supports both transactional and bulk modes of opteration.
+                </p>
+            </div>
+        </section>
+        <section class="content-wrapper main-content clear-fix">
+            <h3>Use the following steps to explore the technical preview of the Ed-Fi ODS API:</h3>
+            <ol class="round">
+                <li class="one">
+                    <h5>Populate Sandbox Administrative Database with Users</h5>
+                    <a href="http://localhost:38928/TestUsers/Initialize">Create test users and an administrative user</a> in order to execute tests and access the Sandbox Administrative Portal (see step two).
+                </li>
+                <li class="two">
+                    <h5>Create an Ed-Fi ODS API Sandbox</h5>
+                    To access the data in the Ed-Fi ODS database using the Ed-Fi ODS API, you need to provision an API sandbox using the <a href="http://localhost:38928/Client">API Sandbox Administration Portal</a>. Login with a user name of "test@edfi.org" and a password of "***REMOVED***".
+                    We recommend that you change your password as soon as you log in.
+                </li>
+                <li class="three">
+                    <h5>Review the Ed-Fi ODS API Documentation</h5>
+                    Review the <a href="http://localhost:56641/">Ed-Fi ODS Documentation Website</a> in order to understand the methods for interacting with data in your Ed-Fi ODS API sandbox.
+                </li>
+            </ol>
+        </section>
+    </div>
+</body>
+</html>

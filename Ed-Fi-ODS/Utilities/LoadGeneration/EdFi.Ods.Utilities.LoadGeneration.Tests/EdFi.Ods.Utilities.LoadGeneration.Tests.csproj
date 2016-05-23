@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{69B5B884-FEEE-430C-AA64-5880B78AFBD6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.Utilities.LoadGeneration.Tests</RootNamespace>
+    <AssemblyName>EdFi.Ods.Utilities.LoadGeneration.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.5.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Should">
+      <HintPath>..\packages\Should.1.1.20\lib\Should.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\Application\EdFi.Ods.Tests\_Bases\TestFixtureBase.cs">
+      <Link>TestFixtureBase.cs</Link>
+    </Compile>
+    <Compile Include="ApiSdkReflectionProviderFixtures.cs" />
+    <Compile Include="Persistence\ResourcePersistorFixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\SchoolYearTypeReferenceValueBuilderFixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\StudentCompetencyObjective_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\StudentAssessmentStudentObjectiveAssessment_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\StaffEducationOrganizationAssignmentAssociation_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\ReportCardStudentLearningObjective_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\ObjectiveAssessmentLearningObjective_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\ObjectiveAssessmentAssessmentItem_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\StudentAcademicRecordReportCard_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\Section_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ConventionTestClasses\Api\ClassPeriodsApi.cs" />
+    <Compile Include="ContextSpecificReferenceValueBuilderFixtures.cs" />
+    <Compile Include="ConventionTestClasses\Api\GradeLevelDescriptorsApi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ConventionTestClasses\Models\ClassPeriod.cs" />
+    <Compile Include="ConventionTestClasses\Models\CompetencyObjective.cs" />
+    <Compile Include="ConventionTestClasses\Models\CompetencyObjectiveReference.cs" />
+    <Compile Include="ConventionTestClasses\Models\EducationContentAppropriateSex.cs" />
+    <Compile Include="ConventionTestClasses\Models\GradeLevelDescriptor.cs" />
+    <Compile Include="ConventionTestClasses\Models\Link.cs" />
+    <Compile Include="ConventionTestClasses\Models\SchoolReference.cs" />
+    <Compile Include="ConventionTestClasses\Models\SexType.cs" />
+    <Compile Include="ConventionTestClasses\Api\SexTypesApi.cs" />
+    <Compile Include="ConventionTestClasses\Sdk\BearerTokenAuthenticator.cs" />
+    <Compile Include="ConventionTestClasses\Sdk\ITokenRetriever.cs" />
+    <Compile Include="ConventionTestClasses\Sdk\TokenRetriever.cs" />
+    <Compile Include="CsvResourceDataProfileProviderFixtures.cs" />
+    <Compile Include="ExistingResourceReferenceProviderFixtures.cs" />
+    <Compile Include="LoadTestControllerFixtures.cs" />
+    <Compile Include="DescriptorFactoryFixtures.cs" />
+    <Compile Include="ApiWrapperFixtures.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectionExtensionsFixture.cs" />
+    <Compile Include="ResourceReferenceBuilders\AcademicWeek_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\GradingPeriod_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\StudentAssessmentItem_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\StudentLearningObjective_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\StudentGradebookEntry_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\CourseOffering_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\StudentSchoolAttendanceEvent_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\SelfRecursiveRelationshipPropertySkipperFixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\BellSchedule_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceFactoryFixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\PropertyConstraintsExtensions.cs" />
+    <Compile Include="ResourceReferenceBuilders\ReferenceBuilderFixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\ReportCardGrade_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\ReportCardStudentCompetencyObjective_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\SectionAttendanceTakenEvent_References_ValueBuilder_Fixtures.cs" />
+    <Compile Include="ResourceReferenceBuilders\When_building_references_where_key_unification_context_has_been_established.cs" />
+    <Compile Include="ResourceReferenceCollectionFixtures.cs" />
+    <Compile Include="ResourceSelectorFixtures.cs" />
+    <Compile Include="SequentialItemFromApiProviderFixture.cs" />
+    <Compile Include="ResourceGenerationWorkerFixture.cs" />
+    <Compile Include="TestApiSdkAssemblyProvider.cs" />
+    <Compile Include="TestConfigurationProvider.cs" />
+    <Compile Include="ResourceCountManagerTests.cs" />
+    <Compile Include="StandardReferenceValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\EdFiAwareStringValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\EdFiDescriptorValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\EdFiTypeValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\GeneralReferenceStudentUniqueIdValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\SchoolYearValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\StudentInstanceStudentUniqueIdValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\RandomEducationOrganizationIdValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\RandomLocalEducationAgencyIdValueBuilderFixtures.cs" />
+    <Compile Include="ValueBuilders\RandomSchoolIdValueBuilderFixtures.cs" />
+    <Compile Include="When_building_references.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Application\EdFi.TestObjects\EdFi.TestObjects.csproj">
+      <Project>{D699FD99-71B6-47C4-8214-953F160CC338}</Project>
+      <Name>EdFi.TestObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Utilities.LoadGeneration\EdFi.Ods.Utilities.LoadGeneration.csproj">
+      <Project>{0910CA09-B1F9-4988-B547-0B6A423BF831}</Project>
+      <Name>EdFi.Ods.Utilities.LoadGeneration</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

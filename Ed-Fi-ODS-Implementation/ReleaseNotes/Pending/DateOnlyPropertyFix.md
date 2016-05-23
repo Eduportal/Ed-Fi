@@ -1,0 +1,1 @@
+* Fixes defect #77261428 - DistrictCalendar Update failure.  Forces conversion of all DateOnly DateTime values to match the default DateTime.Kind and remove the time element.  This is done through generated setter behaviors on the Entities.

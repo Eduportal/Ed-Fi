@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<InterchangeEducationOrganization xmlns="http://ed-fi.org/0200-Draft" xmlns:ann="http://ed-fi.org/annotation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ed-fi.org/Interchange-EducationOrganization.xsd">
+	<EducationServiceCenter id="ESCID_17">
+		<StateOrganizationId>152950</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>17</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>Region 17 Educaional Service Center</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>Education Service Center</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>1111 W LOOP 289</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79416-5029</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 792-4000</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 792-1523</TelephoneNumber>
+		</Telephone>
+	</EducationServiceCenter>
+	<LocalEducationAgency id="LEAID_152901">
+		<StateOrganizationId>152901</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>4828500</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>Lubbock ISD</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>Local Education Agency</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>1628 19TH ST</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79401-4895</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-1000</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-1210</TelephoneNumber>
+		</Telephone>
+		<EducationOrganizationPeerReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152950</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</EducationOrganizationPeerReference>
+		<LEACategory>Independent</LEACategory>
+		<EducationServiceCenterReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152950</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</EducationServiceCenterReference>
+	</LocalEducationAgency>
+	<School id="CID_152901020">
+		<StateOrganizationId>152901020</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>482850010889</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>CORONADO H S</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>School</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>3307 VICKSBURG AVE</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79410</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-0600</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-0560</TelephoneNumber>
+		</Telephone>
+		
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<CodeValue>03</CodeValue>
+		</GradesOffered>
+		
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<ShortDescription>8th Grade</ShortDescription>
+		</GradesOffered>
+		
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Tenth grade</Description>
+		</GradesOffered>
+		
+		<SchoolCategories>
+			<SchoolCategory>High School</SchoolCategory>
+		</SchoolCategories>
+		
+		<LocalEducationAgencyReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152901</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</LocalEducationAgencyReference>
+		
+	<ClassPeriodReference >
+			<ClassPeriodIdentity>
+				<ClassPeriodName>01</ClassPeriodName>
+			</ClassPeriodIdentity>
+	</ClassPeriodReference>
+	
+	<ClassPeriodReference ref="CLS_02"/>
+	
+		<LocationReference ref="LOC_C10"/>
+		
+		<LocationReference>
+			<LocationIdentity>
+				<ClassroomIdentificationCode>LOC_C20</ClassroomIdentificationCode>
+			</LocationIdentity>
+		</LocationReference>
+	</School>
+
+	<Location id="LOC_C10">
+		<ClassroomIdentificationCode>C10</ClassroomIdentificationCode>
+		<MaximumNumberOfSeats>10</MaximumNumberOfSeats>
+		<OptimalNumberOfSeats>8</OptimalNumberOfSeats>
+	</Location>
+	<Location id="LOC_C20">
+		<ClassroomIdentificationCode>C20</ClassroomIdentificationCode>
+		<MaximumNumberOfSeats>10</MaximumNumberOfSeats>
+		<OptimalNumberOfSeats>8</OptimalNumberOfSeats>
+	</Location>
+	<Location id="LOC_E10">
+		<ClassroomIdentificationCode>E10</ClassroomIdentificationCode>
+		<MaximumNumberOfSeats>20</MaximumNumberOfSeats>
+		<OptimalNumberOfSeats>12</OptimalNumberOfSeats>
+	</Location>
+	
+	<Location id="LOC_E40">
+		<ClassroomIdentificationCode>E40</ClassroomIdentificationCode>
+		<MaximumNumberOfSeats>10</MaximumNumberOfSeats>
+		<OptimalNumberOfSeats>8</OptimalNumberOfSeats>
+	</Location>
+	
+	<ClassPeriod id="CLS_02">
+		<ClassPeriodName>02</ClassPeriodName>
+	</ClassPeriod>
+
+	<School id="CID_152901021">
+		<StateOrganizationId>152901021</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>482850010890</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>ESTACADO H S</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>School</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>1504 EAST ITASCA STREET</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79403</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-1400</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-1952</TelephoneNumber>
+		</Telephone>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Ninth grade</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Tenth grade</Description>
+		</GradesOffered>
+		<SchoolCategories>
+			<SchoolCategory>High School</SchoolCategory>
+		</SchoolCategories>
+		<LocalEducationAgencyReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152901</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</LocalEducationAgencyReference>
+		<LocationReference ref="LOC_E10"/>
+		<LocationReference ref="LOC_E40"/>
+	</School>
+</InterchangeEducationOrganization>

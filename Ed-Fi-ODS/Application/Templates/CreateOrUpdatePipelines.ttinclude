@@ -1,0 +1,99 @@
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.Common.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ import namespace="EdFi.Ods.Common.Utils.Profiles" #>
+<#@ import namespace="EdFi.Ods.CodeGen.Models.ProfileMetadata" #>
+<#@ output extension=".generated.cs" #>
+
+using EdFi.Ods.Api.Pipelines;
+using EdFi.Ods.Pipelines.Factories;
+<#
+    string projectPath = GetProjectPath();
+
+    // Load the current assembly's profiles
+    var profiles = MetadataHelper.GetProfiles(projectPath);
+
+    var databaseSchemaProvider = 
+        new UsiToUniqueIdTransformingDatabaseSchemaProviderDecorator(
+            new EdFiExtensionsDatabaseSchemaProviderDecorator(
+                new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath())));
+
+    var codeGenHelper = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+
+    MetadataValidator.ValidateProfileMetadata(codeGenHelper, profiles, MetadataHelper.GetProfilesXDocument(projectPath));    
+
+    var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath());     
+
+    var aggregateElts = domainMetadataDoc.Descendants("Aggregate");
+
+    if (!projectPath.Contains("Profiles"))
+    {
+        GenerateCreateOrUpdatePipelines(
+            null, 
+            aggregateElts, 
+            codeGenHelper);
+    }
+
+    foreach (var profile in profiles.Profile) {
+        GenerateCreateOrUpdatePipelines(profile, aggregateElts, codeGenHelper);
+    }
+
+#>
+<#+
+void GenerateCreateOrUpdatePipelines(Profile profile, IEnumerable<XElement> aggregateElts,
+    ICodeGenHelper coreCodeGenHelper)
+{
+    ICodeGenHelper codeGenHelper;
+
+    if (profile == null) 
+    {
+        codeGenHelper = coreCodeGenHelper;
+    }
+    else 
+    {
+        codeGenHelper = new ProfilesCodeGenHelper(new ProfileContext{Profile = profile, ContentTypeUsage = ContentTypeUsage.Writable}, coreCodeGenHelper);
+    }
+#>
+
+namespace EdFi.Ods.Api.Pipelines<#= profile == null ? string.Empty: "." + profile.name.Replace("-", "_") #>
+{
+<#+
+    foreach (var aggregateElt in aggregateElts)
+    {
+        string aggregateRootName = aggregateElt.Attribute("root").Value;
+
+        if (codeGenHelper.IsExcluded(aggregateRootName))
+            continue;
+
+        bool isAbstract = aggregateElt
+            .Descendants("Entity")
+            .Where(e => e.Attribute("table").Value == aggregateRootName
+                && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+            .Any();
+
+        if (isAbstract)
+            continue;
+
+        if (!codeGenHelper.ShouldGenerateAggregate(aggregateRootName, null))
+            continue;
+
+        var genericParams = string.Format("Api.Models.Resources.{0}{1}.{0}, Entities.NHibernate.{0}Aggregate.{0}", 
+            aggregateRootName, profile == null ? string.Empty : "." + profile.name.Replace("-", "_") + "_Writable");
+#>
+    public class <#= aggregateRootName #>CreateOrUpdatePipeline : CreateOrUpdatePipeline<<#=genericParams#>>
+    {
+        public <#= aggregateRootName #>CreateOrUpdatePipeline(IPipelineFactory factory) : base(factory) { }
+    }
+
+<#+ } #>
+}
+<#+
+}
+#>

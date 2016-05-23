@@ -1,0 +1,2 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ include file="$(ttIncludeFolder)\Resources.ttinclude" #>

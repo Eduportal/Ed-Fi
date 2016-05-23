@@ -1,0 +1,88 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.Utilities.LoadGeneration.GenerateLoad", "EdFi.Ods.Utilities.LoadGeneration.GenerateLoad\EdFi.Ods.Utilities.LoadGeneration.GenerateLoad.csproj", "{1C29BD07-F39D-4E99-AFA6-7EC7AD972854}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.Utilities.LoadGeneration", "EdFi.Ods.Utilities.LoadGeneration\EdFi.Ods.Utilities.LoadGeneration.csproj", "{0910CA09-B1F9-4988-B547-0B6A423BF831}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.Utilities.LoadGeneration.Tests", "EdFi.Ods.Utilities.LoadGeneration.Tests\EdFi.Ods.Utilities.LoadGeneration.Tests.csproj", "{69B5B884-FEEE-430C-AA64-5880B78AFBD6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataProfile", "DataProfile", "{D805EBCC-05EB-466F-8803-5A0E1256A821}"
+	ProjectSection(SolutionItems) = preProject
+		DataProfile\EdFi_ODS_FullCoverage_RecordCounts.csv = DataProfile\EdFi_ODS_FullCoverage_RecordCounts.csv
+		DataProfile\EdFi_ODS_RecordCounts.csv = DataProfile\EdFi_ODS_RecordCounts.csv
+		DataProfile\EdFi_ODS_RecordCounts.xlsx = DataProfile\EdFi_ODS_RecordCounts.xlsx
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.TestObjects", "..\..\Application\EdFi.TestObjects\EdFi.TestObjects.csproj", "{D699FD99-71B6-47C4-8214-953F160CC338}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.TestObjects.Tests", "..\..\Application\EdFi.TestObjects.Tests\EdFi.TestObjects.Tests.csproj", "{DF7942C7-2FE5-4482-8BF9-9650004034C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Common", "..\..\Application\EdFi.Common\EdFi.Common.csproj", "{C545A7D1-4054-4279-9723-F06DA524E122}"
+EndProject
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "EdFi.Ods.Utilities.LoadGeneration.Azure", "EdFi.Ods.Utilities.LoadGeneration.Azure\EdFi.Ods.Utilities.LoadGeneration.Azure.ccproj", "{B48C8268-E8A5-42FE-9281-E18AA8CD8C2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFiAzureLoadGeneration", "EdFi.Ods.Utilities.LoadGeneration.Azure.LoadGenerationWorker\EdFiAzureLoadGeneration.csproj", "{0770AEEF-9C40-4AEE-B2B3-6FD8F35C8B7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		AzureTest|Any CPU = AzureTest|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C29BD07-F39D-4E99-AFA6-7EC7AD972854}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{1C29BD07-F39D-4E99-AFA6-7EC7AD972854}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{1C29BD07-F39D-4E99-AFA6-7EC7AD972854}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C29BD07-F39D-4E99-AFA6-7EC7AD972854}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C29BD07-F39D-4E99-AFA6-7EC7AD972854}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C29BD07-F39D-4E99-AFA6-7EC7AD972854}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0910CA09-B1F9-4988-B547-0B6A423BF831}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{0910CA09-B1F9-4988-B547-0B6A423BF831}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{0910CA09-B1F9-4988-B547-0B6A423BF831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0910CA09-B1F9-4988-B547-0B6A423BF831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0910CA09-B1F9-4988-B547-0B6A423BF831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0910CA09-B1F9-4988-B547-0B6A423BF831}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69B5B884-FEEE-430C-AA64-5880B78AFBD6}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{69B5B884-FEEE-430C-AA64-5880B78AFBD6}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{69B5B884-FEEE-430C-AA64-5880B78AFBD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69B5B884-FEEE-430C-AA64-5880B78AFBD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69B5B884-FEEE-430C-AA64-5880B78AFBD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69B5B884-FEEE-430C-AA64-5880B78AFBD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D699FD99-71B6-47C4-8214-953F160CC338}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{D699FD99-71B6-47C4-8214-953F160CC338}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{D699FD99-71B6-47C4-8214-953F160CC338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D699FD99-71B6-47C4-8214-953F160CC338}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D699FD99-71B6-47C4-8214-953F160CC338}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D699FD99-71B6-47C4-8214-953F160CC338}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF7942C7-2FE5-4482-8BF9-9650004034C1}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{DF7942C7-2FE5-4482-8BF9-9650004034C1}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{DF7942C7-2FE5-4482-8BF9-9650004034C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF7942C7-2FE5-4482-8BF9-9650004034C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF7942C7-2FE5-4482-8BF9-9650004034C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF7942C7-2FE5-4482-8BF9-9650004034C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.AzureTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.AzureTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B48C8268-E8A5-42FE-9281-E18AA8CD8C2D}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{B48C8268-E8A5-42FE-9281-E18AA8CD8C2D}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{B48C8268-E8A5-42FE-9281-E18AA8CD8C2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B48C8268-E8A5-42FE-9281-E18AA8CD8C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B48C8268-E8A5-42FE-9281-E18AA8CD8C2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B48C8268-E8A5-42FE-9281-E18AA8CD8C2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0770AEEF-9C40-4AEE-B2B3-6FD8F35C8B7B}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{0770AEEF-9C40-4AEE-B2B3-6FD8F35C8B7B}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{0770AEEF-9C40-4AEE-B2B3-6FD8F35C8B7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0770AEEF-9C40-4AEE-B2B3-6FD8F35C8B7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0770AEEF-9C40-4AEE-B2B3-6FD8F35C8B7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0770AEEF-9C40-4AEE-B2B3-6FD8F35C8B7B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

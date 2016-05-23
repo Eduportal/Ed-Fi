@@ -1,0 +1,372 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ import namespace="EdFi.Ods.CodeGen.Models" #>
+<#@ output extension=".generated.cs" encoding="0" #>
+
+using System;
+using System.Linq;
+using EdFi.Common.Security.Claims;
+using EdFi.Ods.Entities.Common;
+using EdFi.Ods.Security.AuthorizationStrategies.Relationships;
+<# 
+    var databaseSchemaProvider = 
+        new EdFiExtensionsDatabaseSchemaProviderDecorator(
+            new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath()));
+
+    var codeGenLogic = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+    
+     var model = new DomainModelFactory(codeGenLogic, GetExtensionsMetadataPath()).GetModel();
+#>
+
+#region Aggregate Entity Includes
+<# foreach (var table in model.Classes.Where(c => c.IsRootTable && GetAuthorizationContextProperties(c).Count > 0)) { #>
+using EdFi.Ods.Entities.NHibernate.<#= table.Name #>Aggregate;
+<# } #>
+#endregion
+
+namespace EdFi.Ods.Security.Authorization.ContextDataProviders
+{ 
+<# foreach (var table in model.Classes.Where(c => c.IsRootTable))
+{
+    var authorizationContextProperties = GetAuthorizationContextProperties(table);
+
+    if (authorizationContextProperties.Count == 0)
+        continue;
+    #>
+
+    /// <summary>
+    /// Creates and returns an <see cref="RelationshipsAuthorizationContextData"/> instance for making authorization decisions for access to the <#=table.Schema #>.<#=table.Name #> table of the <#= table.AggregateRootName #> aggregate in the <#=codeGenLogic.DatabaseName#> Database.
+    /// </summary>
+    public class <#= table.Name #>RelationshipsAuthorizationContextDataProvider<TContextData> : IRelationshipsAuthorizationContextDataProvider<I<#= table.Name #>, TContextData>
+        where TContextData : RelationshipsAuthorizationContextData, new()
+    {     
+        /// <summary>
+        /// Creates and returns an <see cref="TContextData"/> instance based on the supplied resource.
+        /// </summary>
+        public TContextData GetContextData(I<#= table.Name #> resource)
+        {
+            if (resource == null)
+                throw new ArgumentNullException("resource", "The '<#= table.Name.Substring(0, 1).ToLower() + table.Name.Substring(1) #>' resource for obtaining authorization context data cannot be null.");
+
+            var entity = resource as <#= table.Name #>;
+
+            return new TContextData 
+            {
+<#  foreach (var p in authorizationContextProperties) { 
+        // Check for numeric types and add logic to convert them to null in the context if their values are default
+        if (p.IsIncluded && ("|long|short|int|Guid|".Contains("|" + p.PropertyType + "|"))) { #>
+                <#= p.PropertyName #> = entity.<#= p.PropertyName #> == default(<#= p.PropertyType #>) ? null as <#= p.PropertyType #>? : entity.<#= p.PropertyName #>, // <#= p.IsPrimaryKeyProperty ? "Primary key property, " : string.Empty #><#= p.Reason #>
+<#      } else { #>
+                <#= p.IsIncluded ? string.Empty : "// "#><#= p.PropertyName #> = entity.<#= p.PropertyName #>, // <#= p.IsPrimaryKeyProperty ? "Primary key property, " : string.Empty #><#= p.Reason #>
+<#      } #>
+<#  } #>
+            };
+        }
+
+        /// <summary>
+        ///  Creates and returns a signature key based on the resource, which can then be used to get and instance of IEdFiSignatureAuthorizationProvider
+        /// </summary>
+        public string[] GetAuthorizationContextPropertyNames()
+        {
+           var properties = new []
+                {
+<#        foreach (var p in authorizationContextProperties) { 
+            // Check for numeric types and add logic to convert them to null in the context if their values are default
+            if (p.IsIncluded && ("|long|short|int|Guid|".Contains("|" + p.PropertyType + "|"))) { #>
+                    "<#= p.PropertyName #>",
+<#          } else { #>
+                    <#= p.IsIncluded ? string.Empty : "// "#>"<#= p.PropertyName #>",
+<#          } #>
+<#      } #>
+                };
+
+           return properties;
+        }
+
+        /// <summary>
+        /// Creates and returns an <see cref="RelationshipsAuthorizationContextData"/> instance based on the supplied resource.
+        /// </summary>
+        public TContextData GetContextData(object resource)
+        {
+            return GetContextData((<#= table.Name #>) resource);
+        } 
+    } 
+<# } #>
+}
+<#+
+    private List<string> edOrgColumnNames = new List<string>()
+        {
+            "SchoolId", 
+            "LocalEducationAgencyId", 
+            "EducationServiceCenterId", 
+            "StateEducationAgencyId", 
+            "EducationOrganizationId",
+            "EducationOrganizationNetworkId", 
+        };
+
+    struct AuthorizationContextProperty
+    {
+        public string PropertyName { get; set; }
+        public string PropertyType { get; set; }
+        public bool IsPrimaryKeyProperty { get; set; }
+        public bool IsIncluded { get; set; }
+        public string Reason { get; set; }
+    }
+
+    List<AuthorizationContextProperty> GetAuthorizationContextProperties(CodeGenClassModel table)
+    {
+        // TODO: Apply authorization context metadata overrides
+ 
+        return GetConventionBasedAuthorizationContextProperties(table);
+    }
+
+    List<AuthorizationContextProperty> GetConventionBasedAuthorizationContextProperties(CodeGenClassModel table)
+    {
+        var properties = new List<AuthorizationContextProperty>();
+
+        var tableColumns = table.PKs.Concat(table.NonPrimaryKeyColumns);
+
+        properties.AddRange(GetUniqueIdProperties(table, tableColumns));
+                            
+        properties.AddRange(GetEdOrgProperties(table, tableColumns));
+
+        //properties.AddRange(GetAssessmentFamilyProperties(table, tableColumns));
+        
+        //properties.AddRange(GetAssessmentProperties(table, tableColumns));
+        //properties.AddRange(GetAssessmentMetadataProperties(table, tableColumns));
+        return properties;
+    }
+
+    List<AuthorizationContextProperty> GetUniqueIdProperties(CodeGenClassModel table, IEnumerable<ColumnModel> tableColumns)
+    {
+        
+
+        var usis = tableColumns.Where(n => Regex.IsMatch(n.CleanName, "^(Staff|Student|Parent)USI$"));
+
+        return usis.Select(c => 
+            new AuthorizationContextProperty 
+            {  
+                PropertyName = c.CleanName,
+                PropertyType = c.SysType,
+                IsPrimaryKeyProperty = c.IsPK,
+                IsIncluded = c.IsPK,
+                Reason = c.IsPK ? "USI" : "Not part of primary key",
+            }).ToList();
+    }
+
+    List<AuthorizationContextProperty> GetEdOrgProperties(CodeGenClassModel table, IEnumerable<ColumnModel> tableColumns)
+    {
+        var properties = new List<AuthorizationContextProperty>();
+
+        var edOrgs = edOrgColumnNames.Where(x => table.PKs.Any(pk => pk.CleanName == x));
+
+        if (edOrgs.Any())
+        {
+            // Prioritize list by most-specific to least-specific
+            var primaryEdOrgCol = tableColumns.Single(c => c.CleanName == edOrgs.First());
+
+            properties.Add(
+                new AuthorizationContextProperty()
+                {
+                    PropertyName = primaryEdOrgCol.CleanName,
+                    PropertyType = primaryEdOrgCol.SysType,
+                    IsPrimaryKeyProperty = primaryEdOrgCol.IsPK,
+                    IsIncluded = true,
+                    Reason = edOrgs.Count() == 1 ? "Only Education Organization Id present" : "Most specific Education Organization type present",
+                });
+
+            properties.AddRange(
+                edOrgs
+                    .Skip(1)
+                    .Select(p => tableColumns.Single(c => c.CleanName == p))
+                    .Select(c =>
+                    new AuthorizationContextProperty()
+                    {
+                        PropertyName = c.CleanName,
+                        PropertyType = c.SysType,
+                        IsPrimaryKeyProperty = c.IsPK,
+                        IsIncluded = false,
+                        Reason = "More specific Education Organization type already present",
+                    }));
+        }
+
+        // Consider ALL role-named EdOrgs
+        var roleNamedEdOrgColumns = tableColumns.Where(c => edOrgColumnNames.Any(n => c.Name != n && c.Name.EndsWith(n)));
+
+        properties.AddRange(
+            roleNamedEdOrgColumns.Where(c => !properties.Any(p => p.PropertyName == c.CleanName))
+                .Select(c =>
+                        new AuthorizationContextProperty()
+                        {
+                            PropertyName = c.CleanName,
+                            PropertyType = c.SysType,
+                            IsPrimaryKeyProperty = c.IsPK,
+                            IsIncluded = false,
+                            Reason = "Role name applied" + (c.IsPK ? string.Empty : " and not part of primary key"),
+                        }));
+
+        // Consider non-role-named EdOrgs and NON-PK EdOrgs
+        var nonPKEdOrgColumns = tableColumns.Where(c => !c.IsPK && edOrgColumnNames.Any(n => c.CleanName == n));
+
+        properties.AddRange(
+            nonPKEdOrgColumns.Where(c => !properties.Any(p => p.PropertyName == c.CleanName))
+                .Select(c => 
+                    new AuthorizationContextProperty()
+                    {
+                        PropertyName = c.CleanName,
+                        PropertyType = c.SysType,
+                        IsPrimaryKeyProperty = c.IsPK,
+                        IsIncluded = false,
+                        Reason = "Not part of primary key",
+                    }));
+
+        return properties;
+    }
+
+    List<AuthorizationContextProperty> GetDescriptorProperties(CodeGenClassModel table, IEnumerable<ColumnModel> tableColumns)
+    {
+        var properties = new List<AuthorizationContextProperty>();
+
+        if ((table.Name.ToLowerInvariant() != "descriptor") && Regex.IsMatch(table.Name, "Descriptor$"))
+        {
+            var col = table.BaseClass.UnderlyingTable.Columns.FirstOrDefault(c => c.CleanName == "Namespace");
+            if (col != null)
+            {
+                properties.Add(new AuthorizationContextProperty {  
+                        PropertyName = col.CleanName,
+                        PropertyType = col.SysType,
+                        IsPrimaryKeyProperty = col.IsPK,
+                        IsIncluded = true,
+                        Reason = "Descriptors filter on Namespace",
+                    });
+            }
+            else {
+                throw new Exception("Namespace is a required column for Descriptor tables.");
+            }
+        }
+
+        return properties;
+    }
+
+    List<AuthorizationContextProperty> GetAssessmentFamilyProperties(CodeGenClassModel table, IEnumerable<ColumnModel> tableColumns)
+    {
+        var properties = new List<AuthorizationContextProperty>();
+
+        if (table.Name.ToLowerInvariant() == "assessmentfamily")
+        {
+            var col = table.UnderlyingTable.Columns.FirstOrDefault(c => c.CleanName == "Namespace");
+            if (col != null)
+            {
+                properties.Add(new AuthorizationContextProperty {  
+                        PropertyName = col.CleanName,
+                        PropertyType = col.SysType,
+                        IsPrimaryKeyProperty = col.IsPK,
+                        IsIncluded = true,
+                        Reason = "AssessmentFamily filters on Namespace",
+                    });
+            }
+            else {
+                throw new Exception("Namespace is a required column for the AssessmentFamily table.");
+            }
+        }
+
+        return properties;
+    }
+
+    List<AuthorizationContextProperty> GetAssessmentProperties(CodeGenClassModel table, IEnumerable<ColumnModel> tableColumns)
+    {
+        var properties = new List<AuthorizationContextProperty>();
+
+        if (table.Name.ToLowerInvariant() == "assessment")
+        {
+            var col = table.UnderlyingTable.Columns.FirstOrDefault(c => c.CleanName == "Namespace");
+            if (col != null)
+            {
+                properties.Add(new AuthorizationContextProperty {  
+                        PropertyName = col.CleanName,
+                        PropertyType = col.SysType,
+                        IsPrimaryKeyProperty = col.IsPK,
+                        IsIncluded = true,
+                        Reason = "Assessment filters on Namespace",
+                    });
+            }
+            else {
+                throw new Exception("Namespace is a required column for the Assessment table.");
+            }
+
+            col = table.UnderlyingTable.Columns.FirstOrDefault(c => c.CleanName == "AssessmentFamilyTitle");
+            if (col != null)
+            {
+                properties.Add(new AuthorizationContextProperty {  
+                        PropertyName = col.CleanName,
+                        PropertyType = col.SysType,
+                        IsPrimaryKeyProperty = col.IsPK,
+                        IsIncluded = true,
+                        Reason = "Assessment filters on Namespace",
+                    });
+            }
+            else {
+                throw new Exception("AssessmentFamilyTitle is a required column for the Assessment table.");
+            }
+
+            col = table.UnderlyingTable.Columns.FirstOrDefault(c => c.CleanName == "AssessmentTitle");
+            if (col != null)
+            {
+                properties.Add(new AuthorizationContextProperty {  
+                        PropertyName = col.CleanName,
+                        PropertyType = col.SysType,
+                        IsPrimaryKeyProperty = col.IsPK,
+                        IsIncluded = true,
+                        Reason = "Assessment filters on Namespace",
+                    });
+            }
+            else {
+                throw new Exception("AssessmentTitle is a required column for the Assessment table.");
+            }
+        }
+
+        return properties;
+    }
+
+    List<AuthorizationContextProperty> GetAssessmentMetadataProperties(CodeGenClassModel table, IEnumerable<ColumnModel> tableColumns)
+    {
+        var properties = new List<AuthorizationContextProperty>();
+
+        if (IsAssessmentMetaDataTable(table))
+        {
+            var col = table.UnderlyingTable.Columns.FirstOrDefault(c => c.CleanName == "AssessmentTitle");
+            if (col != null)
+            {
+                properties.Add(new AuthorizationContextProperty {  
+                        PropertyName = col.CleanName,
+                        PropertyType = col.SysType,
+                        IsPrimaryKeyProperty = col.IsPK,
+                        IsIncluded = true,
+                        Reason = "Assessment metadata tables filter on Namespace",
+                    });
+            }
+
+            if (!properties.Any())
+                throw new Exception("AssessmentTitle is a required column for an assessment metadata table.");
+        }
+
+        
+
+        return properties;
+    }
+
+    bool IsAssessmentMetaDataTable(CodeGenClassModel table)
+    {
+        if ((table.Name.ToLowerInvariant() == "assessmentitem") ||
+            (table.Name.ToLowerInvariant() == "objectiveassessment") ||
+            (table.Name.ToLowerInvariant() == "studentassessment")) {
+                return true;
+        }
+        
+        return false;
+    }
+#>

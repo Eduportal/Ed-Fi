@@ -1,0 +1,1 @@
+-- Do nothing, all table plural->singular renames are in script 04 for now

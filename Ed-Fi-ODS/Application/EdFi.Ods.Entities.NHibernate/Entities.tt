@@ -1,0 +1,956 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ output extension=".generated.cs" #>
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Runtime.Serialization;
+using EdFi.Ods.Common;
+using EdFi.Ods.Entities.Common;
+using EdFi.Ods.Entities.Common.Caching;
+using EdFi.Ods.Entities.Common.Validation;
+using EdFi.Ods.Entities.NHibernate.Architecture;
+using EdFi.Ods.Api.Common;
+using Newtonsoft.Json;
+
+<# 
+var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath()); 
+
+databaseSchemaProvider = 
+    new EdFiExtensionsDatabaseSchemaProviderDecorator(
+        new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath()));
+
+codeGenHelper = 
+        new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+
+var tablesByName = codeGenHelper.TablesByName;
+
+// Determine what tables in the database have not been explicitly handled
+var unhandledTableNames = 
+    tablesByName.Keys
+    .Except(domainMetadataDoc.Descendants("Entity").Select(x => x.Attribute("table").Value))
+    .Where(x => !codeGenHelper.IsExcluded(x) && !x.EndsWith("Extension")) // Extension tables don't need to be explicitly handled, they are joined by convention
+    .ToList();
+
+// Provide explicit message related to any unhandled tables
+if (unhandledTableNames.Any())
+    throw new Exception(string.Format("The following tables have not been explicitly handled:\r\n{0}", string.Join("\r\n\t", unhandledTableNames)));
+
+var aggregatesElts = domainMetadataDoc.Descendants("Aggregate");
+
+var propertiesWithCollidingJsonNames = codeGenHelper.GetCollidingPropertyNames(tablesByName, aggregatesElts);
+var concreteBases = new List<string>();
+var forBaseMappings = new List<string>();
+foreach (var aggregateElt in aggregatesElts)
+{ 
+    string aggregateRootName = aggregateElt.Attribute("root").Value;
+    bool allowPrimaryKeyUpdates = Convert.ToBoolean(aggregateElt.Attributes("allowPrimaryKeyUpdates").Select(a => a.Value).SingleOrDefault());
+
+    List<string> aggregateTableNames = 
+        (from e in aggregateElt.Descendants("Entity")
+        select e.Attribute("table").Value)
+        .ToList();
+#>
+// Aggregate: <#= aggregateRootName #>
+
+namespace <#=codeGenHelper.Namespace #>.NHibernate.<#= aggregateRootName #>Aggregate
+{ <#
+    foreach (string aggregateTableName in aggregateTableNames)
+    {
+        Table tbl; 
+
+        if (!tablesByName.TryGetValue(aggregateTableName, out tbl)) { #>
+// WARNING: Unable to find table '<#= aggregateTableName #>'
+<#            continue;
+        } 
+
+        var navigableParentFKs = codeGenHelper.GetNavigableParentRelationships(tbl, aggregateTableNames);
+        var navigableChildFKs = tbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+        var navigableOneToOneParentFKs = tbl.GetNavigableOneToOneParentTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+        var navigableOneToOneChildFKs = tbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+
+        // For debugging purposes
+        //foreach (var x in navigableChildFKs)
+        //    if (!IsNavigableChild(tbl, tablesByName[x.OtherTable], aggregateTableNames))
+        //            System.IO.File.AppendAllText(@"D:\temp\junk.txt", "Not navigable by IsNavigableChild: " + x.ThisTable + " -> " + x.OtherTable + "\r\n");
+
+        bool isAbstract = aggregateElt.Descendants("Entity")
+                            .Where(e => e.Attribute("table").Value == tbl.Name 
+                                    && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                            .Any();
+
+        bool isBase = aggregatesElts.Descendants("Entity")
+                                .Where(e => e.Attributes("isA").FirstOrDefault(a => a.Value == tbl.Name) != null)
+                               .Any();
+        var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name)
+                                .Select(e => e.Attribute("isA"))
+                                .SingleOrDefault();
+        string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+        
+        Table baseTbl = null;
+
+        if (baseTableName != null)
+            tablesByName.TryGetValue(baseTableName, out baseTbl);
+        
+        bool isRootTable = tbl.Name.Equals(aggregateRootName, StringComparison.InvariantCultureIgnoreCase);
+        bool isDerived = baseTableName != null;
+
+        string baseAggregateRootName =
+                (from a in aggregatesElts
+                from e in a.Descendants("Entity")
+                where e.Attribute("table").Value == baseTableName
+                select a.Attribute("root").Value)
+                .SingleOrDefault();
+
+        List<string> baseAggregateTableNames = 
+            (from a in aggregatesElts
+            where a.Attribute("root").Value == baseAggregateRootName
+            from e in a.Descendants("Entity")
+            select e.Attribute("table").Value)
+            .ToList();
+
+        var baseNavigableChildFKs = baseTbl == null ? 
+            new List<FKTable>()
+            : baseTbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(baseAggregateTableNames, ct.OtherTable)).ToList();
+
+        if (!codeGenHelper.IsExcluded(tbl.Name))
+        { 
+
+            FKTable baseFK = isDerived ? tbl.FKTables.SingleOrDefault(fkt => !fkt.IsPrimaryTable && fkt.OtherTable == baseTbl.Name) : null;
+
+            if (!isRootTable && navigableParentFKs.Count() != 1) { #>
+// WARNING: Unexpected parent FK count! <#= string.Join("|", navigableParentFKs.Select(x => x.OtherTable)) 
+#>
+<#
+            }
+
+            bool allowPrimaryKeyUpdatesOnClass = (allowPrimaryKeyUpdates && tbl.Name == aggregateRootName);
+
+            if (!isAbstract && isBase){
+                GenerateClass(aggregateRootName, baseAggregateRootName, baseTableName, baseTbl, baseNavigableChildFKs, propertiesWithCollidingJsonNames, baseFK, tbl, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isDerived, isAbstract, isBase, allowPrimaryKeyUpdatesOnClass, tablesByName, false, false, null);
+                #>    }
+<#
+                GenerateClass(aggregateRootName, baseAggregateRootName, baseTableName, baseTbl, baseNavigableChildFKs, propertiesWithCollidingJsonNames, baseFK, tbl, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isDerived, isAbstract, isBase, allowPrimaryKeyUpdatesOnClass, tablesByName, true, false, forBaseMappings);
+                concreteBases.Add(tbl.Name);
+            }
+            else if (forBaseMappings.Contains(tbl.Name)){
+                GenerateClass(aggregateRootName, baseAggregateRootName, baseTableName, baseTbl, baseNavigableChildFKs, propertiesWithCollidingJsonNames, baseFK, tbl, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isDerived, isAbstract, isBase, allowPrimaryKeyUpdatesOnClass, tablesByName, false, false, null);
+                #>    }
+<#
+                GenerateClass(aggregateRootName, baseAggregateRootName, baseTableName, baseTbl, baseNavigableChildFKs, propertiesWithCollidingJsonNames, baseFK, tbl, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isDerived, isAbstract, isBase, allowPrimaryKeyUpdatesOnClass, tablesByName, false, true, null);
+            }
+            else{
+                if (concreteBases.Contains(baseTableName))
+                    baseTableName = baseTableName + "Base";
+                GenerateClass(aggregateRootName, baseAggregateRootName, baseTableName, baseTbl, baseNavigableChildFKs, propertiesWithCollidingJsonNames, baseFK, tbl, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isDerived, isAbstract, isBase, allowPrimaryKeyUpdatesOnClass, tablesByName, false, false, null);
+            }
+
+        #>
+    } 
+<# } 
+
+
+
+}  #>
+}
+<# } // aggregate #>
+
+<# databaseSchemaProvider.EnsureAllConnectionsClosed(); #>
+
+<#+
+private ICodeGenHelper codeGenHelper;
+private IDatabaseSchemaProvider databaseSchemaProvider;
+
+private void GenerateClass(string aggregateRootName, string baseAggregateRootName, string baseTableName, Table baseTbl, List<FKTable> baseNavigableChildFKs, List<string> propertiesWithCollidingJsonNames, FKTable baseFK, Table tbl, bool isRootTable, IEnumerable<FKTable> navigableParentFKs, IEnumerable<FKTable> navigableOneToOneChildFKs, IEnumerable<FKTable> navigableChildFKs, bool isDerived, bool isAbstract, bool isBase, bool allowPrimaryKeyUpdates, IDictionary<string, Table> tablesByName, bool isConcreteBase, bool isService, List<string> forBaseMappings){
+{
+        // TODO: [ODS-541] Database Driven GetNonPrimaryUniqueKeyValues Implementation
+        // Expand implementation of GetNonPrimaryUniqueKeyValues to beyond descriptors and make it database driven.
+        var hasNonPrimaryKeyUniqueValues = tbl.Name == "Descriptor";
+        FKTable parentFK = isRootTable ? null : navigableParentFKs.FirstOrDefault();
+        
+        var synchSupportPropertyNames = new List<string>();
+        var synchSupportChildCollectionClassNames = new List<string>();
+#>
+
+// disable warnings for inheritance from classes marked Obsolete within this generated code only
+#pragma warning disable 612, 618 
+
+    /// <summary>
+    /// A class which represents the <#=tbl.Schema #>.<#=tbl.Name #> table of the <#= aggregateRootName #> aggregate in the <#=codeGenHelper.DatabaseName#> Database.
+    /// </summary>
+    [Serializable]
+    public <#= isAbstract ? "abstract " : string.Empty #>class <#= tbl.Name #><#=isConcreteBase?"Base":""#><#=isService?"ForBase":""#> : <#= isDerived ? baseAggregateRootName + "Aggregate." + baseTableName : (isRootTable ? "AggregateRootWithCompositeKey" : "EntityWithCompositeKey") #>, <#= !isRootTable? "IChildEntity, " : string.Empty #><#= allowPrimaryKeyUpdates ? "IHasCascadableKeyValues," : string.Empty #>
+        I<#= tbl.Name #>, IHasPrimaryKeyValues, <#= hasNonPrimaryKeyUniqueValues ? "IHasNonPrimaryKeyUniqueValues, " : "" #>IHasLookupColumnPropertyMap<#= isAbstract ? string.Empty : ", I" + tbl.Name + "SynchronizationSourceSupport" #>
+    {
+<#+ if (!isDerived)
+{ #>
+        public void SuspendReferenceAssignmentCheck() { }
+<#+ } #>
+<#+
+        if (navigableChildFKs.Any() || navigableOneToOneChildFKs.Any()) { 
+                #><#=GetConstructorCode(tbl.Name, navigableOneToOneChildFKs, navigableChildFKs, isConcreteBase)#><#+
+#>
+
+// restore warnings for inheritance from classes marked Obsolete
+#pragma warning restore 612, 618 
+               
+<#+        } #>        
+        // -------------------------------------------------------------
+
+        // =============================================================
+        //                         Primary Key
+        // -------------------------------------------------------------
+<#+
+    // If we have a parent reference, and it IS part of the primary key
+    if (parentFK != null && codeGenHelper.IsFKPartOfPK(tbl, parentFK))
+    { #>
+        [DomainSignature, JsonIgnore, IgnoreDataMember]
+        public virtual <#= parentFK.OtherClass #><#=isService?"Base":""#> <#= parentFK.OtherClass #> { get; set; }
+
+        I<#= parentFK.OtherClass #> I<#= tbl.Name #>.<#= parentFK.OtherClass #>
+        {
+            get { return <#= parentFK.OtherClass #>; }
+            set { <#= parentFK.OtherClass #> = (<#= parentFK.OtherClass #><#=isService?"Base":""#>) value; }
+        }
+
+<#+    }
+
+    foreach (var pkCol in tbl.PKs.Where(x => parentFK == null || !parentFK.ThisColumns.Contains(x.Name)))
+    { 
+        bool needsOverride = isDerived ? baseTbl.PKs.Any(x => x.Name == pkCol.Name) : false; // parentFK == null ? -1 : parentFK.ThisColumns.IndexOf(pkCol.Name);
+        // string correspondingParentFKColName = pkColIndex == -1 ? null : parentFK.OtherColumns[pkColIndex];
+
+        // We need to use override keyword if name matches parent FK column (we need to generate property because we need to add the attributes)
+        // bool needsOverride = isDerived && (pkCol.CleanName == correspondingParentFKColName);
+
+        if (!isAbstract) { #>
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames) #>")]
+        <#= GetDisplayNameAttributeIfDifferentFromPropertyName(tbl, pkCol, baseTbl) #>[DomainSignature<#= pkCol.IsNullable || codeGenHelper.IsColumnValueAutoAssigned(tbl, pkCol, baseTbl) || CSharpDefaultHasDomainMeaning(pkCol) ?  string.Empty : ", RequiredWithNonDefault" #><#= pkCol.SysType == "DateTime" ? ", SqlServerDateTimeRange" : string.Empty #><#= pkCol.SysType == "string" ? ", StringLength(" + pkCol.MaxLength + "), NoDangerousText" : string.Empty#>]
+<#+      } #>
+<#+      if (baseFK != null) { #>
+        public <#= needsOverride ? "override" : "virtual" #> <#= pkCol.SysType #> <#= pkCol.CleanName #> <#= GetPropertyGetterAndSetter(tablesByName, tbl, pkCol, pkCol.SysType, needsOverride, baseFK, parentFK) #>
+<#+      } else { #>
+        public <#= needsOverride ? "override" : "virtual" #> <#= pkCol.SysType #> <#= pkCol.CleanName #> <#= GetPropertyGetterAndSetter(tablesByName, tbl, pkCol, pkCol.SysType, needsOverride, null, parentFK) #>
+<#+      } #>
+<#+  } #>
+        // -------------------------------------------------------------
+
+<#+  if (isDerived) { #>
+        // =============================================================
+        //                      Inherited Properties
+        // -------------------------------------------------------------
+<#+      foreach (var col in baseTbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) // Explicitly exclude the "Id" and "DateTime" columns property here
+        { 
+            if (!codeGenHelper.IsLookupTypeColumn(tablesByName, baseTbl, col.Name)) { 
+                synchSupportPropertyNames.Add(col.CleanName);  #>
+        <#= codeGenHelper.GetPropertyType(col) #> I<#= baseTbl.Name #>.<#= col.CleanName #> 
+        { 
+            get { return <#= col.CleanName #>; } 
+            set { <#= col.CleanName #> = value; }
+        }
+<#+         } else { 
+                synchSupportPropertyNames.Add(TrimSuffix(col.CleanName, "Id")); #>
+        string I<#= baseTbl.Name #>.<#= TrimSuffix(col.CleanName, "Id") #> 
+        { 
+            get { return <#= TrimSuffix(col.CleanName, "Id") #>; } 
+            set { <#= TrimSuffix(col.CleanName, "Id") #> = value; }
+        }
+<#+         } #>
+
+
+<#+      } #>
+        // -------------------------------------------------------------
+<#+  }
+#>
+
+        // =============================================================
+        //                          Properties
+        // -------------------------------------------------------------
+<#+
+    // If we have a parent reference, and it IS NOT part of the primary key
+    if (parentFK != null && !codeGenHelper.IsFKPartOfPK(tbl, parentFK))
+    { #>
+        [JsonIgnore, IgnoreDataMember]
+        public virtual <#= parentFK.OtherClass #> <#= parentFK.OtherClass #> { get; set; }
+<#+    }
+
+    foreach (var col in tbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && (!isRootTable || c.Name != "LastModifiedDate"))) // Explicitly exclude the "Id" property here
+    {
+        string attribute = null;
+
+        if (!col.IsNullable && !CSharpDefaultHasDomainMeaning(col))
+            attribute += ", RequiredWithNonDefault";
+        
+        if (col.SysType == "DateTime")
+            attribute += ", SqlServerDateTimeRange";
+
+        if (col.SysType == "string")
+            attribute += ", StringLength(" + col.MaxLength + "), NoDangerousText";
+
+        if (!string.IsNullOrEmpty(attribute)) {#>
+        [<#= attribute.Substring(2) #>]
+<#+     } #>
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(col.CleanName, tbl.Name, propertiesWithCollidingJsonNames) #>")]
+<#+     if (col.Precision != 0 && col.Scale != 0) { #>
+        [Range(typeof(<#= codeGenHelper.GetPropertyType(col).Replace("?", "") #>), "<#="-".PadRight(col.Precision-col.Scale+1,'9')+".".PadRight(col.Scale+1,'9')#>", "<#="".PadRight(col.Precision-col.Scale,'9')+".".PadRight(col.Scale+1,'9')#>")]
+<#+     } 
+
+        synchSupportPropertyNames.Add(codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name) ? TrimSuffix(col.CleanName, "Id") : col.CleanName); #>
+        public virtual <#= codeGenHelper.GetPropertyType(col) #> <#= col.CleanName #> <#= GetPropertyGetterAndSetter(tablesByName, tbl, col, codeGenHelper.GetPropertyType(col), false, null, parentFK) #>
+<#+  } #>
+        // -------------------------------------------------------------
+<#+  if (navigableOneToOneChildFKs.Any()) { #>
+
+        // =============================================================
+        //                     One-to-one relationships
+        // -------------------------------------------------------------
+<#+     foreach (var oneToOneFK in navigableOneToOneChildFKs) { 
+            synchSupportPropertyNames.Add(oneToOneFK.OtherClass); #>
+        [ValidateObject]
+        public virtual <#= oneToOneFK.OtherClass #> <#= oneToOneFK.OtherClass #>
+        {
+            get
+            {
+                // Return the item in the list, if one exists
+                if (<#= oneToOneFK.OtherClass #>PersistentList.Any())
+                    return <#= oneToOneFK.OtherClass #>PersistentList[0];
+
+                // No reference is present
+                return null;
+            }
+            set
+            {
+                // Delete the existing object
+                if (<#= oneToOneFK.OtherClass #>PersistentList.Any())
+                    <#= oneToOneFK.OtherClass #>PersistentList.RemoveAt(0);
+
+                // If we're setting a value, add it to the list now
+                if (value != null)
+                    <#= oneToOneFK.OtherClass #>PersistentList.Add(value);
+            }
+        }
+
+        I<#= oneToOneFK.OtherClass #> I<#= tbl.Name #>.<#= oneToOneFK.OtherClass #>
+        {
+            get { return <#= oneToOneFK.OtherClass #>; }
+            set { <#= oneToOneFK.OtherClass #> = (<#= oneToOneFK.OtherClass #>) value; }
+        }
+
+        private IList<<#= oneToOneFK.OtherClass #>> _<#= codeGenHelper.CamelCase(oneToOneFK.OtherClass) #>PersistentList;
+
+        public virtual IList<<#= oneToOneFK.OtherClass #>> <#= oneToOneFK.OtherClass #>PersistentList
+        {
+            get
+            {
+                // -------------------------------------------------------------
+                // On-demand deserialization logic to attach reverse reference of children
+                // due to ServiceStack's lack of [OnDeserialized] attribute support.
+                // Back-reference is required by NHibernate for persistence.
+                // -------------------------------------------------------------
+                foreach (var item in _<#= codeGenHelper.CamelCase(oneToOneFK.OtherClass) #>PersistentList)
+                    if (item.<#= tbl.Name #> == null)
+                        item.<#= tbl.Name #> = this;
+                // -------------------------------------------------------------
+
+                return _<#= codeGenHelper.CamelCase(oneToOneFK.OtherClass) #>PersistentList;
+            }
+            set
+            {
+                _<#= codeGenHelper.CamelCase(oneToOneFK.OtherClass) #>PersistentList = value;
+            }
+        }
+
+<#+      } #>
+
+        // -------------------------------------------------------------
+<#+  } #>
+
+        // =============================================================
+        //                          Collections
+        // -------------------------------------------------------------
+<#+
+    foreach (var childTable in baseNavigableChildFKs)
+    {
+        synchSupportPropertyNames.Add(childTable.OtherQueryable);
+        synchSupportChildCollectionClassNames.Add(childTable.OtherTable);
+    }
+
+    foreach (var childTable in navigableChildFKs) 
+    {
+        if (forBaseMappings!=null) forBaseMappings.Add(childTable.OtherTable);
+
+        synchSupportPropertyNames.Add(childTable.OtherQueryable);
+        synchSupportChildCollectionClassNames.Add(childTable.OtherTable);
+ #>
+
+        private IList<<#= childTable.OtherTable #><#=isConcreteBase?"ForBase":""#>> _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>;
+        private IList<I<#= childTable.OtherTable #>> _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant;
+
+        [ValidateEnumerable]
+        public virtual IList<<#= childTable.OtherTable #><#=isConcreteBase?"ForBase":""#>> <#= childTable.OtherQueryable #>
+        {
+            get
+            {
+                // -------------------------------------------------------------
+                // On-demand deserialization logic to attach reverse reference of children
+                // due to ServiceStack's lack of [OnDeserialized] attribute support.
+                // Back-reference is required by NHibernate for persistence.
+                // -------------------------------------------------------------
+                foreach (var item in _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>)
+                    if (item.<#= tbl.Name #> == null)
+                        item.<#= tbl.Name #> = this;
+                // -------------------------------------------------------------
+
+                return _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>;
+            }
+            set 
+            { 
+                _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #> = value;
+                _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant = new CovariantIListAdapter<I<#= childTable.OtherTable #>, <#= childTable.OtherTable #><#=isConcreteBase?"ForBase":""#>>(value);
+            }
+        }
+
+        // Covariant version, visible only on the interface
+        IList<I<#= childTable.OtherTable #>> I<#= tbl.Name #>.<#= childTable.OtherQueryable #>
+        {
+            get 
+            { 
+                // -------------------------------------------------------------
+                // On-demand deserialization logic to attach reverse reference of children
+                // due to ServiceStack's lack of [OnDeserialized] attribute support.
+                // Back-reference is required by NHibernate for persistence.
+                // -------------------------------------------------------------
+                foreach (var item in _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>)
+                    if (item.<#= tbl.Name #> == null)
+                        item.<#= tbl.Name #> = this;
+                // -------------------------------------------------------------
+
+                return _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant; 
+            }
+            set 
+            { 
+                <#= childTable.OtherQueryable #> = new List<<#= childTable.OtherTable #><#=isConcreteBase?"ForBase":""#>>(value.Cast<<#= childTable.OtherTable #><#=isConcreteBase?"ForBase":""#>>()); 
+            }
+        }
+
+<#+    } #>
+        // -------------------------------------------------------------
+
+        // Provide lookup property map
+        private static readonly Dictionary<string, LookupColumnDetails> _idPropertyByLookupProperty = new Dictionary<string, LookupColumnDetails>(StringComparer.InvariantCultureIgnoreCase)
+            {
+<#+  foreach (var col in tbl.Columns) {
+        if (codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) { #>
+                { "<#= TrimSuffix(col.CleanName, "Id") #>", new LookupColumnDetails { PropertyName = "<#= col.CleanName #>", LookupTypeName = "<#= TrimSuffix(col.CleanName, "Id") #>"} },
+<#+      } #>
+<#+  } #>
+            };
+
+        Dictionary<string, LookupColumnDetails> IHasLookupColumnPropertyMap.IdPropertyByLookupProperty
+        {
+            get { return _idPropertyByLookupProperty; }
+        }
+
+        // Provide primary key information
+        OrderedDictionary IHasPrimaryKeyValues.GetPrimaryKeyValues()
+        {
+<#+
+    // If we have a parent reference, and it IS part of the primary key
+    if (parentFK != null && codeGenHelper.IsFKPartOfPK(tbl, parentFK))
+    { #>
+            // Get parent key values
+            var keyValues = (<#= parentFK.OtherClass #> as IHasPrimaryKeyValues).GetPrimaryKeyValues();
+
+<#+    }
+    else
+    { #>
+            // Initialize a new dictionary to hold the key values            
+            var keyValues = new OrderedDictionary();
+
+<#+ } #>
+            // Add current key values
+<#+ foreach (var pkCol in tbl.PKs.Where(x => parentFK == null || !parentFK.ThisColumns.Contains(x.Name)))
+    { #>
+            keyValues.Add("<#= pkCol.CleanName #>", <#= pkCol.CleanName #>);
+<#+ } #>
+
+            return keyValues;
+        }
+
+<#+     // TODO: [ODS-541] Database Driven GetNonPrimaryUniqueKeyValues Implementation
+        // Expand implementation of GetNonPrimaryUniqueKeyValues to beyond descriptors and make it database driven.
+        if (hasNonPrimaryKeyUniqueValues)
+        { #>
+        // Provide primary key information
+        OrderedDictionary IHasNonPrimaryKeyUniqueValues.GetNonPrimaryUniqueKeyValues()
+        {
+            // Initialize a new dictionary to hold the key values
+            var keyValues = new OrderedDictionary();
+            keyValues.Add("Namespace", Namespace);
+            keyValues.Add("CodeValue", CodeValue);
+            return keyValues;
+        }
+<#+     }#>
+<#+     if (allowPrimaryKeyUpdates) { #>
+        /// <summary>
+        /// Gets or sets the <see cref="OrderedDictionary"/> capturing the new key values that have
+        /// not been modified directly on the entity.
+        /// </summary>
+        OrderedDictionary IHasCascadableKeyValues.NewKeyValues { get; set; }
+
+<#+        } #>
+        #region Overrides for Equals() and GetHashCode()
+        public override bool Equals(object obj)
+        {
+            var compareTo = obj as IHasPrimaryKeyValues;
+
+            if (ReferenceEquals(this, compareTo))
+                return true;
+
+            if (compareTo == null)
+                return false;
+
+            var theseKeys = (this as IHasPrimaryKeyValues).GetPrimaryKeyValues();
+            var thoseKeys = compareTo.GetPrimaryKeyValues();
+
+            foreach (DictionaryEntry entry in theseKeys)
+            {
+                if (!entry.Value.Equals(thoseKeys[entry.Key]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private const int HashMultiplier = 31; // or 33, 37, 39, 41
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var keyValues = (this as IHasPrimaryKeyValues).GetPrimaryKeyValues();
+
+                if (keyValues.Count == 0)
+                    return base.GetHashCode();
+
+                int hashCode = this.GetType().GetHashCode();
+
+                foreach (DictionaryEntry entry in keyValues)
+                {
+                    if (entry.Value == null)
+                        continue;
+
+                    hashCode = (hashCode*HashMultiplier) ^ entry.Value.GetHashCode();
+                }
+
+                return hashCode;
+            }
+        }
+        #endregion
+
+<#+  if (!isAbstract) { #>
+        bool ISynchronizable.Synchronize(object target) // ISynchronizable<I<#= tbl.Name #>>
+        {
+            return this.SynchronizeTo((I<#= tbl.Name #>)target);
+        }
+
+        void IMappable.Map(object target)
+        {
+            this.MapTo((I<#= tbl.Name #>) target, null);
+        }
+
+<#+  } #>
+<#+  if (parentFK != null) 
+     { #>
+        void IChildEntity.SetParent(object value) //, string context)
+        {
+            <#= parentFK.OtherTable #> = (<#= parentFK.OtherTable #><#=isService?"Base":""#>) value;
+        }
+<#+  } 
+
+     if (!isAbstract) { #>
+
+        // =========================================
+        //        Synchronization Support
+        // -----------------------------------------
+<#+     foreach (string propertyName in synchSupportPropertyNames.Select(x => (x == "StaffUSI" || x == "StudentUSI" || x == "ParentUSI") ? x.Replace("USI", "UniqueId") : x))
+        { #>
+
+        private bool _is<#= propertyName #>Supported = true;
+        bool I<#= tbl.Name #>SynchronizationSourceSupport.Is<#= propertyName #>Supported 
+        { 
+            get { return _is<#= propertyName #>Supported; } 
+            set { _is<#= propertyName #>Supported = value; }
+        }
+<#+     } 
+
+        foreach (var childCollectionClassName in synchSupportChildCollectionClassNames)
+        {
+ #>
+
+        private Func<I<#= childCollectionClassName #>, bool> _is<#= childCollectionClassName #>Included;
+        Func<I<#= childCollectionClassName #>, bool> I<#= tbl.Name #>SynchronizationSourceSupport.Is<#= childCollectionClassName #>Included
+        { 
+            get { return _is<#= childCollectionClassName #>Included; } 
+            set { _is<#= childCollectionClassName #>Included = value; }
+        }
+<#+     } #>
+
+        // -----------------------------------------
+<#+
+      }
+   }
+}
+
+private string GetDisplayNameAttributeIfDifferentFromPropertyName(Table tbl, Column pkCol, Table baseTbl)
+{
+    if (!pkCol.CleanName.Contains("USI")) return string.Empty;
+    return string.Format("[Display(Name=\"{0}\")]\n        ", pkCol.CleanName.Replace("USI", "UniqueId"));
+}
+private string GetConstructorCode(string tblName, IEnumerable<FKTable> navigableOneToOneChildFKs, IEnumerable<FKTable> navigableChildFKs, bool isConcreteBase)
+{
+    var code = string.Empty;
+    if (isConcreteBase) code = "        [Obsolete(\"This class is not intended to be used directly.  Use the "+ tblName + " entity instead for a concrete class mapped to the " + tblName + " table.\")]" + Environment.NewLine;
+    code += "        " + (isConcreteBase?"protected":"public") + " " + tblName + (isConcreteBase?"Base":"") + "()" + Environment.NewLine;
+    code += "        {" + Environment.NewLine; 
+    foreach (var fkt in navigableOneToOneChildFKs) {
+        code += "           "+fkt.OtherClass + "PersistentList = new List<" + fkt.OtherClass+">();" + Environment.NewLine;
+    }
+    foreach (var fkt in navigableChildFKs) {
+        code += "            "+fkt.OtherQueryable + " = new List<" + fkt.OtherClass + (isConcreteBase?"ForBase":"") + ">();" + Environment.NewLine;
+    }
+    code += Environment.NewLine + "        }"; 
+    return code;
+}
+
+string GetPropertyGetterAndSetter(IDictionary<string, Table> tablesByName, Table table, Column column, string propertyType, bool needsOverride, FKTable baseFK, FKTable parentFK)
+{
+    var columnName = column.Name;
+    if (codeGenHelper.IsLookupTypeColumn(tablesByName, table, columnName))
+        return GenerateLookupProperty(tablesByName, table, columnName, propertyType, needsOverride);
+
+    if (CodeGenSpecifications.IsUsiColumn(columnName))
+        return GenerateUsiProperty(tablesByName, table, column, propertyType, needsOverride, parentFK);
+        
+    if (codeGenHelper.IsUniqueId(table, column))
+        return GenerateUniqueIdProperty(table, columnName);
+
+    if(column.IsDateOnlyProperty() && baseFK == null) //if the base property will be used trust it to set the Date values properly, otherwise we need to ensure DateOnly values are set using the default DateTime.Kind (which is what we get out of NHibernate for comparison)
+        return GenerateDateProperty(column, baseFK, propertyType);
+
+    if (baseFK != null)
+    {
+        // Find the index of the current column in "ThisColumns"
+        int fkColumnIndex = baseFK.ThisColumns.IndexOf(columnName);
+
+        string baseColumnName = baseFK.OtherColumns[fkColumnIndex];
+
+        if (baseColumnName != columnName) {
+            return string.Format(@"
+        {{
+            get {{ return base.{0}; }}
+            set {{ base.{0} = value; }}
+        }}
+        ", baseColumnName);
+        }
+    }
+
+    const string standardAutoProperty = " { get; set; }";
+    return standardAutoProperty;
+}
+
+private string GenerateDateProperty(Column column, FKTable baseFK, string propertyType)
+{
+    var fieldName = codeGenHelper.CamelCase(column.Name);
+
+    var note = @"//This is only stored as a Date in the DB and NHibernate will retrieve it using the default (local) DateTime.Kind.  We must ensure it is set consistently for any equality/change evaluation.";
+
+    if(column.IsNullable)
+    {
+        return string.Format(@"
+        {{
+            get {{ return _{1}; }}
+            set 
+            {{ 
+                {2}
+                if(value == null)
+                {{
+                    _{1} = null;
+                }} else
+                {{
+                    var given = (DateTime) value;
+                    _{1} = new DateTime(given.Year, given.Month, given.Day);
+                }}
+            }}
+        }}
+
+        private {0} _{1};", propertyType, fieldName, note);
+
+    }
+
+    return string.Format(@"
+        {{
+            get {{ return _{1}; }}
+            {2}
+            set {{ _{1} = new DateTime(value.Year, value.Month, value.Day); }}
+        }}
+
+        private {0} _{1};
+
+        ", propertyType, fieldName, note);
+}
+
+    private string GenerateUsiProperty(IDictionary<string, Table> tablesByName, Table table, Column column, string propertyType,
+        bool needsOverride, FKTable parentFK)
+    {
+        const string uniqueIdSuffix = "UniqueId";
+        var columnName = column.Name;
+        var usiType = TrimSuffix(columnName, "USI");
+        var lookupPropertyName = usiType + uniqueIdSuffix;
+        var lookupFieldName = "_" + codeGenHelper.CamelCase(lookupPropertyName);
+
+        var fieldName = "_" + codeGenHelper.CamelCase(columnName);
+
+        var propertyTypeIdAccessor = string.Format(@"{0} = PersonUniqueIdToUsiCache.GetCache().GetUsi{3}(""{1}"", {2});", fieldName,
+                usiType,
+                lookupFieldName,
+                (column.IsNullable?"Nullable":"")
+            );
+
+        string propertyTypeAccessor = (column.IsNullable)
+            ? string.Format(@"{0} = PersonUniqueIdToUsiCache.GetCache().GetUniqueId(""{1}"", {2}.Value);",
+                lookupFieldName, usiType, fieldName)
+            : string.Format(@"{0} = PersonUniqueIdToUsiCache.GetCache().GetUniqueId(""{1}"", {2});",
+                lookupFieldName, usiType, fieldName);
+         /*propertyType.EndsWith("?")
+            ? string.Format(
+                @"_{2} = _{1} == null ? null : MagicService.GetValue(""{0}"", _{1}.Value);",
+                lookupTableName, tablesProvider.CamelCase(columnName), tablesProvider.CamelCase(lookupPropertyName))
+            : string.Format(@"_{2} = MagicService.GetValue(""{0}"", _{1});", lookupTableName,
+                tablesProvider.CamelCase(columnName), tablesProvider.CamelCase(lookupPropertyName));*/
+
+        var sb = new StringBuilder();
+
+        sb.AppendFormat(@"
+        {{
+            get
+            {{
+                if ({1} == default({2}))
+                    {3}
+
+                return {1};
+            }} 
+            set
+            {{
+                {1} = value;
+            }}
+        }}
+
+        private {2} {1};",
+            "(removed)", fieldName,
+            propertyType, propertyTypeIdAccessor);
+        
+        if (table.Name == usiType)
+        {
+            sb.AppendFormat(@"
+        string IIdentifiablePerson.UniqueId {{ get {{ return {0}; }} }}
+        ", lookupPropertyName);
+        }
+        else
+        {
+            sb.AppendFormat(@"
+        private string {1};
+
+        public {3} string {4}
+        {{
+            get
+            {{
+                if ({1} == null{5})
+                    {2}
+                    
+                return {1};
+            }}
+            set
+            {{
+                {1} = value;
+            }}
+        }}",
+                "(removed)", lookupFieldName, propertyTypeAccessor,
+                needsOverride ? "override" : "virtual", lookupPropertyName,
+                column.IsNullable ? string.Format(" && {0}.HasValue", fieldName) : String.Empty);
+        }
+
+        return sb.ToString();
+    }
+
+    private string GenerateUniqueIdProperty(Table table, string columnName)
+    {
+        var lookupPropertyName = columnName.Replace("UniqueId", "USI");
+        var lookupFieldName = "_" + codeGenHelper.CamelCase(columnName);
+
+        var fieldName = "_" + codeGenHelper.CamelCase(lookupPropertyName);
+
+        string propertyTypeAccessor = string.Format(@"{0} = PersonUniqueIdToUsiCache.GetCache().GetUniqueId(""{1}"", {2});", 
+                lookupFieldName, table.Name, fieldName);
+         /*propertyType.EndsWith("?")
+            ? string.Format(
+                @"_{2} = _{1} == null ? null : MagicService.GetValue(""{0}"", _{1}.Value);",
+                lookupTableName, tablesProvider.CamelCase(columnName), tablesProvider.CamelCase(lookupPropertyName))
+            : string.Format(@"_{2} = MagicService.GetValue(""{0}"", _{1});", lookupTableName,
+                tablesProvider.CamelCase(columnName), tablesProvider.CamelCase(lookupPropertyName));*/
+
+        var sb = new StringBuilder();
+
+        if (!table.PKs.Any(pk => table.ParentTables.SelectMany(p => p.ThisColumns).Contains(pk.Name)))
+        {
+            sb.AppendFormat(@"
+        {{
+            get
+            {{
+                if ({1} == null)
+                    {2}
+                    
+                return {1};
+            }}
+            set
+            {{
+                {1} = value;
+            }}
+        }}
+        private string {1};
+        ",
+            "(removed)", lookupFieldName, propertyTypeAccessor);
+        }
+        else
+        {
+            throw new Exception("Incorrect column name passed to the method. This method is designed for handling unique case of USI/UniqueId relationship, and works for specific columns that are part of the primary key.");
+        }
+        return sb.ToString();
+    }
+
+    private string GenerateLookupProperty(IDictionary<string, Table> tablesByName, Table table, string columnName, string propertyType,
+        bool needsOverride)
+    {
+        string lookupPropertyName = TrimSuffix(columnName, "Id");
+        string lookupTableName = codeGenHelper.GetLookupTableName(tablesByName, table, columnName);
+
+        if (lookupTableName == null)
+            throw new ArgumentNullException(
+                string.Format("Unable to determine lookup table from relationships for table '{0}', column '{1}'.",
+                    table.Name, columnName));
+
+        string propertyTypeIdAccessor = propertyType.EndsWith("?")
+            ? string.Format(
+                @"_{1} = string.IsNullOrWhiteSpace(_{2}) ? default({3}) : TypesAndDescriptorsCache.GetCache().GetId(""{0}"", _{2});",
+                lookupTableName, codeGenHelper.CamelCase(columnName), codeGenHelper.CamelCase(lookupPropertyName),
+                propertyType)
+            : string.Format(@"_{1} = TypesAndDescriptorsCache.GetCache().GetId(""{0}"", _{2});", lookupTableName,
+                codeGenHelper.CamelCase(columnName), codeGenHelper.CamelCase(lookupPropertyName));
+
+        string propertyTypeAccessor = propertyType.EndsWith("?")
+            ? string.Format(
+                @"_{2} = _{1} == null ? null : TypesAndDescriptorsCache.GetCache().GetValue(""{0}"", _{1}.Value);",
+                lookupTableName, codeGenHelper.CamelCase(columnName), codeGenHelper.CamelCase(lookupPropertyName))
+            : string.Format(@"_{2} = TypesAndDescriptorsCache.GetCache().GetValue(""{0}"", _{1});", lookupTableName,
+                codeGenHelper.CamelCase(columnName), codeGenHelper.CamelCase(lookupPropertyName));
+
+        return string.Format(@"
+        {{
+            get
+            {{
+                if (_{1} == default({3}))
+                    {4}
+
+                return _{1};
+            }} 
+            set
+            {{
+                _{1} = value;
+                _{2} = null;
+            }}
+        }}
+
+        private {3} _{1};
+        private string _{2};
+
+        public {6} string {7}
+        {{
+            get
+            {{
+                if (_{2} == null)
+                    {5}
+                    
+                return _{2};
+            }}
+            set
+            {{
+                _{2} = value;
+                _{1} = default({3});
+            }}
+        }}",
+            lookupTableName, codeGenHelper.CamelCase(columnName), codeGenHelper.CamelCase(lookupPropertyName),
+            propertyType, propertyTypeIdAccessor, propertyTypeAccessor,
+            needsOverride ? "override" : "virtual", lookupPropertyName);
+    }
+
+    #>
+<#+
+
+    // TODO: This is a temporary snippet of code to address issue with GradeLevelTypeId (role named to GradeOffered)
+    // and the fact that it is not an IDENTITY column-based value, and has domain meaning for the value of 0 (as kindergarten).
+    // The column cannot be listed as "RequiredWithNonDefault", meaning no "zero" would be allowed.
+    bool CSharpDefaultHasDomainMeaning(Column col)
+    {
+        switch (col.SysType)
+        {
+            case "string":
+            case "DateTime":
+                return false;
+
+            case "TimeSpan":
+                if (col.Name.StartsWith("Start", StringComparison.InvariantCultureIgnoreCase)
+                    || col.Name.StartsWith("Begin", StringComparison.InvariantCultureIgnoreCase)
+                    || col.Name.StartsWith("End", StringComparison.InvariantCultureIgnoreCase))
+                    return false;
+                
+                break;
+
+            case "short":
+            case "int":
+                if (col.Name.Equals("GradeLevelTypeId", StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+
+                if (col.Name.EndsWith("Year", StringComparison.InvariantCultureIgnoreCase)
+                    || col.Name.Equals("Version", StringComparison.InvariantCultureIgnoreCase)
+                    || col.Name.Contains("Sequence")
+                    || col.Name.EndsWith("Number", StringComparison.InvariantCultureIgnoreCase)
+                    )
+                    return false;
+
+                if (col.Name.EndsWith("Id", StringComparison.InvariantCultureIgnoreCase))
+                    return false;
+
+                if (col.Name.EndsWith("USI", StringComparison.InvariantCultureIgnoreCase))
+                    return false;
+
+                break;
+
+            default:
+                return true;
+        }
+
+        return true;
+    }
+#>
+

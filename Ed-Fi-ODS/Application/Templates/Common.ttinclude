@@ -1,0 +1,63 @@
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ assembly name="System.Configuration" #>
+<#@ assembly name="System.Windows.Forms" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Data.Common" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Configuration" #>
+<#@ import namespace="System.Windows.Forms" #>
+<#+
+
+    private string GetSolutionPath()
+    {
+        return Host.ResolveAssemblyReference("$(SolutionDir)");
+    }
+
+    public string GetCurrentProjectFileName() {
+        return Host.ResolveAssemblyReference("$(ProjectName)");
+    }
+
+	public string GetProjectPath()
+    {
+        return Host.ResolveAssemblyReference("$(ProjectDir)");
+	}
+
+    private string GetExtensionsPath()
+    {
+        return Host.ResolveAssemblyReference("$(ttExtensionsFolder)");
+    }
+
+    public string GetSchemaPath()
+    {
+        return Host.ResolveAssemblyReference("$(schemaDir)");
+    }
+
+    private string GetExtensionsMetadataPath()
+    {
+		return Path.Combine(GetExtensionsPath(), "Metadata");       
+    }
+
+	public string GetTemplatesPath()
+    {
+		//
+		// This path is relative to the Ed-Fi-ODS projects
+		// Don't call it from templates in Ed-Fi-ODS-Implementation
+		//
+        return Host.ResolveAssemblyReference("$(ttIncludeFolder)");
+    }
+
+	string TrimSuffix(string text, string suffix)
+    {
+        return Regex.Replace(text, @"^(\w+)" + suffix + "$", "$1");
+    }
+#>

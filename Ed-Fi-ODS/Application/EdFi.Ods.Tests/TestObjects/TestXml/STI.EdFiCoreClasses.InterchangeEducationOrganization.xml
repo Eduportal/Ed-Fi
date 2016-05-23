@@ -1,0 +1,603 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<InterchangeEducationOrganization xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://ed-fi.org/0200-Draft">
+  <Location id="Location_1">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>09th Grade Hall</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_2">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>10th Grade Hall</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_3">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>1st Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_4">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>2nd Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_5">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>Gym</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_6">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>1st Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_7">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>2nd Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_8">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>1st Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_9">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>2nd Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_10">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>East Hallway</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_11">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>West Hallway</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_16">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>1st Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_17">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>2nd Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_18">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100002</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>1st Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_19">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100002</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>2nd Floor</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_20">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>5th Grade Wing</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_21">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>PK Wing</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_22">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>K Wing</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_23">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>1st Grade Wing</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_24">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>2nd Grade Wing</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_25">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>3rd Grade Wing</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_26">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>4th Grade Wing</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_27">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100002</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>HS</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_28">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>HS</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_29">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100020</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>MS</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_30">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>HS</ClassroomIdentificationCode>
+  </Location>
+  <Location id="Location_31">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassroomIdentificationCode>HS</ClassroomIdentificationCode>
+  </Location>
+  <ClassPeriod id="TimeSlot_22">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>AM</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_23">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>PM</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_24">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>LA</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_25">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>MA</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_26">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>SC</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_27">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>SS</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_28">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>RD</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_29">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>SP</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_30">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>WR</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_31">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>PE</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_32">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>AR</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_33">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>MU</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_1">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>01</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_2">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>02</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_3">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>03</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_4">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>04</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_5">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>05</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_6">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>500063</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>06</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_7">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100020</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>1</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_8">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100020</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>2</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_9">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100020</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>3</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_10">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100020</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>4</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_11">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100020</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>5</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_12">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100020</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>6</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_13">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100020</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>7</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_14">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>1</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_15">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>2</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_16">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>3</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_17">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>4</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_18">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>5</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_19">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>6</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_20">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>7</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_21">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100055</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>8</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_40">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100002</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>1</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_41">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100002</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>2</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_42">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100002</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>3</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_43">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100002</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>4</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_51">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>1</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_52">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>2</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_53">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>3</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_54">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>4</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_55">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>5</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_56">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>6</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_57">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>100025</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>7</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_44">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>1</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_45">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>2</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_46">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>3</ClassPeriodName>
+  </ClassPeriod>
+  <ClassPeriod id="TimeSlot_47">
+    <SchoolReference>
+      <SchoolIdentity>
+        <SchoolId>400005</SchoolId>
+      </SchoolIdentity>
+    </SchoolReference>
+    <ClassPeriodName>4</ClassPeriodName>
+  </ClassPeriod>
+</InterchangeEducationOrganization>

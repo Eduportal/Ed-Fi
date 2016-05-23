@@ -1,0 +1,724 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{06D25DDA-12C5-4EFA-AB3D-FDF08AE7A432}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.Tests</RootNamespace>
+    <AssemblyName>EdFi.Ods.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>edaed3a0</NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation, Version=5.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\FluentValidation.5.6.2.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HttpSimulator">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\HttpSimulator.1.0.0.0\lib\Net40\HttpSimulator.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="KellermanSoftware.Compare-NET-Objects">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\CompareNETObjects.1.7.3.0\lib\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.Hosting.3.0.1\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Testing">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.Testing.3.0.1\lib\net45\Microsoft.Owin.Testing.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Data">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Should">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Should.1.1.20\lib\Should.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Owin, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EdFi.Common\Context\CallContextStorageTests.cs" />
+    <Compile Include="EdFi.Common\Context\HttpContextStorageTests.cs" />
+    <Compile Include="EdFi.Common\Database\NamedDatabaseConnectionStringProviderTests.cs" />
+    <Compile Include="EdFi.Common\ExpandoTests.cs" />
+    <Compile Include="EdFi.Common\Extensions\IEnumerableExtensionTests.cs" />
+    <Compile Include="EdFi.Common\Extensions\StringExtensionTests.cs" />
+    <Compile Include="EdFi.Common\InversionOfControl\WindsorContainerExTests.cs" />
+    <Compile Include="EdFi.Identity\IdentityMapperTests.cs" />
+    <Compile Include="EdFi.Messaging.MSMQ\MsmqMessageFactoryTests.cs" />
+    <Compile Include="EdFi.Ods.Admin.Models\ApplicationTests.cs" />
+    <Compile Include="EdFi.Ods.Admin.Models\ClientAppRepoTests.cs" />
+    <Compile Include="EdFi.Ods.Admin.Models\UserTests.cs" />
+    <Compile Include="EdFi.Ods.Admin.Models\VendorTests.cs" />
+    <Compile Include="EdFi.Ods.Api\Services\Authorization\CachingOAuthTokenValidatorDecoratorTests.cs" />
+    <Compile Include="EdFi.Ods.Api\Services\Controllers\AuthorizeControllerTests.cs" />
+    <Compile Include="EdFi.Ods.Api\Services\Controllers\TokenControllerTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen\DatabaseSchema\ProfileCodeGenHelperTests.cs" />
+    <Compile Include="EdFi.Ods.Entities.Common\DataAnnotationObjectValidatorTests.cs" />
+    <Compile Include="EdFi.Ods.Entities.Common\EnsureUniqueIdAlreadyExistsObjectValidatorTests.cs" />
+    <Compile Include="EdFi.Ods.Entities.Common\NoDangerousTextAttributeTests.cs" />
+    <Compile Include="EdFi.Ods.Entities.NHibernate\TypesAndDescriptorsCacheTests.cs" />
+    <Compile Include="EdFi.Ods.Security\AuthorizationStrategies\AliasGeneratorTests.cs" />
+    <Compile Include="EdFi.Ods.Security\AuthorizationStrategies\Relationships\AllRelationshipsAuthorizationStrategyTests.cs" />
+    <Compile Include="EdFi.Ods.Security\AuthorizationStrategies\Relationships\AuthorizationSegmentsToFilterConverterTests.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\AssessmentMetadataAuthorizationTests.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\ConcreteEducationOrganizationIdAuthorizationContextDataTransformerTests.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\EdFiAuthorizationProviderTests.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\NamespaceBasedAuthorizationTests.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\Repositories\AuthorizationDecoratorTests.cs" />
+    <Compile Include="EdFi.Ods.Security\Claims\ClaimsIdentityProviderTests.cs" />
+    <Compile Include="EdFi.Ods.Security\_Stubs\StubSecurityRepository.cs" />
+    <Compile Include="EdFi.Ods.Admin.Models\_Stubs\StubUserUpdater.cs" />
+    <Compile Include="EdFi.Ods.Admin.Models\_Stubs\TestSandboxProvisioner.cs" />
+    <Compile Include="EdFi.Ods.Admin\Services\ClientCreatorTests.cs" />
+    <Compile Include="EdFi.Ods.Admin\Services\ProtectedConfigurationTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Console\BulkLoadExecutorTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Console\LocalBulkOperationInitializerTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Console\ValidateAndSourceLocalOnlyFilesTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\BulkLoadExtensionMethodsTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\IndexedXmlFileReaderTests\When_Finding_Section_Foreign_Keys_In_A_Referenced_Section_Reference_Element.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\LoadAggregateResultTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\LoadResultTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\StubDbSetCreator.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\UploadFilePersistenceResultTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\AggregateLoaderBaseTests.cs" />
+    <Compile Include="EdFi.Ods.Admin.Models\SandboxProvisionerTypeCalculatorTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\BulkLoadMasterTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\XmlMapBuilderTests\When_Mapping_StudentSectionAssociation.cs" />
+    <Compile Include="EdFi.Ods.Common.Security\ApiKeyContextProviderTests.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\Enumerations\EnumerationTests.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\_Stubs\TestFileSystem.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\_Stubs\TestOutput.cs" />
+    <Compile Include="EdFi.Ods.Common\Database\PrototypeWithDatabaseNameOverrideDatabaseConnectionStringProviderTests.cs" />
+    <Compile Include="EdFi.Ods.Common\ExceptionHandling\DuplicateNaturalKeyCreateExceptionTranslatorTests.cs" />
+    <Compile Include="EdFi.Ods.Common\ExceptionHandling\DuplicateNaturalKeyUpdateExceptionTranslatorTests.cs" />
+    <Compile Include="EdFi.Ods.Common\InterchangeTypeTest.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\Extensions\EnumExtensionsTest.cs" />
+    <Compile Include="EdFi.Ods.Common\Context\ApiKeyContextProviderTests.cs" />
+    <Compile Include="EdFi.Ods.Common\Database\SandboxConnectionStringMetadataProviderTests.cs" />
+    <Compile Include="EdFi.Ods.Common\Database\SandboxDatabaseNameProviderTests.cs" />
+    <Compile Include="EdFi.Ods.Common\UtcTimeConverterTests.cs" />
+    <Compile Include="EdFi.Ods.Common\_Stubs\Repositories\StubRepository.cs" />
+    <Compile Include="EdFi.Ods.Common\_Stubs\StubUploadFileSourcingResults.cs" />
+    <Compile Include="EdFi.Ods.Entities.Common\AttributeValidationTests.cs" />
+    <Compile Include="EdFi.Ods.Pipelines\Steps\PersistModelTests.cs" />
+    <Compile Include="EdFi.Ods.Repositories.Common\BulkOperationCreateRequestValidationTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\HaveInterchangeSpecificLoadersTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\InterchangeControllerBaseTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\IndexedXmlFileReaderTests\When_An_Optional_Element_Is_Not_Present_In_Xml.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\IndexedXmlFileReaderTests\XmlFileReaderTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\XmlGPSTests\When_Given_Complex_Reference_Map.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\XmlMapBuilderTests\Single_Target_Tests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\XmlMapBuilderTests\When_Building_A_Map_Starting_At_An_Identity.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\XmlMapBuilderTests\When_Building_Map_For_School.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\XmlMapBuilderTests\When_Creating_A_Map_For_StaffProgram_EdOrg_Id_Element.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\XmlMapBuilderTests\When_Creating_A_Map_For_StaffProgram_Program_Type_Element.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\XmlMapBuilderTests\MappingStudentUSI.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\Configuration\ConfigurationReaderTests.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\DataStructures\OrderedCollectionOfSetsTests.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\Resources\EmbeddedResourceReaderTests.cs" />
+    <Compile Include="EdFi.Ods.Common\UploadFileSourcingResultsTests.cs" />
+    <Compile Include="EdFi.Ods.Entities.Common\PersonIdUsiCacheTests.cs" />
+    <Compile Include="EdFi.Ods.Messaging\CommandListenerTests.cs" />
+    <Compile Include="EdFi.Ods.Entities.Common\UniqueIdNotChangedObjectValidatorTests.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\EducationOrganizationCacheTests.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\Repositories\AuthorizationContextProviderStub.cs" />
+    <Compile Include="EdFi.Ods.Security\Utilities\CastleWindsor\SecurityComponentsInstallerTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi.Common\OAuthAuthenticationFilterTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi.Resources\ResourceModelReferenceTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\Controllers\DeleteTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\Controllers\GetByIdTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\Controllers\GetByKeyTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\Controllers\GetManyTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\Controllers\PostTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\Controllers\PutTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\Controllers\TestControllerBuilder.cs" />
+    <Compile Include="EdFi.Ods.WebApi\Controllers\TestGetPipelineStepsProvider.cs" />
+    <Compile Include="EdFi.Ods.WebApi\ExceptionHandlingFilterTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\UrlRoutingTests.cs" />
+    <Compile Include="EdFi.Security\Authorization\AuthorizationBuilderTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi.Common\RouteTester.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\Repositories\RepositoryStub.cs" />
+    <Compile Include="EdFi.Ods.Security\Authorization\Repositories\SecurityComponentsInstallerTest.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\IndexedXmlFileReaderTests\When_Finding_Foreign_Key_XElements.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\CodeGenEngineTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\CodeGeneratorStub.cs" />
+    <Compile Include="EdFi.Ods.WebApi\BulkOperationsControllerTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\StubBus.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\TestMapFromXmlResourceFactory.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\BaseAggregateLoader_When_aggregates_contain_references_to_self.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\UploadFileCommitHandler_When_A_CommitUpload_Command_Is_Sent.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\EntityMetadataManagerTests\StudentDisciplineTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\EntityMetadataManagerTests\StudentTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\FakeT4.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\UploadFileValidatorTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\CreateOrUpdatePipelineStub.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\TestAggregateLoader.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\TestIndexedFile.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\TestLevelDescriptorResourceFactory.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\TestOnlyStep.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\BaseAggregateLoader_When_All_Aggregates_of_a_given_type_are_loaded.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\FileBuilder.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\GradeLevelDescriptorStubFactory.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\StubPipeline.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\StubReader.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\GradeLevelDescriptorStubStep.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\IndexedXmlFileReaderTests\when_building_an_xmlfilereader_with_invalid_file.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\IndexedXmlFileReaderTests\when_building_an_xmlfilereader_with_invalid_invalid_root_elements.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\IndexedXmlFileReaderTests\when_building_an_xmlfilereader_with_no_root_elements.cs" />
+    <Compile Include="EdFi.Ods.Repositories.Common\When_creating_a_bulk_operation_command_and_request_is_invalid.cs" />
+    <Compile Include="EdFi.Ods.Repositories.Common\When_creating_a_bulk_operation_command_and_request_is_valid.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\IndexedXmlFileReaderTests\when_getting_node_by_entity_on_an_xmlfilereader.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\StubAggregateLoader.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\Extensions\ObjectExtensionsTests.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\Extensions\StringExtensionTests.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\Extensions\TypeExtensionsTests.cs" />
+    <Compile Include="EdFi.Ods.Common\ExceptionHandling\ExceptionTranslatorFixtures.cs" />
+    <Compile Include="EdFi.Ods.Common\ExceptionHandling\NHibernateExceptionBuilder.cs" />
+    <Compile Include="EdFi.Ods.Common\Validation\ValidateObjectAttributeTests.cs" />
+    <Compile Include="EdFi.Ods.Common\XElementExtensionsTests.cs" />
+    <Compile Include="EdFi.Ods.BulkLoad.Core\Controllers\StartOperationCmdHandler_When_Given_A_StartOperation_Command_For_Existing_UnFinished_Operation.cs" />
+    <Compile Include="EdFi.Ods.Messaging\MessageProcessorTests.cs" />
+    <Compile Include="EdFi.Ods.Messaging\TestCommandsAndHandlers.cs" />
+    <Compile Include="EdFi.Ods.Repositories.Common\When_Validating_A_Completed_Upload.cs" />
+    <Compile Include="EdFi.Ods.Repositories.Common\When_Validating_A_Post_Chunk_Request.cs" />
+    <Compile Include="EdFi.Ods.Swagger\PropertyInfoToModelPropertySpecTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi.Common\HttpContextCacheHelpersTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi.Common\SandboxAccessManagerTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\ForeignKeyPropertyTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\MultiElementEntityCollectionPropertyTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\ParsedSchemaObjectExtensionsTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\StubParsedSchemaObject.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\DescriptorsCoveringTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\EdOrgCalendarCoveringTest.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\EdOrgCoveringTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\MasterScheduleCoveringTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\StaffAssociationCoveringTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\StandardsCoveringTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\StudentDisciplineCoveringTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\StudentEnrollmentCoveringTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\StudentParentCoveringTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\ResourceFactories\StudentProgramCoveringTests.cs" />
+    <Compile Include="EdFi.Security\AuthorizationContextStorageTests.cs" />
+    <Compile Include="EdFi.Security\Claims\JsonClaimHelperTests.cs" />
+    <Compile Include="ExternalDependencyHelper.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExternalDependencyHelper.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TestObjects\CustomBuilders\AutoIncrementAttributedIdSkipper.cs" />
+    <Compile Include="TestObjects\CustomBuilders\EducationOrganizationIdBuilder.cs" />
+    <Compile Include="TestObjects\CustomBuilders\Ids.cs" />
+    <Compile Include="TestObjects\CustomBuilders\NamedPropertySkipper.cs" />
+    <Compile Include="TestObjects\TestStreamBuilder.cs" />
+    <Compile Include="TestObjects\TestXml\BugRegressionTestXml.cs" />
+    <Compile Include="TestObjects\TestXml\GrandBendTestXml.cs" />
+    <Compile Include="TestObjects\TestXml\IMarkWhereTestXmlLives.cs" />
+    <Compile Include="TestObjects\TestXml\MinimalTemplateEdOrgXml.cs" />
+    <Compile Include="TestObjects\TestXml\SkywardTestXml.cs" />
+    <Compile Include="TestObjects\TestXml\STITestXml.cs" />
+    <Compile Include="TestObjects\TestXml\TNTestXml.cs" />
+    <Compile Include="TestObjects\ValidationOnlyPipelineFactory.cs" />
+    <Compile Include="_Bases\ResourceFactoryTestBase.cs" />
+    <Compile Include="_Bases\Scenario.cs" />
+    <Compile Include="_Bases\XmlFileTestBase.cs" />
+    <Compile Include="_Bases\XmlMapBuilderTestBase.cs" />
+    <Compile Include="_Builders\New.cs" />
+    <Compile Include="_Extensions\CompareObjectsExtensions.cs" />
+    <Compile Include="_Extensions\ExceptionAssertionExtensions.cs" />
+    <Compile Include="_Extensions\StringExtensions.cs" />
+    <None Include="App.config" />
+    <None Include="EdFi.Ods.BulkLoad.Console\App.config" />
+    <None Include="EdFi.Ods.XmlShredding\InterchangeXmlParserTest.cs" />
+    <None Include="EdFi.Ods.XmlShredding\InterchangeFileManagerTests.cs" />
+    <None Include="EdFi.Ods.XmlShredding\FakeTypesAndDescriptorsCache.cs" />
+    <Compile Include="EdFi.Ods.WebApi.Data\DbExecutorTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi.Entities\MappingExtensionsTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\CustomMultipartStreamProviderTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\IdsModelBinderTests.cs" />
+    <Compile Include="EdFi.Ods.WebApi\When_Commiting_An_Upload.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\EntityMetadataManagerTests\EntityMetadataManagerTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\EntityTypePropertyTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\InlineEntityPropertyTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\InterchangeFactoryTests.cs" />
+    <Compile Include="EdFi.Ods.CodeGen.XmlShredding\SimpleTypePropertyTests.cs" />
+    <Compile Include="EdFi.Ods.XmlShredding\DescriptorsInterchangeTests.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\Extensions\ExpressionExtensionsTests.cs" />
+    <Compile Include="EdFi.Ods.Admin\Extensions\PasswordExtensionsTests.cs" />
+    <Compile Include="EdFi.Ods.Admin\Extensions\StringExtensionsTests.cs" />
+    <Compile Include="EdFi.Ods.Admin\Models\CreateLoginResultTests.cs" />
+    <Compile Include="EdFi.Ods.Admin\Services\PasswordServiceTests.cs" />
+    <Compile Include="EdFi.Ods.Admin\Services\UserAccountManagerTests.cs" />
+    <None Include="EdFi.Ods.Admin\_Stubs\StubUserAuthRepository.cs" />
+    <Compile Include="EdFi.Ods.CommonUtils\RandomUtilTests.cs" />
+    <Compile Include="FindConflictingReferences.cs" />
+    <Compile Include="Metadata\TablesByAggregateRoot.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestObjects\BuilderFactoryTests.cs" />
+    <Compile Include="TestObjects\CustomBuilders\FixedLengthStringValueBuilderTests.cs" />
+    <Compile Include="TestObjects\CustomBuilders\IgnoreAttributeSkipperTests.cs" />
+    <Compile Include="TestObjects\CustomBuilders\UpdatePropertySkipperTests.cs" />
+    <Compile Include="TestObjects\TestBulkOperationsContext.cs" />
+    <Compile Include="TestObjects\TestBulkOperationSet.cs" />
+    <Compile Include="TestObjects\TestDbExecutor.cs" />
+    <Compile Include="TestObjects\TestDbSet.cs" />
+    <Compile Include="TestObjects\TestLoader.cs" />
+    <Compile Include="TestObjects\TestUploadFileChunkSet.cs" />
+    <Compile Include="TestObjects\TestUploadFilesSet.cs" />
+    <Compile Include="_Bases\SchemaMetadataTestBase.cs" />
+    <Compile Include="_Bases\TestBase.cs" />
+    <Compile Include="_Bases\TestFixtureBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EdFi.Ods.XmlShredding\ResourceFactories\READMEFIRST.md" />
+    <None Include="ExternalDependencyHelper.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ExternalDependencyHelper.generated.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdFi.Ods.Security.Metadata\EdFi.Ods.Security.Metadata.csproj">
+      <Project>{1acf010b-2092-4377-844e-fd710b6404bd}</Project>
+      <Name>EdFi.Ods.Security.Metadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Common\EdFi.Common.csproj">
+      <Project>{c545a7d1-4054-4279-9723-f06da524e122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Messaging.MSMQ\EdFi.Messaging.MSMQ.csproj">
+      <Project>{8DD040EE-00E9-4ADF-A477-688E213EEAC5}</Project>
+      <Name>EdFi.Messaging.MSMQ</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Admin.Models\EdFi.Ods.Admin.Models.csproj">
+      <Project>{86bec77a-1eea-4570-8af7-daa4e7818353}</Project>
+      <Name>EdFi.Ods.Admin.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Admin\EdFi.Ods.Admin.csproj">
+      <Project>{d0335b4f-b79b-4ccb-ab11-a4106c070513}</Project>
+      <Name>EdFi.Ods.Admin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Common\EdFi.Ods.Api.Common.csproj">
+      <Project>{c2ce5033-e5f3-49a4-a1c3-99775c926644}</Project>
+      <Name>EdFi.Ods.Api.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Data\EdFi.Ods.Api.Data.csproj">
+      <Project>{86eaf98e-a060-43b0-8f55-96a33fbce23b}</Project>
+      <Name>EdFi.Ods.Api.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Models\EdFi.Ods.Api.Models.csproj">
+      <Project>{28504282-cafb-499b-9919-c8458ac7a27d}</Project>
+      <Name>EdFi.Ods.Api.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api\EdFi.Ods.Api.csproj">
+      <Project>{2a1d92bc-c388-425e-aeee-0668bf472ccc}</Project>
+      <Name>EdFi.Ods.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Ed-Fi-ODS-Implementation\Application\EdFi.Ods.BulkLoad.Console\EdFi.Ods.BulkLoad.Console.csproj">
+      <Project>{0d7e809f-3e4c-41d4-8cdf-576d43e78004}</Project>
+      <Name>EdFi.Ods.BulkLoad.Console</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Codegen.Generated\EdFi.Ods.CodeGen.Generated.csproj">
+      <Project>{afce2d31-ce65-44ed-92f3-757c64e4ad6e}</Project>
+      <Name>EdFi.Ods.CodeGen.Generated</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.CodeGen\EdFi.Ods.CodeGen.csproj">
+      <Project>{5616c863-9b07-4ba4-a611-9f2226294b10}</Project>
+      <Name>EdFi.Ods.CodeGen</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Common.ExceptionHandling\EdFi.Ods.Common.ExceptionHandling.csproj">
+      <Project>{933734a8-06a2-42da-a302-6ac42810adca}</Project>
+      <Name>EdFi.Ods.Common.ExceptionHandling</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Common\EdFi.Ods.Common.csproj">
+      <Project>{8D7CB143-8818-47A8-89E8-702D485E8DA0}</Project>
+      <Name>EdFi.Ods.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Entities.Common\EdFi.Ods.Entities.Common.csproj">
+      <Project>{DA329E1E-BBCA-4C8F-9B4C-313635D49BB5}</Project>
+      <Name>EdFi.Ods.Entities.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Entities.NHibernate\EdFi.Ods.Entities.NHibernate.csproj">
+      <Project>{766fc77d-7171-419b-b767-45dd737c6a41}</Project>
+      <Name>EdFi.Ods.Entities.NHibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.BulkLoad.Core\EdFi.Ods.BulkLoad.Core.csproj">
+      <Project>{1494cfa1-9ed3-471f-a77c-fbffe76f00f6}</Project>
+      <Name>EdFi.Ods.BulkLoad.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Messaging\EdFi.Ods.Messaging.csproj">
+      <Project>{71FE3AD6-74D4-457A-9786-9C8B17813300}</Project>
+      <Name>EdFi.Ods.Messaging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Pipelines\EdFi.Ods.Api.Pipelines.csproj">
+      <Project>{f5aed08a-65d5-4efe-9307-9f2b54b111b7}</Project>
+      <Name>EdFi.Ods.Api.Pipelines</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Security\EdFi.Ods.Security.csproj">
+      <Project>{21495A36-4946-4E1F-93A5-4A2AB2D5B38C}</Project>
+      <Name>EdFi.Ods.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Swagger\EdFi.Ods.Swagger.csproj">
+      <Project>{b369a75b-1dfb-4bcc-8dfa-269d562ab47e}</Project>
+      <Name>EdFi.Ods.Swagger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.XmlShredding\EdFi.Ods.XmlShredding.csproj">
+      <Project>{1a264cf0-165c-4aad-b284-af52a5ae377d}</Project>
+      <Name>EdFi.Ods.XmlShredding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Identity\EdFi.Identity.csproj">
+      <Project>{5FB903B5-16A9-402D-8C05-9583AC9E273E}</Project>
+      <Name>EdFi.Identity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.TestObjects\EdFi.TestObjects.csproj">
+      <Project>{d699fd99-71b6-47c4-8214-953f160cc338}</Project>
+      <Name>EdFi.TestObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Common\Test.Common.csproj">
+      <Project>{DF5439DF-3B96-4E6E-970A-F9AFED6BD482}</Project>
+      <Name>Test.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EdFi.Ods.XmlShredding\Xml\Interchange-EducationOrganization.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EdFi.Ods.XmlShredding\Xml\Interchange-Descriptors.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendEdOrgCalendar.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendMasterSchedule.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendStudentParent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendStandardSample.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="EdFi.Ods.CommonUtils\Resources\IAmAResource.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\TNDescriptors.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendEducationOrganizationSample.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendStaffAssociation.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\SkywardEducationOrganization.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendStudentDiscipline.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestObjects\TestXml\SkywardEducationOrgCalendar.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendStudentEnrollment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestObjects\TestXml\SkywardMasterSchedule.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendStudentProgram.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\STI.EdFiCoreClasses.InterchangeEducationOrganization.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestObjects\TestXml\STI.EdFiCoreClasses.InterchangeEducationOrgCalendar.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\Interchange-EducationOrganization.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\BugRegressionEducationOrgCalendar.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\TopLevelSectionReference.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestObjects\TestXml\GrandBendStudentAssessment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\templates\App.config">
+      <Link>ReferencedFiles\App.config</Link>
+    </None>
+    <None Include="..\templates\Common.ttinclude">
+      <Link>ReferencedFiles\Common.ttinclude</Link>
+    </None>
+    <None Include="..\templates\SQLServer.ttinclude">
+      <Link>ReferencedFiles\SQLServer.ttinclude</Link>
+    </None>
+    <None Include="..\templates\Settings.ttinclude">
+      <Link>ReferencedFiles\Settings.ttinclude</Link>
+    </None>
+    <None Include="..\libs.codegen\EdFi.Ods.CodeGen.dll">
+      <Link>ReferencedFiles\EdFi.Ods.CodeGen.dll</Link>
+    </None>
+    <None Include="..\schema.codegen\Ed-Fi-Core.xsd">
+      <Link>ReferencedFiles\schema.codegen\Ed-Fi-Core.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-AssessmentMetadata.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-AssessmentMetadata.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Descriptors.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Descriptors.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-EducationOrganization.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-EducationOrganization.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-EducationOrgCalendar.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-EducationOrgCalendar.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Finance.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Finance.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-MasterSchedule.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-MasterSchedule.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Parent.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Parent.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-PostSecondaryEvent.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-PostSecondaryEvent.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StaffAssociation.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StaffAssociation.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Standards.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Standards.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-Student.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-Student.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentAssessment.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentAssessment.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentAttendance.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentAttendance.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentCohort.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentCohort.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentDiscipline.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentDiscipline.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentEnrollment.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentEnrollment.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentGrade.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentGrade.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentGradebook.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentGradebook.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentIntervention.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentIntervention.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentProgram.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentProgram.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\Interchange-StudentTranscript.xsd">
+      <Link>ReferencedFiles\schema.codegen\Interchange-StudentTranscript.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\schema.codegen\SchemaAnnotation.xsd">
+      <Link>ReferencedFiles\schema.codegen\SchemaAnnotation.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Import Project="../T4TextTemplating.Targets" />
+  <Import Project="..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+  </Target>
+</Project>

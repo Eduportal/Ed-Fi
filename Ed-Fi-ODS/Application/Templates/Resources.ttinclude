@@ -1,0 +1,1473 @@
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Common.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.Common.dll" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Xml.XPath" #>
+<#@ import namespace="EdFi.Ods.Common.Utils.Profiles" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ import namespace="EdFi.Common.Inflection" #>
+<#@ import namespace="EdFi.Ods.CodeGen.Models.ProfileMetadata" #>
+<#@ output extension=".generated.cs" #>
+
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Net;
+using EdFi.Common.Extensions;
+using EdFi.Ods.Common;
+using EdFi.Ods.Entities.Common;
+using Newtonsoft.Json;
+<#  string projectPath = GetProjectPath();
+
+    // Load the current assembly's profiles
+    var profiles = MetadataHelper.GetProfiles(projectPath);
+    var profilesXDoc = MetadataHelper.GetProfilesXDocument(projectPath);
+
+    if (profiles.Profile.Any()) { #>
+using FluentValidation.Results;
+
+<#
+    }
+
+    var databaseSchemaProvider = 
+        new UsiToUniqueIdTransformingDatabaseSchemaProviderDecorator(
+            new EdFiExtensionsDatabaseSchemaProviderDecorator(
+                new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath())));
+
+    codeGenHelper = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+
+    MetadataValidator.ValidateProfileMetadata(codeGenHelper, profiles, MetadataHelper.GetProfilesXDocument(projectPath));
+
+    const string ResourceNamespace = "EdFi.Ods.Api.Models.Resources";
+
+    var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath()); 
+    var tables = databaseSchemaProvider.LoadTables();
+
+    var tablesByName = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
+
+    foreach (var t in tables)
+        tablesByName[t.Name] = t;
+
+    // Determine what tables in the database have not been explicitly handled
+    var unhandledTableNames = 
+        tablesByName.Keys
+        .Except(domainMetadataDoc.Descendants("Entity").Select(x => x.Attribute("table").Value))
+        .Where(x => !codeGenHelper.IsExcluded(x) && !x.EndsWith("Extension")) // Extension tables don't need to be explicitly handled, they are joined by convention
+        .ToList();
+
+    // Provide explicit message related to any unhandled tables
+    if (unhandledTableNames.Any())
+        throw new Exception(string.Format("The following tables have not been explicitly handled:\r\n{0}", string.Join("\r\n\t", unhandledTableNames)));
+
+    var aggregatesElts = domainMetadataDoc.Descendants("Aggregate");
+
+    List<string> propertiesWithCollidingJsonNames = codeGenHelper.GetCollidingPropertyNames(tablesByName, aggregatesElts);
+
+    if (!projectPath.Contains("Profiles"))
+    {
+        GenerateResources(
+            null, 
+            aggregatesElts, 
+            ResourceNamespace, 
+            tablesByName, 
+            propertiesWithCollidingJsonNames,
+            //tables,
+            codeGenHelper,
+            databaseSchemaProvider);
+    }
+
+    foreach (var profile in profiles.Profile) {
+        var profileContexts = new List<ProfileContext>();
+        
+        var profileXElt = GetProfileXElement(profilesXDoc, profile.name);
+
+        if ((profile.Resource ?? new Resource[0]).Any(x => x.ReadContentType != null))
+            profileContexts.Add(new ProfileContext { Profile = profile, ProfileXElement = profileXElt, ContentTypeUsage = ContentTypeUsage.Readable });
+
+        if ((profile.Resource ?? new Resource[0]).Any(x => x.WriteContentType != null))
+            profileContexts.Add(new ProfileContext { Profile = profile, ProfileXElement = profileXElt, ContentTypeUsage = ContentTypeUsage.Writable });
+
+        foreach (var profileContext in profileContexts) {
+            GenerateResources(
+                profileContext, 
+                aggregatesElts, 
+                ResourceNamespace,
+                tablesByName,
+                propertiesWithCollidingJsonNames,
+                //tables,
+                codeGenHelper,
+                databaseSchemaProvider);
+        }
+    }
+#>
+<#+
+
+// TODO: Move to CodeGenHelper, and remove from Resources.ttinclude and Requests.ttinclude
+XElement GetProfileXElement(XDocument doc, string profileName)
+{
+        try 
+        {
+            var profileXElt = doc
+                .Descendants("Profile")
+                .Where(x => x.Attribute("name").Value == profileName)
+                .Single();
+
+            return profileXElt;
+        }
+        catch (InvalidOperationException)
+        {
+            throw new Exception(string.Format(
+                "Unable to find exactly one profile named '{0}'.", 
+                profileName));
+        }
+}
+
+void GenerateResources(ProfileContext profileContext, IEnumerable<XElement> aggregatesElts, 
+    string ResourceNamespace, Dictionary<string, Table> tablesByName, 
+    List<string> propertiesWithCollidingJsonNames,
+    ICodeGenHelper coreCodeGenHelper,
+    IDatabaseSchemaProvider databaseSchemaProvider)
+{
+    var codeGenHelper = profileContext == null 
+        ? coreCodeGenHelper 
+        : new ProfilesCodeGenHelper(profileContext, coreCodeGenHelper);
+
+    string profileNamespaceSegment =  
+        profileContext == null 
+            ? string.Empty 
+            : "." + profileContext.Profile.name.Replace("-", "_") + "_" + profileContext.ContentTypeUsage;
+
+    bool aggregateHasFilteredCollections = profileContext != null 
+            && profileContext.ProfileXElement.XPathSelectElements("//Collection/Filter").Any();
+
+    List<Table> tables = databaseSchemaProvider.LoadTables();
+
+    foreach (var aggregateElt in aggregatesElts)
+    { 
+        string aggregateRootName = aggregateElt.Attribute("root").Value;
+
+        if (codeGenHelper.IsExcluded(aggregateRootName))
+            continue;
+
+        if (!codeGenHelper.ShouldGenerateAggregate(aggregateRootName, null)) // TODO: GKM - Is context needed here, for the reference?
+            continue;
+
+        var contexts = codeGenHelper.GetGenerationContexts(aggregateRootName);
+
+        if (contexts == null || contexts.Count == 0)
+            contexts = new List<string>{ null };
+
+        foreach (string context in contexts)
+        {
+            string contextNamespaceSegment = string.IsNullOrEmpty(context) ? string.Empty : "." + context;
+
+        List<string> aggregateTableNames = 
+            (from e in aggregateElt.Descendants("Entity")
+            select e.Attribute("table").Value)
+            .ToList();
+
+        Table tbl = null, baseTbl = null;
+#>
+// Aggregate: <#= aggregateRootName #>
+
+namespace <#= ResourceNamespace #>.<#= aggregateRootName #><#= profileNamespaceSegment #><#= contextNamespaceSegment #>
+{ 
+<#+
+        tbl = codeGenHelper.GetTable(tablesByName, aggregateRootName);
+
+        string profileContextualTableNamespaceSegment =
+            profileContext == null
+                ? string.Empty
+                : "." + tbl.Name;
+
+        if (!codeGenHelper.IsLookupTable(tbl)) {
+#>
+    /// <summary>
+    /// Represents a reference to the <#= tbl.Name #> resource.
+    /// </summary>
+    [DataContract]
+    public class <#= tbl.Name #>Reference
+    {
+<#+         foreach (var pkCol in tbl.PKs)
+            { 
+                if (!codeGenHelper.IsLookupTable(tbl) && !codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) { #>
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames) #>"), NaturalKeyMember]
+        public <#= pkCol.SysType #> <#= pkCol.CleanName #> { get; set; }
+
+<#+             } else { #>
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames) #>"), NaturalKeyMember]
+        public string <#= TrimSuffix(pkCol.CleanName, "Id") #> { get; set; }
+
+<#+             } #>
+<#+         }
+
+            RenderLinkFor(tablesByName, tbl, propertiesWithCollidingJsonNames);
+ #>
+
+    } // Aggregate reference
+
+<#+     } #>
+<#+
+        foreach (string aggregateTableName in aggregateTableNames)
+        {
+            if (!tablesByName.TryGetValue(aggregateTableName, out tbl)) { #>
+// WARNING: Unable to find table '<#= aggregateTableName #>'
+<#+               continue;
+            } 
+
+            if (codeGenHelper.IsExcluded(tbl.Name))
+                continue;
+
+            if (!codeGenHelper.ShouldGenerateEntity(aggregateRootName, tbl.Name, context))
+                continue;
+
+            var navigableParentFKs = codeGenHelper.GetNavigableParentRelationships(tbl, aggregateTableNames);
+            var navigableChildFKs = tbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable)).ToList();
+            var navigableOneToOneParentFKs = tbl.GetNavigableOneToOneParentTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+            var navigableOneToOneChildFKs = tbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+            
+            var nonNavigableParentFKs = 
+                (from fkt in codeGenHelper.GetNonNavigableParentRelationships(tbl, aggregateTableNames)
+                let nonNavigableOtherTable = tablesByName[fkt.OtherTable]
+                    // Filter out one-to-one relationships (no references should be generated for those)
+                where !(fkt.ThisColumns.All(fkcol => tbl.PrimaryKeyColumns.Any(c => c.Name == fkcol))
+                        && nonNavigableOtherTable.PrimaryKeyColumns.Count == tbl.PrimaryKeyColumns.Count)
+                select fkt)
+                .ToList();
+
+            // Get a list of properties not to render directly
+            var propertiesInReferences = nonNavigableParentFKs
+                .Where(fkt => !codeGenHelper.IsDirectLookupReference(tablesByName, fkt)) // Don't include keys that are direct references to lookup tables
+                .SelectMany(x => x.ThisColumns)
+                .ToList();
+
+            // For listing out relationships
+            //if (nonNavigableParentFKs.Any()) 
+            //{ 
+                //foreach (var nonNavigableFK in nonNavigableParentFKs)
+                //{
+                    //var nonNavigableOtherTable = tablesByName[nonNavigableFK.OtherTable];
+
+                    //// Skip one-to-one relationships.
+                    ////if (nonNavigableFK.ThisColumns.All(fkcol => tbl.PrimaryKeyColumns.Any(c => c.Name == fkcol))
+                    ////    && nonNavigableOtherTable.PrimaryKeyColumns.Count == tbl.PrimaryKeyColumns.Count)
+                    ////    continue;
+
+                    ////File.AppendAllText(@"D:\temp\log.txt", string.Format("{0} ({3}{1} -> {2})\r\n", aggregateRootName, aggregateTableName, nonNavigableFK.OtherTable, (IsTypeTable(nonNavigableOtherTable) || IsDescriptorTable(nonNavigableOtherTable)) ? string.Empty : "**** "));    
+                    //File.AppendAllText(@"D:\temp\log.txt", string.Format("{3}\t{0}\t{1}\t{2}\r\n", aggregateRootName, aggregateTableName, nonNavigableFK.OtherTable, (IsTypeTable(nonNavigableOtherTable) || IsDescriptorTable(nonNavigableOtherTable)) ? string.Empty : "Yes"));    
+                //}
+            //}
+
+                bool isRootTable = tbl.Name.Equals(aggregateRootName, StringComparison.InvariantCultureIgnoreCase); 
+
+                bool isAbstract = aggregateElt.Descendants("Entity")
+                                    .Where(e => e.Attribute("table").Value == tbl.Name 
+                                            && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                                   .Any();
+
+                if (isAbstract)
+                    continue;
+
+                var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                                    .Where(e => e.Attribute("table").Value == tbl.Name)
+                                    .Select(e => e.Attribute("isA"))
+                                    .SingleOrDefault();
+
+                string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+
+                baseTbl = tables.SingleOrDefault(t => t.Name.Equals(baseTableName, StringComparison.InvariantCultureIgnoreCase));
+
+                bool isDerived = baseTableName != null;
+
+                string baseAggregateRootName =
+                        (from a in aggregatesElts
+                        from e in a.Descendants("Entity")
+                        where e.Attribute("table").Value == baseTableName
+                        select a.Attribute("root").Value)
+                       .SingleOrDefault();
+
+                List<string> baseAggregateTableNames = 
+                    (from a in aggregatesElts
+                    where a.Attribute("root").Value == baseAggregateRootName
+                    from e in a.Descendants("Entity")
+                    select e.Attribute("table").Value)
+                    .ToList();
+                
+                var baseNavigableChildFKs = baseTbl == null ? 
+                    new List<FKTable>()
+                    : baseTbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(baseAggregateTableNames, ct.OtherTable)).ToList();
+
+                var baseNonNavigableParentFKs = baseTbl == null ?
+                    new List<FKTable>()
+                    : codeGenHelper.GetNonNavigableParentRelationships(baseTbl, baseAggregateTableNames).ToList();
+                nonNavigableParentFKs = baseNonNavigableParentFKs.Union(nonNavigableParentFKs).ToList();
+                var basePropertiesInReferences = baseNonNavigableParentFKs
+                    .Where(fkt => !codeGenHelper.IsDirectLookupReference(tablesByName, fkt))
+                    // Don't include keys that are direct references to lookup tables
+                    .SelectMany(x => x.ThisColumns);
+                propertiesInReferences = basePropertiesInReferences.Union(propertiesInReferences).ToList();
+
+                if (!isRootTable && navigableParentFKs.Count() != 1) { #>
+// WARNING: Unexpected parent FK count! <#= string.Join("|", navigableParentFKs.Select(x => x.OtherTable)) 
+#>
+<#+
+                }
+
+                FKTable parentFK = isRootTable ? null : navigableParentFKs.Single(); 
+    
+                var customReferenceClassByTableName = new Dictionary<string, string>();
+
+                // Only look for need for custom references in non-root tables
+                if (parentFK != null)
+                {
+                    // Process external references to see if we need to generate any custom variants of them
+                    foreach (var fkt in nonNavigableParentFKs.Where(x => codeGenHelper.ShouldGenerateReference(aggregateRootName, tbl.Name, x, context)))
+                    {
+                        // Don't generate lookups for types and descriptors
+                        if (codeGenHelper.IsLookupTable(tablesByName[fkt.OtherTable]))
+                            continue;
+
+                        var externallyContributedFKColumnNamePairings = 
+                            (from c in fkt.ThisColumns
+                            where !parentFK.ThisColumns.Contains(c)
+                            select new { ThisColumn = c, OtherColumn = GetOtherFKColumn(fkt, c) })
+                            .ToList();
+
+                        // Do we need to generate a custom reference class because some columns already have values set within the current aggregate
+                        if (externallyContributedFKColumnNamePairings.Count < fkt.ThisColumns.Count)
+                        {
+                            // There is key unification happening here. Need to generate a custom reference class
+                            string referenceClassName = tbl.Name + "To" + fkt.OtherTable + "Reference";
+                            
+                            // Make note of the custom class name to use when generating the usage of the references below
+                            customReferenceClassByTableName[fkt.OtherTable] = referenceClassName;
+#>
+    /// <summary>
+    /// Represents a reference from the <#= fkt.ThisTable #> entity to the <#= fkt.OtherTable #> resource.
+    /// </summary>
+    [DataContract]
+    public class <#= referenceClassName #>
+    {
+        private I<#= tbl.Name #> backReference;
+
+        // Parameterless constructor for deserialization
+        public <#= referenceClassName #>() { }
+
+        // Constructor for inline initialization in parent
+        public <#= referenceClassName #>(I<#= tbl.Name #> backReference)
+        {
+            this.backReference = backReference;
+        }
+
+        // Expose back reference internally for access after JSON deserialization to enable link generation
+        internal I<#= tbl.Name #> BackReference
+        {
+            get { return backReference; }
+            set { backReference = value; }
+        }
+
+<#+
+                            // Generate properties just for columns introduced by the current FK
+                            foreach (var fkColumnNamePairing in externallyContributedFKColumnNamePairings)
+                            {
+                                //var thisColumn = tbl.Columns.Single(c => c.Name == fkColumnNamePairing.ThisColumn);
+                                var otherTable = tablesByName[fkt.OtherTable];
+                                var otherColumn = otherTable.Columns.Single(c => c.Name == fkColumnNamePairing.OtherColumn);
+
+                                if (!codeGenHelper.IsLookupTable(tbl) && !codeGenHelper.IsLookupTypeColumn(tablesByName, otherTable, otherColumn.Name)) { #>
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(otherColumn.CleanName, otherTable.Name, propertiesWithCollidingJsonNames) #>"), NaturalKeyMember]
+        public <#= otherColumn.SysType #> <#= otherColumn.CleanName #> { get; set; }
+
+<#+                             } else { #>
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(otherColumn.CleanName, "Id"), otherTable.Name, propertiesWithCollidingJsonNames) #>"), NaturalKeyMember]
+        public string <#= TrimSuffix(otherColumn.CleanName, "Id") #> { get; set; }
+
+<#+                             } 
+                            }
+
+                            RenderLinkFor(tablesByName, tablesByName[fkt.OtherTable], propertiesWithCollidingJsonNames,
+                                fkt, externallyContributedFKColumnNamePairings.ToDictionary(x => x.OtherColumn, x => x.ThisColumn),
+                                aggregateTableNames);
+#>
+    }
+
+<#+                     }
+                    }
+                }
+#>
+    /// <summary>
+    /// A class which represents the <#= tbl.Schema #>.<#= tbl.Name #> table of the <#= aggregateRootName #> aggregate in the <#= codeGenHelper.DatabaseName#> Database.
+    /// </summary>
+    [Serializable, DataContract]
+    public <#= isAbstract ? "abstract " : string.Empty #>class <#= tbl.Name #> : I<#= tbl.Name #><#= isDerived ? ", EdFi.Ods.Entities.Common.I" + baseTbl.Name : string.Empty#><#= isRootTable ? ", IHasETag" : string.Empty #>, I<#= tbl.Name #>SynchronizationSourceSupport
+    {
+        private bool _SuspendReferenceAssignmentCheck = false;
+        public void SuspendReferenceAssignmentCheck() { _SuspendReferenceAssignmentCheck = true; }
+<#+
+            var propertyNameAndSourceSupport = new List<Tuple<string, bool>>();
+            var collectionFilters = new List<CollectionFilter>();
+
+            var onDeserializedItems = new List<string>();
+
+                if (navigableChildFKs.Any() || baseNavigableChildFKs.Any()) { #>
+        // =============================================================
+        //                         Constructor
+        // -------------------------------------------------------------
+        public <#= tbl.Name #>()
+        { 
+            <#+
+                    foreach (var fkt in navigableChildFKs.Where(x => !codeGenHelper.IsExcluded(x.OtherTable))) 
+                    { 
+                        if (!codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, fkt.OtherQueryable, context))
+                        {
+                            propertyNameAndSourceSupport.Add(Tuple.Create(fkt.OtherQueryable, false));
+                            continue;
+                        }
+
+                        propertyNameAndSourceSupport.Add(Tuple.Create(fkt.OtherQueryable, true));
+#>
+<#= fkt.OtherQueryable #> = new List<<#= fkt.OtherClass #>>();
+            <#+     } 
+#>
+<#+                 if (isDerived) { #>
+
+            // Inherited lists
+<#+                     foreach (var fkt in baseNavigableChildFKs.Where(x => !codeGenHelper.IsExcluded(x.OtherTable))) 
+                        {
+                            if (!codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, fkt.OtherQueryable, context)) 
+                            {
+                                propertyNameAndSourceSupport.Add(Tuple.Create(fkt.OtherQueryable, false));
+                                continue;
+                            }
+
+                            propertyNameAndSourceSupport.Add(Tuple.Create(fkt.OtherQueryable, true));
+#>
+            <#= fkt.OtherQueryable #> = new List<<#= baseAggregateRootName #><#= profileNamespaceSegment #><#= profileContextualTableNamespaceSegment #>.<#= fkt.OtherClass #>>();
+<#+                     }
+                    } #>
+
+        }
+        // -------------------------------------------------------------
+
+<#+            } #>        
+<#+             if (isRootTable) { #>
+        /// <summary>
+        /// The unique identifier for the <#= tbl.Name #> resource.
+        /// </summary>
+        [DataMember(Name="id")]
+        [JsonConverter(typeof(EdFi.Ods.Common.GuidConverter))]
+        public Guid Id { get; set; }
+<#+             } #>                
+<#+             var referencesToGenerate = nonNavigableParentFKs
+                    .Where(fkt => !codeGenHelper.IsDirectLookupReference(tablesByName, fkt) 
+                                  && codeGenHelper.ShouldGenerateReference(aggregateRootName, tbl.Name, fkt, context));
+
+                if (referencesToGenerate.Any()) { #>
+        // =============================================================
+        //                         References
+        // -------------------------------------------------------------
+<#+
+                    foreach (var reference in referencesToGenerate)
+                    {
+                        string referenceTypeName;
+                        bool isCustomReference = true;
+
+                        if (!customReferenceClassByTableName.TryGetValue(reference.OtherTable, out referenceTypeName))
+                        {
+                            referenceTypeName = (aggregateTableNames.Contains(reference.OtherTable) ? string.Empty : reference.OtherTable + ".") + reference.OtherTable + "Reference";
+                            isCustomReference = false;
+                        }
+
+                        string referenceFieldName = "_" + codeGenHelper.CamelCase(codeGenHelper.GetRoleName(reference) + reference.OtherTable) + "Reference";
+                        string referencePropertyName = codeGenHelper.GetRoleName(reference) + reference.OtherTable + "Reference";
+                        var referenceImplicitName = string.Format("Implicit{0}", referencePropertyName);
+                        var referenceExplicitlyAssignedFlag = string.Format("{0}ExplicitlyAssigned", referenceFieldName);
+#>
+        private bool <#= referenceExplicitlyAssignedFlag #>;
+        private <#= referenceTypeName #> <#= referenceFieldName #>;
+        private <#= referenceTypeName #> <#=referenceImplicitName#>
+        {
+            get
+            {
+                // if the Reference is null, it is instantiated unless it has been explicitly assigned to null
+                if (<#= referenceFieldName #> == null && !<#= referenceExplicitlyAssignedFlag #>)
+                    <#= referenceFieldName #> = new <#= referenceTypeName #>(<#=isCustomReference ? "this" : "" #>);
+
+                return <#= referenceFieldName #>;
+            }
+        }
+
+        [DataMember(Name="<#= codeGenHelper.CamelCase(referencePropertyName) #>")]<#= reference.ThisColumns.All(n => tbl.PrimaryKeyColumns.Any(pkc => pkc.Name == n)) ? "[NaturalKeyMember]" : string.Empty #>
+        public <#= referenceTypeName #> <#= referencePropertyName #>
+        {
+            get 
+            {
+                // Only return the reference if it's non-null, and all its properties have non-default values assigned 
+                if (<#= referenceImplicitName #> != null
+                    && (<#= referenceFieldName #>ExplicitlyAssigned || _SuspendReferenceAssignmentCheck || <#= referenceImplicitName #>.IsReferenceFullyDefined()))
+                    return <#= referenceImplicitName #>;
+
+                return null; 
+            }
+            set 
+            { 
+                <#=referenceFieldName #>ExplicitlyAssigned = true;
+                <#= referenceFieldName #> = value; 
+            }
+        }
+<#+                 } #>
+<#+                 
+                    // Only add deserialization logic for custom reference classes, which depend on the back reference in order to generate the link
+                    if (referencesToGenerate.Any(r => customReferenceClassByTableName.ContainsKey(r.OtherTable))) { 
+                      foreach (var reference in referencesToGenerate) 
+                        {
+                            // Only generate deserialization logic for custom reference classes
+                            if (!customReferenceClassByTableName.ContainsKey(reference.OtherTable))
+                                continue;
+
+onDeserializedItems.Add(string.Format("if (_{0}Reference != null)", codeGenHelper.CamelCase(codeGenHelper.GetRoleName(reference) + reference.OtherTable)));
+onDeserializedItems.Add(string.Format("    _{0}Reference.BackReference = this;", codeGenHelper.CamelCase(codeGenHelper.GetRoleName(reference) + reference.OtherTable)));
+#>
+
+<#+                     } 
+                  } #>
+        // -------------------------------------------------------------
+<#+             } #>
+
+        // =============================================================
+        //                         Primary Key
+        // -------------------------------------------------------------
+<#+
+                // If we have a parent reference, and it IS part of the primary key
+                if (parentFK != null && codeGenHelper.IsFKPartOfPK(tbl, parentFK))
+                { #>
+        private I<#= parentFK.OtherClass #> _<#= codeGenHelper.CamelCase(parentFK.OtherClass) #>;
+
+        [IgnoreDataMember] // Don't modify back references during acceptance testing
+        I<#= parentFK.OtherClass #> I<#= tbl.Name #>.<#= parentFK.OtherClass #>
+        {
+            get { return _<#= codeGenHelper.CamelCase(parentFK.OtherClass) #>; }
+            set { _<#= codeGenHelper.CamelCase(parentFK.OtherClass) #> = value; }
+        }
+
+        internal I<#= parentFK.OtherClass #> <#= parentFK.OtherClass #>
+        {
+            set { _<#= codeGenHelper.CamelCase(parentFK.OtherClass) #> = value; }
+        }
+<#+               }
+
+                foreach (var pkCol in tbl.PKs.Where(x => parentFK == null || !parentFK.ThisColumns.Contains(x.Name)))
+                {
+                    RenderProperty(codeGenHelper, tablesByName, aggregateRootName, tbl, baseTbl, pkCol, propertiesInReferences, nonNavigableParentFKs, propertiesWithCollidingJsonNames, context);
+                }
+
+                if (isDerived) { #>
+<#+                 foreach (var pkColumnRoleName in GetRoleNamedPKColumns(tbl, baseTbl)) { #>
+        int I<#= baseTbl.Name #>.<#= pkColumnRoleName.BaseColumnName #>
+        {
+            get { return <#= pkColumnRoleName.DerivedColumnName #>; }
+            set { <#= pkColumnRoleName.DerivedColumnName #> = value; }
+        }
+<#+                 } #>
+
+<#+             } #>
+        // -------------------------------------------------------------
+
+<#+     if (isDerived) { #>
+        // =============================================================
+        //                      Inherited Properties
+        // -------------------------------------------------------------
+<#+
+                foreach (var col in baseTbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) // Explicitly exclude the "DateTIme" columns property here
+                {
+                    if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, col.Name, context)) {
+                        string generatedPropertyName = RenderProperty(codeGenHelper, tablesByName, aggregateRootName, baseTbl, null, col, propertiesInReferences, nonNavigableParentFKs, propertiesWithCollidingJsonNames, context);
+                        propertyNameAndSourceSupport.Add(Tuple.Create(generatedPropertyName, true));
+                    }
+                    else {
+                        string generatedPropertyName = RenderNullPropertyUsingExplicitImplementation(tablesByName, baseTbl, null, col, propertiesInReferences, nonNavigableParentFKs, propertiesWithCollidingJsonNames);
+                        propertyNameAndSourceSupport.Add(Tuple.Create(generatedPropertyName, false));
+                    }
+                } #>
+        // -------------------------------------------------------------
+
+<#+     } #>
+
+        // =============================================================
+        //                          Properties
+        // -------------------------------------------------------------
+<#+
+                foreach (var col in tbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) // Explicitly exclude the "DateTIme" columns property here
+                {
+                    if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, col.Name, context)) {
+                        string generatedPropertyName;
+                        
+                        // This special handling exists because of the renaming of USI columns to UniqueId.
+                        // If the "non-PK" also exists in the PK (e.g. StudentUniqueId), don't actually generate another one here.
+                        // The PK version takes precedence.  However, we still need to indicate whether or not the property is supported as a synchronization source.
+                        if (tbl.PKs.Select(pk => pk.Name).Contains(col.Name))
+                            generatedPropertyName = col.Name;
+                        else
+                            generatedPropertyName = RenderProperty(codeGenHelper, tablesByName, aggregateRootName, tbl, baseTbl, col, propertiesInReferences, nonNavigableParentFKs, propertiesWithCollidingJsonNames, context);
+
+                        propertyNameAndSourceSupport.Add(Tuple.Create(generatedPropertyName, true));
+                    }
+                    else {
+                        string generatedPropertyName;
+
+                        // This special handling exists because of the renaming of USI columns to UniqueId.
+                        // If the "non-PK" also exists in the PK (e.g. StudentUniqueId), don't actually generate another one here.
+                        // The PK version takes precedence.  However, we still need to indicate whether or not the property is supported as a synchronization source.
+                        if (tbl.PKs.Select(pk => pk.Name).Contains(col.Name))
+                            generatedPropertyName = col.Name;
+                        else
+                            // Not directly supported, so generate a "null object" type explicit implementation
+                            generatedPropertyName = RenderNullPropertyUsingExplicitImplementation(tablesByName, tbl, baseTbl, col, propertiesInReferences, nonNavigableParentFKs, propertiesWithCollidingJsonNames);
+
+                        propertyNameAndSourceSupport.Add(Tuple.Create(generatedPropertyName, false));
+                    }
+                } #>
+        // -------------------------------------------------------------
+<#+     if (navigableOneToOneChildFKs.Any() || navigableOneToOneParentFKs.Any()) { #>
+
+        // =============================================================
+        //                     One-to-one relationships
+        // -------------------------------------------------------------
+<#+         foreach (var oneToOneFK in navigableOneToOneChildFKs) { 
+                if (codeGenHelper.ShouldGenerateReference(aggregateRootName, tbl.Name, oneToOneFK, context)) { #>
+        /// <summary>
+        /// <#= codeGenHelper.ApplyPropertyNameConventions(oneToOneFK.OtherClass, tbl.Name, propertiesWithCollidingJsonNames) #>
+        /// </summary> 
+        [DataMember(Name = "<#= codeGenHelper.ApplyPropertyNameConventions(oneToOneFK.OtherClass, tbl.Name, propertiesWithCollidingJsonNames) #>")]
+        public <#= oneToOneFK.OtherClass #> <#= oneToOneFK.OtherClass #> { get; set; }
+
+        I<#= oneToOneFK.OtherClass #> I<#= tbl.Name #>.<#= oneToOneFK.OtherClass #>
+        {
+            get { return <#= oneToOneFK.OtherClass #>; }
+            set { <#= oneToOneFK.OtherClass #> = (<#= oneToOneFK.OtherClass #>) value; }
+        }
+<#+                 propertyNameAndSourceSupport.Add(Tuple.Create(oneToOneFK.OtherClass, true));
+                }
+                else { #>
+
+        I<#= oneToOneFK.OtherClass #> I<#= tbl.Name #>.<#= oneToOneFK.OtherClass #>
+        {
+            get { return null; }
+            set { }
+        }
+<#+
+                    propertyNameAndSourceSupport.Add(Tuple.Create(oneToOneFK.OtherClass, false));
+                }
+            } #>
+
+        // -------------------------------------------------------------
+<#+     } #>
+
+<#+     if (isDerived) { #>
+        // =============================================================
+        //                     Inherited Collections
+        // -------------------------------------------------------------
+<#+
+                foreach (var childTable in baseNavigableChildFKs.Where(ct => 
+                    codeGenHelper.IsInAggregate(baseAggregateTableNames, ct.OtherTable)
+                    && !codeGenHelper.IsExcluded(ct.OtherTable))) 
+                { 
+                    if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, childTable.OtherQueryable, context))
+                    {
+                        var collectionFilter = GetCollectionFilter(profileContext, aggregateRootName, parentFK, childTable.OtherQueryable, childTable.OtherClass);
+                        collectionFilters.Add(collectionFilter);
+
+ #>
+        private IList<<#= baseAggregateRootName #><#= profileNamespaceSegment #><#= profileContextualTableNamespaceSegment #>.<#= childTable.OtherTable #>> _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>;
+        private IList<I<#= childTable.OtherTable #>> _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant;
+
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(childTable.OtherQueryable, baseTbl.Name, propertiesWithCollidingJsonNames) #>")]
+        public IList<<#= baseAggregateRootName #><#= profileNamespaceSegment #><#= profileContextualTableNamespaceSegment #>.<#= childTable.OtherTable #>> <#= childTable.OtherQueryable #> 
+        { 
+            get { return _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>; }
+            set 
+            {
+                _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #> = value;
+<#+                     if (collectionFilter.FilterPropertyName == null) 
+                        { #>
+                _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant = new CovariantIListAdapter<I<#= childTable.OtherTable #>, <#= baseAggregateRootName #><#= profileNamespaceSegment #><#= profileContextualTableNamespaceSegment #>.<#= childTable.OtherTable #>>(value);
+<#+                     } else { #>
+
+                var synchSourceSupport = (I<#= tbl.Name #>SynchronizationSourceSupport) this;
+
+                var covariantList = new CovariantIListAdapterWithAddNotifications<I<#= childTable.OtherTable #>, <#= baseAggregateRootName #><#= profileNamespaceSegment #><#= profileContextualTableNamespaceSegment #>.<#= childTable.OtherTable #>>(value);
+                covariantList.AddingItem += (s, e) =>
+                {
+                    var item = (I<#= childTable.OtherTable #>) e.Item;
+
+                    if (!synchSourceSupport.Is<#= childTable.OtherTable #>Included(item))
+                        e.Cancel = true;
+                };
+
+                _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant = covariantList;
+<#+                     } #>
+            }
+        }
+
+        // Covariant version, visible only on the interface
+        IList<I<#= childTable.OtherTable #>> I<#= baseTbl.Name #>.<#= childTable.OtherQueryable #>
+        {
+            get { return _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant; }
+            set { <#= childTable.OtherQueryable #> = new List<<#= baseAggregateRootName #><#= profileNamespaceSegment #><#= profileContextualTableNamespaceSegment #>.<#= childTable.OtherTable #>>(value.Cast<<#= baseAggregateRootName #><#= profileNamespaceSegment #><#= profileContextualTableNamespaceSegment #>.<#= childTable.OtherTable #>>()); }
+        }
+<#+
+                        onDeserializedItems.Add(string.Format("// _{0}", codeGenHelper.CamelCase(childTable.OtherQueryable)));
+                    } 
+                    else 
+                    {
+                        collectionFilters.Add(new CollectionFilter { ClassName = childTable.OtherTable });
+ #>
+        // Not supported by this model, so there's "null object pattern" style implementation
+        IList<I<#= childTable.OtherTable #>> I<#= baseTbl.Name #>.<#= childTable.OtherQueryable #>
+        {
+            get { return null; }
+            set { }
+        }
+
+<#+                 }
+                } #>
+        // -------------------------------------------------------------
+<#+     } #>
+
+        // =============================================================
+        //                          Collections
+        // -------------------------------------------------------------
+
+<#+
+                foreach (var childTable in navigableChildFKs.Where(ct => 
+                    codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable)
+                    && !codeGenHelper.IsExcluded(ct.OtherTable))) 
+                { 
+                    if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, childTable.OtherQueryable, context)) 
+                    { 
+                        var collectionFilter = GetCollectionFilter(profileContext, aggregateRootName, parentFK, childTable.OtherQueryable, childTable.OtherClass);
+                        collectionFilters.Add(collectionFilter);
+#>
+        private IList<<#= childTable.OtherTable #>> _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>;
+        private IList<I<#= childTable.OtherTable #>> _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant;
+
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(childTable.OtherQueryable, tbl.Name, propertiesWithCollidingJsonNames) #>")]
+        public IList<<#= childTable.OtherTable #>> <#= childTable.OtherQueryable #> 
+        { 
+            get { return _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>; }
+            set 
+            {
+                // Initialize primary list with notifying adapter immediately wired up so existing items are associated with the parent
+                var list = new ListAdapterWithAddNotifications<<#= childTable.OtherTable #>>(value,
+                    (s, e) => ((I<#= childTable.OtherTable #>)e.Item).<#= tbl.Name #> = this<#= collectionFilter.FilterPropertyName == null ? ");" : ","  #>
+<#+                     
+                        if (collectionFilter.FilterPropertyName != null) 
+                        { #>
+                    (s, e) => ((I<#= tbl.Name #>SynchronizationSourceSupport) this)
+                                    .Is<#= childTable.OtherClass #>Included((I<#= childTable.OtherClass #>) e.Item));
+<#+                     } #>
+                _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #> = list;
+
+                // Initialize covariant list with notifying adapter with deferred wireup so only new items are processed (optimization)
+                var covariantList = new CovariantIListAdapterWithAddNotifications<I<#= childTable.OtherTable #>, <#= childTable.OtherTable #>>(value);
+                covariantList.ItemAdded += (s, e) => ((I<#= childTable.OtherTable #>)e.Item).<#= tbl.Name #> = this;
+<#+                     if (collectionFilter.FilterPropertyName != null) 
+                        { #>
+
+                var synchSourceSupport = (I<#= tbl.Name #>SynchronizationSourceSupport) this;
+
+                covariantList.AddingItem += (s, e) =>
+                {
+                    var item = (I<#= childTable.OtherTable #>) e.Item;
+
+                    if (!synchSourceSupport.Is<#= childTable.OtherTable #>Included(item))
+                        e.Cancel = true;
+                };
+<#+                     } #>
+                _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant = covariantList;
+            }
+        }
+
+        // Covariant version, visible only on the interface
+        IList<I<#= childTable.OtherTable #>> I<#= tbl.Name #>.<#= childTable.OtherQueryable #>
+        {
+            get { return _<#= codeGenHelper.CamelCase(childTable.OtherQueryable) #>Covariant; }
+            set { <#= childTable.OtherQueryable #> = new List<<#= childTable.OtherTable #>>(value.Cast<<#= childTable.OtherTable #>>()); }
+        }
+
+<#+
+                        onDeserializedItems.Add(string.Format("if (_{0} != null) foreach (var item in _{0})", codeGenHelper.CamelCase(childTable.OtherQueryable)));
+                        onDeserializedItems.Add(string.Format("{{"));
+                        onDeserializedItems.Add(string.Format("    item.{0} = this;", tbl.Name));
+                        onDeserializedItems.Add(string.Format("}}"));
+                        onDeserializedItems.Add(string.Format(""));
+                    } 
+                    else 
+                    {
+                        collectionFilters.Add(new CollectionFilter { ClassName = childTable.OtherTable });
+ #>
+        // Not supported by this model, so there's "null object pattern" style implementation
+        IList<I<#= childTable.OtherTable #>> I<#= tbl.Name #>.<#= childTable.OtherQueryable #>
+        {
+            // get { return NullList<I<#= childTable.OtherTable #>>.Instance; }
+            get { return null; }
+            set { }
+        }
+
+<#+                 }
+                } #>
+
+        // -------------------------------------------------------------
+
+<#+             if (isRootTable) { #>
+        // =============================================================
+        //                         Versioning
+        // -------------------------------------------------------------
+
+        [DataMember(Name="_etag")]
+        public virtual string ETag { get; set; }
+
+        // -------------------------------------------------------------
+<#+             } #>
+
+<#+ if (onDeserializedItems.Any())
+    {#>
+        [OnDeserialized]
+        internal void OnDeserialized(StreamingContext context)
+        {
+            // Reconnect external inbound references on deserialization
+<#+     foreach (var line in onDeserializedItems)
+        {#>
+            <#= line #>
+<#+     }#>
+        }
+<#+ }#>
+
+        bool ISynchronizable.Synchronize(object target)
+        {
+            return this.SynchronizeTo((I<#= tbl.Name #>)target);
+        }
+
+        void IMappable.Map(object target)
+        {
+            this.MapTo((I<#= tbl.Name #>) target, null);
+        }
+
+        // =============================================================
+        //                Synchronization Source Support
+        // -------------------------------------------------------------
+<#+     if (propertyNameAndSourceSupport.Any())
+        {
+            int horizontalSpaceAllocation = propertyNameAndSourceSupport.Max(x => x.Item1.Length) + "IsSupported".Length + 1; // Horizontal alignment for readability
+            foreach (var nameAndSupport in propertyNameAndSourceSupport) { #>
+        bool I<#= tbl.Name #>SynchronizationSourceSupport.<#= ("Is" + nameAndSupport.Item1 + "Supported").PadRight(horizontalSpaceAllocation) #> { get { return <#= nameAndSupport.Item2.ToString().ToLower() #>; } set { } }
+<#+         }
+        }
+
+        if (collectionFilters.Any()) { #>
+
+        // Child collection item filter delegates
+<#+         foreach (var collectionFilter in collectionFilters) { #>
+        Func<I<#= collectionFilter.ClassName #>, bool> I<#= tbl.Name #>SynchronizationSourceSupport.Is<#= collectionFilter.ClassName #>Included
+        { 
+<#+             if (collectionFilter.FilterPropertyName == null) { #>
+            get { return null; }
+            set { }
+<#+             } 
+                else 
+                {
+                    string filterPropertyName = collectionFilter.FilterPropertyName;
+                    string equalityMethodLogicalPrefix = collectionFilter.IsInclusive ? string.Empty : "!";
+                    string logicalOperator = collectionFilter.IsInclusive ? "||" : "&&";
+ #>
+            get 
+            { 
+                return x => 
+<#+                     for (int i = 0; i < collectionFilter.Values.Count; i++) 
+                        { #>
+                    <#= i > 0 ? logicalOperator : string.Empty #> <#= equalityMethodLogicalPrefix #>x.<#= filterPropertyName #>.EqualsIgnoreCase("<#= collectionFilter.Values[i] #>")<#= i == collectionFilter.Values.Count - 1 ? ";" : string.Empty #>
+<#+                     } #>
+            }
+            set { } // Not supported for resources
+<#+             } #>
+        }
+<#+         } #>
+<#+     } #>
+        // -------------------------------------------------------------
+    }
+
+<#+     if (profileContext != null 
+            && profileContext.ContentTypeUsage == ContentTypeUsage.Writable
+            && aggregateHasFilteredCollections)
+            //&& collectionFilters.Any(x => x.FilterPropertyName != null)) 
+        { #>
+    public class <#= tbl.Name #>PutPostRequestValidator : FluentValidation.AbstractValidator<<#= tbl.Name #>>
+    {
+        public override FluentValidation.Results.ValidationResult Validate(<#= tbl.Name #> instance)
+        {
+            var failures = new List<ValidationFailure>();
+
+            var synchSupport = (instance as I<#= tbl.Name #>SynchronizationSourceSupport);
+
+            // Child collection validators
+<#+         foreach (var collectionFilter in collectionFilters.Where(x => x.FilterPropertyName != null)) { #>
+            var invalid<#= collectionFilter.CollectionPropertyName #> = instance.<#= collectionFilter.CollectionPropertyName #>.Where(x => !synchSupport.Is<#= collectionFilter.ClassName #>Included(x)).Select(x => x.<#= collectionFilter.FilterPropertyName #>).ToList();
+
+            if (invalid<#= collectionFilter.CollectionPropertyName #>.Any())
+                failures.Add(new ValidationFailure("<#= collectionFilter.FilterPropertyName #>",
+                    string.Format(
+                        "The value of '{0}' supplied for the '<#= collectionFilter.FilterPropertyName #>' of the '<#= collectionFilter.ClassName #>' does not conform with the filter values defined by profile '<#= profileContext.Profile.name #>': ['<#= string.Join("', '", collectionFilter.Values) #>']",
+                        invalid<#= collectionFilter.CollectionPropertyName #>.FirstOrDefault())));
+
+<#+         } #>
+
+            // Recursively invoke the child collection item validators
+<#+         foreach (var childTable in navigableChildFKs) 
+            {
+                if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, childTable.OtherQueryable, context)) 
+                { #>
+<#+             // TODO: baseNavigableChildFKs var childFkt = navigableChildFKs.SingleOrDefault(fkt => fkt.OtherQueryable == collectionFilter.CollectionPropertyName); #>
+            var <#= codeGenHelper.CamelCase(childTable.OtherTable) #>Validator = new <#= childTable.OtherTable #>PutPostRequestValidator();
+                
+            foreach (var item in instance.<#= childTable.OtherQueryable #>)
+            {
+                var result = <#= codeGenHelper.CamelCase(childTable.OtherTable) #>Validator.Validate(item);
+
+                if (!result.IsValid)
+                    failures.AddRange(result.Errors);
+            }
+
+<#+             } #>
+<#+         } #>
+
+<#+         if (isDerived) {
+                foreach (var childTable in baseNavigableChildFKs) 
+                {
+                    if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, childTable.OtherQueryable, context))
+                    { #>
+            var <#= codeGenHelper.CamelCase(childTable.OtherTable) #>Validator = new <#= baseAggregateRootName #><#= profileNamespaceSegment #><#= profileContextualTableNamespaceSegment #>.<#= childTable.OtherTable #>PutPostRequestValidator();
+                
+            foreach (var item in instance.<#= childTable.OtherQueryable #>)
+            {
+                var result = <#= codeGenHelper.CamelCase(childTable.OtherTable) #>Validator.Validate(item);
+
+                if (!result.IsValid)
+                    failures.AddRange(result.Errors);
+            }
+
+<#+                 } #>
+<#+             } #>
+<#+         } #>
+
+            return new FluentValidation.Results.ValidationResult(failures);
+        }
+    }
+
+<#+     } #>
+<#+      } // table (in aggregate) #>
+}
+<#+     } // context #>
+<#+   } // aggregate #>
+
+<#+   databaseSchemaProvider.EnsureAllConnectionsClosed(); }#>
+
+
+<#+
+    private ICodeGenHelper codeGenHelper;
+    public class ColumnRoleName
+    {
+        public string DerivedColumnName { get; set; }
+        public string BaseColumnName { get; set; }
+    }
+
+    // This method finds any PK columns in a derived table that have had role names applied from the base table
+    // (Only applicable to inheritance type relationships)
+    public List<ColumnRoleName> GetRoleNamedPKColumns(Table tbl, Table baseTbl)
+    {
+        var baseFK = tbl.FKTables.Where(fkt => fkt.OtherTable == baseTbl.Name).SingleOrDefault();
+
+        if (baseFK == null)
+            throw new Exception(string.Format("Could not find FK in table '{0}' referencing base table '{0}'.", tbl.Name, baseTbl.Name));
+
+        var roleNamedColumns = new List<ColumnRoleName>();
+
+        for (int i = 0; i < baseFK.ThisColumns.Count; i++)
+        {
+            var roleNamedColumn = new ColumnRoleName { DerivedColumnName = baseFK.ThisColumns[i], BaseColumnName = baseFK.OtherColumns[i] };
+
+            if (roleNamedColumn.DerivedColumnName != roleNamedColumn.BaseColumnName)
+                roleNamedColumns.Add(roleNamedColumn);
+        }
+
+        return roleNamedColumns;
+    }
+
+    public string GetOtherFKColumn(FKTable fkt, string thisColumn)
+    {
+        return fkt.OtherColumns[fkt.ThisColumns.IndexOf(thisColumn)];
+    }
+
+    public string GetThisFKColumn(FKTable fkt, string otherColumn)
+    {
+        return fkt.ThisColumns[fkt.OtherColumns.IndexOf(otherColumn)];
+    }
+
+    public FKTable GetParentFK(List<string> aggregateTableNames, Table tbl)
+    {
+        var parentFKs = codeGenHelper.GetNavigableParentRelationships(tbl, aggregateTableNames);
+
+        if (!parentFKs.Any())
+            throw new Exception(string.Format("Unable to determine parent table for table '{0}'.", tbl.Name));
+
+        if (parentFKs.Count() > 1)
+            throw new Exception(string.Format("Unable to uniquely determine parent table for table '{0}'.  Candidates are: '{1}'.  This indicates that the aggregate design should be reviewed (tables should only have 1 identifying parent within the aggregate).", tbl.Name, string.Join("', '", parentFKs.Select(fkt => fkt.OtherTable))));
+
+        return parentFKs.Single();
+    }
+
+    public void RenderLinkFor(Dictionary<string, Table> tablesByName, Table linkedTbl, List<string> propertiesWithCollidingJsonNames)
+    {
+        RenderLinkFor(tablesByName, linkedTbl, propertiesWithCollidingJsonNames, null, null, null);
+    }
+
+    public void RenderLinkFor(Dictionary<string, Table> tablesByName, Table targetTbl, List<string> propertiesWithCollidingJsonNames,
+        FKTable foreignKey, Dictionary<string, string> externallyContributedChildColumnNameByParentColumnName, List<string> aggregateTableNames)
+    {
+        Table originatingTable = foreignKey == null ? null : tablesByName[foreignKey.ThisTable];
+#>
+        private Link _link;
+
+        [DataMember(Name="link")]
+        public Link Link
+        {
+            get
+            {
+                if (_link == null)
+                {
+<#+     if (foreignKey != null) { #>
+                    // Can't generate a link without the back reference
+                    if (backReference == null)
+                        return null;
+
+<#+     } #>
+                    // Only generate links when all values are present
+                    if (IsReferenceFullyDefined())
+                    {
+                        _link = new Link
+                        {
+                            Rel = "<#= targetTbl.Name #>",
+                            Href = "/<#= codeGenHelper.CamelCase(CompositeTermInflector.MakePlural(targetTbl.Name)) #>"
+<#+  
+    string currentQueryParmPrefix = "?";
+    foreach (var pkCol in targetTbl.PKs)
+    {
+        string accessPath;
+        string sourcePropertyName;
+
+        if (originatingTable != null && !externallyContributedChildColumnNameByParentColumnName.TryGetValue(pkCol.Name, out sourcePropertyName))
+        {
+            var parentKey = GetParentFK(aggregateTableNames, originatingTable);
+
+            accessPath = "backReference." + parentKey.OtherTable + ".";
+            string originatingTableColumnName = GetThisFKColumn(foreignKey, pkCol.Name);
+            string parentTableColumnName = GetOtherFKColumn(parentKey, originatingTableColumnName);
+
+            var parentTable = tablesByName[parentKey.OtherTable];
+            sourcePropertyName = parentTable.Columns.Single(c => c.Name == parentTableColumnName).CleanName;
+        }
+        else
+        {
+            sourcePropertyName = pkCol.CleanName;
+            accessPath = string.Empty;
+        }
+
+        if (!codeGenHelper.IsLookupTable(targetTbl)) 
+        { 
+            if (codeGenHelper.IsLookupTypeColumn(tablesByName, targetTbl, pkCol.Name)) 
+            { #>
+                                    + "<#= currentQueryParmPrefix #><#= codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), targetTbl.Name, propertiesWithCollidingJsonNames) #>=" + WebUtility.UrlEncode(<#= accessPath #><#= TrimSuffix(sourcePropertyName, "Id") #>)<#+ // Prevent unwanted linebreaks #>
+<#+         } 
+            else 
+            { #>
+                                    + "<#= currentQueryParmPrefix #><#= codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, targetTbl.Name, propertiesWithCollidingJsonNames) #>=" + <#= string.Format(pkCol.SysType == "string" ? "WebUtility.UrlEncode({0})" : (pkCol.SysType == "DateTime" ? "JsonConvert.SerializeObject({0}).Replace(\"\\\"\", string.Empty)" : "{0}"), accessPath + sourcePropertyName) #><#+ // Prevent unwanted linebreaks #>
+<#+         } #>            
+<#+     } 
+        else 
+        { #>
+                                    + "<#= currentQueryParmPrefix #>shortDescription=" + WebUtility.UrlEncode(<#= accessPath #><#= TrimSuffix(sourcePropertyName, "Id") #>)<#+ // Prevent unwanted linebreaks #>
+<#+     } 
+
+        currentQueryParmPrefix = "&";
+    } #>
+                        };
+                    }
+                }
+
+                return _link;
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the reference has been fully defined (all key values are currently assigned non-default values).
+        /// </summary>
+        /// <returns><b>true</b> if the reference's properties are all set to non-default values; otherwise <b>false</b>.</returns>
+        public bool IsReferenceFullyDefined()
+        {
+            return <#+
+        string currentConditionalPrefix = "";
+        var indent = new string(' ', 16);
+
+        foreach (var pkCol in targetTbl.PKs)
+        {
+            string accessPath;
+            string cleanName;
+
+            if (originatingTable != null && !externallyContributedChildColumnNameByParentColumnName.TryGetValue(pkCol.Name, out cleanName))
+            {
+                var parentKey = GetParentFK(aggregateTableNames, originatingTable);
+
+                accessPath = "backReference." + parentKey.OtherTable + ".";
+                string originatingTableColumnName = GetThisFKColumn(foreignKey, pkCol.Name);
+                string parentTableColumnName = GetOtherFKColumn(parentKey, originatingTableColumnName);
+
+                var parentTable = tablesByName[parentKey.OtherTable];
+                cleanName = parentTable.Columns.Single(c => c.Name == parentTableColumnName).CleanName;
+            }
+            else
+            {
+                cleanName = pkCol.CleanName;
+                accessPath = string.Empty;
+            }
+
+            if (!codeGenHelper.IsLookupTable(targetTbl) && !codeGenHelper.IsLookupTypeColumn(tablesByName, targetTbl, pkCol.Name)) {
+                if (accessPath != string.Empty)
+                {
+                    currentConditionalPrefix = currentConditionalPrefix + " " + accessPath.Trim(new []{'.'}) + " != null && ";
+                }
+#><#= currentConditionalPrefix #><#= accessPath #><#= cleanName #> != default(<#= pkCol.SysType #>)
+<#+         } else { #>
+<#= currentConditionalPrefix #><#= accessPath #><#= TrimSuffix(cleanName, "Id") #> != default(string)
+<#+         } 
+
+            currentConditionalPrefix = indent + "&& ";
+        } #><#= indent #>;
+        }
+<#+
+    }
+
+    public string RenderNullPropertyUsingExplicitImplementation(Dictionary<string, Table> tablesByName, Table tbl, Table baseTbl, Column col, List<string> propertiesInReferences, List<FKTable> nonNavigableParentFKs, List<string> propertiesWithCollidingJsonNames)
+    {
+        string generatedPropertyName = col.CleanName;
+
+        if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) { #>
+
+        // NOT a lookup column, Not supported by this model, so there's "null object pattern" style implementation
+        <#= codeGenHelper.GetPropertyType(col) #> I<#= tbl.Name #>.<#= col.CleanName #>
+        { 
+            get { return default(<#= codeGenHelper.GetPropertyType(col) #>); } 
+            set { }
+        }
+<#+     } else { 
+            generatedPropertyName = TrimSuffix(col.CleanName, "Id"); #>
+
+        // IS a lookup column, Not supported by this model, so there's "null object pattern" style implementation
+        string I<#= tbl.Name #>.<#= TrimSuffix(col.CleanName, "Id") #>
+        { 
+            get { return null; } 
+            set { }
+        }
+<#+     }
+
+        if (codeGenHelper.IsUniqueId(tbl, col)) { #>
+        <#= codeGenHelper.GetPropertyType(col) #> IIdentifiablePerson.UniqueId { get { return default(<#= codeGenHelper.GetPropertyType(col) #>) } }
+<#+     }
+
+        return generatedPropertyName;
+    }
+
+    public string RenderProperty(ICodeGenHelper codeGenHelper, Dictionary<string, Table> tablesByName, string aggregateRootName, Table tbl, Table baseTbl, Column col, List<string> propertiesInReferences, List<FKTable> nonNavigableParentFKs, List<string> propertiesWithCollidingJsonNames, string context)
+    {
+        bool isPKCol = tbl.PrimaryKeyColumns.Contains(col); 
+        string generatedPropertyName = col.CleanName;
+#>
+
+        /// <summary>
+        /// <#= codeGenHelper.CleanForSwaggerAttribute(col.Description) #>
+        /// </summary> 
+<#+
+        if (propertiesInReferences.Contains(col.Name)) 
+        {
+            // Prioritize required FKs over optional ones...
+            var includedNonNavigableParentFKs = nonNavigableParentFKs.Where(fkt => codeGenHelper.ShouldGenerateReference(aggregateRootName, tbl.Name, fkt, context));
+            
+            var prioritizedNonNavigableParentFKs = 
+                includedNonNavigableParentFKs.Where(fkt => fkt.ThisColumns.All(c => (tbl[c] != null && !tbl[c].IsNullable) || (baseTbl != null && baseTbl[c] != null && !baseTbl[c].IsNullable)))
+                .Concat(includedNonNavigableParentFKs);
+                
+                        
+            var firstReference = prioritizedNonNavigableParentFKs.FirstOrDefault(fkt => fkt.ThisColumns.Contains(col.Name));
+            var referenceImplicitName = string.Format("Implicit{0}Reference",
+                codeGenHelper.GetRoleName(firstReference) + firstReference.OtherTable);
+
+            var targetInterfaceName = "I" + (baseTbl != null && baseTbl[col.Name] != null
+                ? baseTbl.Name
+                : tbl.Name);
+            if (firstReference == null) 
+            {
+                if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) 
+                { #>
+        // IS in a reference, NOT a lookup column 
+        <#= codeGenHelper.GetPropertyType(col) #> <#= targetInterfaceName #>.<#= col.CleanName #>
+        { 
+            get { return default(<#= codeGenHelper.GetPropertyType(col) #>); }
+            set { }
+        }
+<#+             } else { #>
+        // IS in a reference (<#= tbl.Name + "." + col.Name #>), IS a lookup column
+        string <#= targetInterfaceName #>.<#= TrimSuffix(col.CleanName, "Id") #>
+        { 
+            get { return null; } 
+            set { } 
+        }
+<#+             }
+            } else {
+            if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) { #>
+        // IS in a reference, NOT a lookup column -- [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(col.CleanName, tbl.Name, propertiesWithCollidingJsonNames) #>"<#= col.IsNullable || codeGenHelper.IsColumnValueAutoAssigned(tbl, col, baseTbl) ? string.Empty : ", IsRequired=true" #>)<#= col.IsNullable || codeGenHelper.IsColumnValueAutoAssigned(tbl, col, baseTbl) ? string.Empty : ", Required" #><#= col.SysType == "string" ? ", StringLength(" + col.MaxLength + ")" : string.Empty#>, NaturalKeyMember]
+        <#= codeGenHelper.GetPropertyType(col) #> <#= targetInterfaceName #>.<#= col.CleanName #>
+        { 
+            get
+            {
+                if (<#= referenceImplicitName #> != null
+                    && (_SuspendReferenceAssignmentCheck || <#= referenceImplicitName #>.IsReferenceFullyDefined()))
+                    return <#= referenceImplicitName #>.<#= codeGenHelper.GetOtherColumn(tablesByName, firstReference, col.Name).CleanName #>;
+                
+                return default(<#= codeGenHelper.GetPropertyType(col) #>);
+            }
+            set
+            {
+                // When a property is assigned, Reference should not be null even if it has been explicitly assigned to null.
+                // All ExplicitlyAssigned are reset to false in advanced
+<#+
+                foreach (var reference in includedNonNavigableParentFKs.Where(fkt => fkt.ThisColumns.Contains(col.Name)))
+                {
+                    var prop = codeGenHelper.GetRoleName(reference) + reference.OtherTable; #>
+
+                // <#=prop#>
+                _<#= codeGenHelper.CamelCase(prop) #>ReferenceExplicitlyAssigned = false;
+                Implicit<#= prop #>Reference.<#= codeGenHelper.GetOtherColumn(tablesByName, reference, col.Name).CleanName #> = value<#= col.IsNullable && col.SysType != "string" ? ".GetValueOrDefault()" : string.Empty #>;
+<#+             } #>
+            }
+        }
+<#+         } else { // Is a lookup column 
+                generatedPropertyName = TrimSuffix(col.CleanName, "Id"); #>
+        // IS in a reference (<#= tbl.Name + "." + col.Name #>), IS a lookup column -- [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(col.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames) #>"<#= col.IsNullable || codeGenHelper.IsColumnValueAutoAssigned(tbl, col, baseTbl) ? string.Empty : ", IsRequired=true" #>)<#= col.IsNullable || codeGenHelper.IsColumnValueAutoAssigned(tbl, col, baseTbl) ? string.Empty : ", Required" #><#= col.SysType == "string" ? ", StringLength(" + col.MaxLength + ")" : string.Empty#><#= isPKCol ? ", NaturalKeyMember" : string.Empty #>]
+        string <#= targetInterfaceName #>.<#= TrimSuffix(col.CleanName, "Id") #>
+        { 
+            get
+            {
+                if (<#= referenceImplicitName #> != null
+                    && (_SuspendReferenceAssignmentCheck || <#= referenceImplicitName #>.IsReferenceFullyDefined()))
+                    return <#= referenceImplicitName #>.<#= TrimSuffix(codeGenHelper.GetOtherColumn(tablesByName, firstReference, col.Name).CleanName, "Id") #>;
+                
+                return null;
+            }
+            set
+            {
+<#+
+                foreach (var reference in includedNonNavigableParentFKs.Where(fkt => fkt.ThisColumns.Contains(col.Name)))
+                { #>
+                Implicit<#= codeGenHelper.GetRoleName(reference) + reference.OtherTable #>Reference.<#= TrimSuffix(codeGenHelper.GetOtherColumn(tablesByName, reference, col.Name).CleanName, "Id") #> = value;
+<#+             } #>
+            }
+        }
+<#+         }}
+        }
+        else // is NOT a reference
+        {
+            if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) { #>
+        // NOT in a reference, NOT a lookup column 
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(col.CleanName, tbl.Name, propertiesWithCollidingJsonNames) #>")<#= isPKCol ? ", NaturalKeyMember" : string.Empty #><#= codeGenHelper.IsUniqueId(tbl, col)? ", UniqueId" : string.Empty #>]<#+ RenderTimeSpanJsonConverter(col); #><#= string.Empty #>
+        public <#= codeGenHelper.GetPropertyType(col) #> <#= col.CleanName #> { get; set; }
+<#+ 
+                if (codeGenHelper.IsUniqueId(tbl, col)) { 
+#> 
+        <#= codeGenHelper.GetPropertyType(col) #> IIdentifiablePerson.UniqueId { get { return <#=col.CleanName#>; } }
+<#+             } #>
+<#+         } else { // is a lookup column 
+                generatedPropertyName = TrimSuffix(col.CleanName, "Id"); #>
+        // NOT in a reference, IS a lookup column 
+        [DataMember(Name="<#= codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(col.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames) #>")<#= isPKCol ? ", NaturalKeyMember" : string.Empty #><#= codeGenHelper.IsUniqueId(tbl, col)? ", UniqueId" : string.Empty #>]
+        public string <#= TrimSuffix(col.CleanName, "Id") #> { get; set; }
+<#+ 
+                if (codeGenHelper.IsUniqueId(tbl, col)) { 
+#> 
+        <#= codeGenHelper.GetPropertyType(col) #> IIdentifiablePerson.UniqueId { get { return <#=col.CleanName#>; } }
+<#+             } #>
+<#+         }
+        }
+
+        return generatedPropertyName;
+    }
+
+    public void RenderTimeSpanJsonConverter(Column col)
+    {
+        if (col.SysType == "TimeSpan")
+        {
+            Write("[JsonConverter(typeof(UtcTimeConverter))]");
+        }
+    }
+
+    public string GetRangeAttributeCSharp(Column col)
+    {
+        switch (col.DataType)
+        {
+            case "decimal":
+                return (string.Format("[Range(typeof(decimal), \"-{0}.{1}\", \"{0}.{1}\")]", 
+                    new string('9', col.Precision - col.Scale), 
+                    new string('9', col.Scale)));
+
+            case "money":
+                return "[Range(typeof(decimal), \"-922337203685477.5808\", \"922337203685477.5807\")]";
+            default:
+                return string.Empty;
+        }
+    }
+
+    public class CollectionFilter
+    {
+        public string ClassName { get; set; }
+        public string CollectionPropertyName { get; set; }
+        public string FilterPropertyName { get; set; }
+        public List<string> Values { get; set; }
+        public bool IsInclusive { get; set; }
+        public bool IsWritable { get; set; }
+    }
+
+    public CollectionFilter GetCollectionFilter(
+        ProfileContext profileContext, 
+        string aggregateRootName,
+        //string tableName,
+        FKTable parentFK, 
+        string otherQueryable, 
+        string otherClass)
+    {
+        if (profileContext == null)
+            return new CollectionFilter { ClassName = otherClass };
+
+        string contentTypeUsagePrefix;
+
+        switch (profileContext.ContentTypeUsage)
+        {
+            case ContentTypeUsage.Writable:
+                contentTypeUsagePrefix = "Write";
+                break;
+            case ContentTypeUsage.Readable:
+                contentTypeUsagePrefix = "Read";
+                break;
+            default:
+                throw new NotSupportedException("Unsupported profile context content type usage value encountered.  Expected 'Readable' or 'Writable'.");
+        }
+
+        bool isWritable = (profileContext.ContentTypeUsage == ContentTypeUsage.Writable);
+
+        XElement filterDefinition = null; 
+
+        try 
+        {
+            var contentType
+                = profileContext.ProfileXElement
+                .Elements("Resource")
+                .Single(r => r.Attribute("name").Value == aggregateRootName)
+                .Element(contentTypeUsagePrefix + "ContentType");
+
+            XElement baseElement;
+
+            if (parentFK == null)
+            {
+                // The current class is the root
+                baseElement = contentType;
+            }
+            else
+            {
+                // Subject is the first-level child of the root
+                if (parentFK.OtherTable == aggregateRootName)
+                {
+                    // Look for a 2nd level parent object in the Profile definition
+                    baseElement = contentType
+                        .Elements("Object")
+                        .SingleOrDefault(o => o.Attribute("name").Value.EndsWith(parentFK.ThisTable)); // using EndsWith to allow for possible RoleNames (need better semantic model to avoid these types of ambiguous checks)
+
+                    if (baseElement == null)
+                    {
+                        string thisQueryable = CompositeTermInflector.MakePlural(parentFK.ThisTable);
+
+                        baseElement = contentType
+                            .Elements("Collection")
+                            .SingleOrDefault(c => c.Attribute("name").Value.EndsWith(thisQueryable)); // using EndsWith to allow for possible RoleNames (need better semantic model to avoid these types of ambiguous checks)
+                    }
+                }
+                else
+                {
+                    // Look for a parent object *deeper* in the Profile definition
+                    baseElement = contentType
+                        .Descendants("Object") // Using "Descendants" here to find the baseElement context which is deeper in the hierarchy
+                        .SingleOrDefault(o => o.Attribute("name").Value.EndsWith(parentFK.OtherTable)); // using EndsWith to allow for possible RoleNames (need better semantic model to avoid these types of ambiguous checks)
+
+                    if (baseElement == null)
+                    {
+                        // Now look for a parent collection in the Profile definition
+                        baseElement = contentType
+                            .Descendants("Collection")  // Using "Descendants" here to find the baseElement context which is deeper in the hierarchy
+                            .SingleOrDefault(c => c.Attribute("name").Value.EndsWith(parentFK.OtherQueryable)); // using EndsWith to allow for possible RoleNames (need better semantic model to avoid these types of ambiguous checks)
+                    }
+                }
+            }
+
+            // Quit now if we cannot find a basis element in the Profile definition.
+            if (baseElement == null)
+                return new CollectionFilter { ClassName = otherClass };
+
+            filterDefinition = baseElement
+                .Elements("Collection")
+                .Single(c => c.Attribute("name").Value == otherQueryable)
+                .Element("Filter");
+        }
+        catch (Exception) {}
+
+        if (filterDefinition == null)
+            return new CollectionFilter { ClassName = otherClass };
+
+        string filterPropertyName = filterDefinition.Attribute("propertyName").Value;
+        string filterMode = filterDefinition.Attribute("filterMode").Value;
+        
+        bool filterIsInclusive;
+
+        switch (filterMode)
+        {
+            case "IncludeOnly":
+                filterIsInclusive = true;
+                break;
+            case "ExcludeOnly":
+                filterIsInclusive = false;
+                break;
+            default:
+                throw new NotSupportedException(string.Format("filterMode value of '{0}' is not currently suported.", filterMode));
+        }
+
+        var collectionFilter = 
+            new CollectionFilter 
+            { 
+                ClassName = otherClass, 
+                FilterPropertyName = filterPropertyName,
+                CollectionPropertyName = otherQueryable,
+                IsInclusive = filterIsInclusive,
+                Values = filterDefinition.Elements("Value").Select(e => e.Value).ToList(),
+                IsWritable = isWritable,
+            };
+
+        return collectionFilter;
+    }
+ #>

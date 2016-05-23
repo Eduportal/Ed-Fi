@@ -1,0 +1,50 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+
+<#@ include file="$(ttIncludeFolder)\Settings.ttinclude" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Common.dll" #>
+<#@ import namespace="EdFi.Common.IO" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen.XsdToWebApi" #>
+<#@ import namespace="EdFi.Ods.CodeGen.XmlShredding" #>
+<#@ output extension=".generated.cs" #>
+using EdFi.Ods.Api.Pipelines;
+using EdFi.Ods.Pipelines.Factories;
+using EdFi.Ods.XmlShredding;
+namespace EdFi.Ods.BulkLoad.Core.Controllers.Aggregates
+{    
+<#
+    var schemaDir = Host.ResolveAssemblyReference("$(schemaDir)");
+    var finder = new AggregateRootFinder();
+    var aggregates = finder.FindAggregateRootNames(schemaDir);
+
+    foreach (var aggregate in aggregates)
+    { 
+#>
+
+    public class <#= aggregate #>Loader : AggregateLoaderBase<Api.Models.Resources.<#= aggregate #>.<#= aggregate #>, Entities.NHibernate.<#= aggregate #>Aggregate.<#= aggregate #>>
+    {
+        public <#= aggregate #>Loader(IPipelineFactory factory)
+            : base(new EdFi.Ods.XmlShredding.ResourceFactories.<#= aggregate #>.<#= aggregate #>Factory(), new <#= aggregate #>CreateOrUpdatePipeline(factory)) { }
+    }
+<#  } #>
+}<#+
+    public class AggregateRootFinder
+    {
+        public IEnumerable<string> FindAggregateRootNames(string schemaDir)
+        {
+            var xsdPaths = new InterchangeXsdFileProvider(schemaDir).GetInterchangeFilePaths();
+            //As of when this line was written, Interchanges were the first object in the returned collection - if that changes "BOoOoM"
+            var interchangeObjects = (from xsdPath in xsdPaths select InterchangeLoader.Load(xsdPath) into results where results.Any() select results.Single()).ToList();
+            var names = new List<string>();
+            foreach (var interchangeObject in interchangeObjects)
+            {
+                names.AddRange(interchangeObject.GetChildElementsToBeParsed().Where(c => !names.Contains(c.XmlSchemaObjectName)).Select(schemaObject => schemaObject.XmlSchemaObjectName));
+            }
+            return names;
+        } 
+    }
+#>

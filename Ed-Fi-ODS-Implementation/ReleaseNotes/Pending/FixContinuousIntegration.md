@@ -1,0 +1,1 @@
+* Made changes to configuration and SQL Login structures to allow for automated deploy to succeed. 

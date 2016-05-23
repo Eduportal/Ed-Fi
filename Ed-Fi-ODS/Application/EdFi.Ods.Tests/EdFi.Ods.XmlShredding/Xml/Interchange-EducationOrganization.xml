@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InterchangeEducationOrganization xmlns="http://ed-fi.org/0200-Draft" xmlns:ann="http://ed-fi.org/annotation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ed-fi.org/0120 C:/Projects/EdFi/Ed-FiTeam/Ed-Fi-Core/Ed-Fi-Standard/Schemas/Interchange-EducationOrganization.xsd">
+	<School>
+		<StateOrganizationId>152901001</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>482850010001</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>Apple Alternative Elementary School</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>School</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>3307 VICKSBURG AVE</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79410</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-0600</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-0560</TelephoneNumber>
+		</Telephone>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Fifth grade</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Sixth grade</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Tenth grade</Description>
+		</GradesOffered>
+		<SchoolCategories>
+			<SchoolCategory>Elementary School</SchoolCategory>
+		</SchoolCategories>
+		<LocalEducationAgencyReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152901</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</LocalEducationAgencyReference>
+	</School>
+	<School>
+		<StateOrganizationId>152901002</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>482850010002</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>Brown DAEP MIddle School</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>School</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>3307 VICKSBURG AVE</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79410</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-0600</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-0560</TelephoneNumber>
+		</Telephone>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Seventh grade</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Eighth grade</Description>
+		</GradesOffered>
+		<SchoolCategories>
+			<SchoolCategory>Middle School</SchoolCategory>
+		</SchoolCategories>
+		<LocalEducationAgencyReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152901</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</LocalEducationAgencyReference>
+	</School>
+	<School>
+		<StateOrganizationId>152901003</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>482850010003</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>Deep Freshman School</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>School</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>3307 VICKSBURG AVE</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79410</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-0600</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-0560</TelephoneNumber>
+		</Telephone>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Ninth grade</Description>
+		</GradesOffered>
+		<SchoolCategories>
+			<SchoolCategory>Junior High School</SchoolCategory>
+		</SchoolCategories>
+		<LocalEducationAgencyReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152901</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</LocalEducationAgencyReference>
+	</School>
+	<School>
+		<StateOrganizationId>152901004</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>482850010004</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>Every JJAEP H S</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>School</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>3307 VICKSBURG AVE</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79410</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-0600</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-0560</TelephoneNumber>
+		</Telephone>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Tenth grade</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Eleventh grade</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Twelfth grade</Description>
+		</GradesOffered>
+		<SchoolCategories>
+			<SchoolCategory>High School</SchoolCategory>
+		</SchoolCategories>
+		<LocalEducationAgencyReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152901</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</LocalEducationAgencyReference>
+	</School>
+	<School>
+		<StateOrganizationId>152901005</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>482850010005</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>All Grades School</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>School</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>3307 VICKSBURG AVE</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79410</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-0600</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-0560</TelephoneNumber>
+		</Telephone>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Infant/toddler</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Preschool/Prekindergarten</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Kindergarten</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Eleventh grade</Description>
+		</GradesOffered>
+		<GradesOffered namespace="http://www.ed-fi.org/Descriptor/GradeLevelDescriptor.xml">
+			<Description>Twelfth grade</Description>
+		</GradesOffered>
+		<SchoolCategories>
+			<SchoolCategory>Elementary/Secondary School</SchoolCategory>
+		</SchoolCategories>
+		<LocalEducationAgencyReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152901</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</LocalEducationAgencyReference>
+	</School>
+  <EducationServiceCenter id="ESCID_1">
+		<StateOrganizationId>152950</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>17</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>Region 17 Educaional Service Center</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>Education Service Center</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>1111 W LOOP 289</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79416-5029</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 792-4000</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 792-1523</TelephoneNumber>
+		</Telephone>
+	</EducationServiceCenter>
+  <LocalEducationAgency>
+		<StateOrganizationId>152901</StateOrganizationId>
+		<EducationOrgIdentificationCode IdentificationSystem="NCES">
+			<ID>4828500</ID>
+		</EducationOrgIdentificationCode>
+		<NameOfInstitution>Lubbock ISD</NameOfInstitution>
+		<OrganizationCategories>
+			<OrganizationCategory>Local Education Agency</OrganizationCategory>
+		</OrganizationCategories>
+		<Address AddressType="Physical">
+			<StreetNumberName>1628 19TH ST</StreetNumberName>
+			<City>Lubbock</City>
+			<StateAbbreviation>TX</StateAbbreviation>
+			<PostalCode>79401-4895</PostalCode>
+			<NameOfCounty>Lubbock County</NameOfCounty>
+		</Address>
+		<Telephone InstitutionTelephoneNumberType="Main">
+			<TelephoneNumber>(806) 766-1000</TelephoneNumber>
+		</Telephone>
+		<Telephone InstitutionTelephoneNumberType="Fax">
+			<TelephoneNumber>(806) 766-1210</TelephoneNumber>
+		</Telephone>
+		<ProgramReference>
+			<ProgramIdentity>
+				<ProgramType>Bilingual</ProgramType>
+				<ProgramName>Bilingual- </ProgramName>
+				<EducationOrganizationReference>
+					<EducationOrganizationIdentity>
+						<StateOrganizationId>152901</StateOrganizationId>
+					</EducationOrganizationIdentity>
+				</EducationOrganizationReference>
+			</ProgramIdentity>
+		</ProgramReference>
+		<EducationOrganizationPeerReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152950</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</EducationOrganizationPeerReference>
+		<LEACategory>Independent</LEACategory>
+		<EducationServiceCenterReference>
+			<EducationOrganizationIdentity>
+				<StateOrganizationId>152950</StateOrganizationId>
+			</EducationOrganizationIdentity>
+		</EducationServiceCenterReference>
+	</LocalEducationAgency>
+</InterchangeEducationOrganization>

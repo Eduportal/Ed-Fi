@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5616C863-9B07-4BA4-A611-9F2226294B10}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.CodeGen</RootNamespace>
+    <AssemblyName>EdFi.Ods.CodeGen</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <RestorePackages>true</RestorePackages>
+    <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\Ed-Fi-ODS-Implementation\Application\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\AzureTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DatabaseSchema\CodeGenHelperDecoratorBase.cs" />
+    <Compile Include="DatabaseSchema\CodeGenSpecifications.cs" />
+    <Compile Include="DatabaseSchema\DatabaseSchemaProvider.cs" />
+    <Compile Include="DatabaseSchema\DatabaseSchemaProviderDecoratorBase.cs" />
+    <Compile Include="DatabaseSchema\EdFiExtensionsCodeGenHelperDecorator.cs" />
+    <Compile Include="DatabaseSchema\ICodeGenHelper.cs" />
+    <Compile Include="DatabaseSchema\ProfilesCodeGenHelper.cs" />
+    <Compile Include="DatabaseSchema\CodeGenHelper.cs" />
+    <Compile Include="DatabaseSchema\Column.cs" />
+    <Compile Include="DatabaseSchema\DatabaseTypeTranslator.cs" />
+    <Compile Include="DatabaseSchema\DbType.cs" />
+    <Compile Include="DatabaseSchema\FKTable.cs" />
+    <Compile Include="DatabaseSchema\ForeignKeyNameParts.cs" />
+    <Compile Include="DatabaseSchema\Index.cs" />
+    <Compile Include="DatabaseSchema\UsiToUniqueIdTransformingDatabaseSchemaProviderDecorator.cs" />
+    <Compile Include="MetadataHelper.cs" />
+    <Compile Include="MetadataValidator.cs" />
+    <Compile Include="Models\ProfileMetadata\Ed-Fi-ODS-API-Profiles.cs" />
+    <Compile Include="XmlMetadata\NoForeignKeyMetadata.generated.cs">
+      <DependentUpon>NoForeignKeyMetadata.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="XmlMetadata\Element.cs" />
+    <Compile Include="XmlMetadata\Elements.schema.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Elements.schema.tt</DependentUpon>
+    </Compile>
+    <Compile Include="XmlMetadata\Interchange.cs" />
+    <Compile Include="XmlMetadata\Interchanges.cs" />
+    <Compile Include="XmlMetadata\AggregateLoadOrder.generated.cs">
+      <DependentUpon>AggregateLoadOrder.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="XmlMetadata\SkipReference.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SkipReference.tt</DependentUpon>
+    </Compile>
+    <Compile Include="XmlMetadata\XPathMapBuilder.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XPathMapBuilder.tt</DependentUpon>
+    </Compile>
+    <Compile Include="XmlShredding\CodeDeclarations\ClassDeclaration.cs" />
+    <Compile Include="XmlShredding\CodeDeclarations\InterfaceDeclaration.cs" />
+    <Compile Include="XmlShredding\CodeDeclarations\LineDeclaration.cs" />
+    <Compile Include="XmlShredding\CodeDeclarations\MethodDeclaration.cs" />
+    <Compile Include="XmlShredding\CodeDeclarations\NamespaceDeclaration.cs" />
+    <Compile Include="XmlShredding\CodeGenContext.cs" />
+    <Compile Include="XmlShredding\CodeGenEngine.cs" />
+    <Compile Include="XmlShredding\CodeGenEngineBuilder.cs" />
+    <Compile Include="XmlShredding\CodeGenEngineFactory.cs" />
+    <Compile Include="XmlShredding\CodeGenerator.cs" />
+    <Compile Include="XmlShredding\ElementStep.cs" />
+    <Compile Include="XmlShredding\EntityMetadataManager.cs" />
+    <Compile Include="XmlShredding\EntityTypeProperty.cs" />
+    <Compile Include="XmlShredding\ForeignKeyProperty.cs" />
+    <Compile Include="XmlShredding\ICanProduceInterchangeMetadata.cs" />
+    <Compile Include="XmlShredding\ICodeGenEngine.cs" />
+    <Compile Include="XmlShredding\ICodeGenEngineBuilder.cs" />
+    <Compile Include="XmlShredding\IEntityTypeProperty.cs" />
+    <Compile Include="XmlShredding\IForeignKeyProperty.cs" />
+    <Compile Include="XmlShredding\IInlineEntityProperty.cs" />
+    <Compile Include="XmlShredding\IInterchangeMetadata.cs" />
+    <Compile Include="XmlShredding\IInterchangeXsdFileProvider.cs" />
+    <Compile Include="XmlShredding\IManageEntityMetadata.cs" />
+    <Compile Include="XmlShredding\IMapStep.cs" />
+    <Compile Include="XmlShredding\IMultiElementEntityCollectionProperty.cs" />
+    <Compile Include="XmlShredding\InlineEntityProperty.cs" />
+    <Compile Include="XmlShredding\InterchangeMetadata.cs" />
+    <Compile Include="XmlShredding\InterchangeMetadataFactory.cs" />
+    <Compile Include="XmlShredding\InterchangeXsdFileProvider.cs" />
+    <Compile Include="XmlShredding\IReferenceStep.cs" />
+    <Compile Include="XmlShredding\ISimpleTypeProperty.cs" />
+    <Compile Include="XmlShredding\IXPathMapBuilder.cs" />
+    <Compile Include="XmlShredding\MetaData.cs" />
+    <Compile Include="XmlShredding\MultiElementEntityCollectionProperty.cs" />
+    <Compile Include="XmlShredding\ParsedSchemaObjectExtensions.cs" />
+    <Compile Include="XmlShredding\ReferenceStep.cs" />
+    <Compile Include="XmlShredding\SimpleTypeProperty.cs" />
+    <Compile Include="XmlShredding\XPathMapBuilder.cs" />
+    <Compile Include="XmlShredding\_Installers\EdFiOdsXmlShreddingCodeGenInstaller.cs" />
+    <Compile Include="XsdToWebApi\Extensions\StringExtensions.cs" />
+    <Compile Include="XsdToWebApi\InterchangeLoader.cs" />
+    <Compile Include="XsdToWebApi\Parse\ISchemaValidation.cs" />
+    <Compile Include="XsdToWebApi\Parse\Parse.cs" />
+    <Compile Include="XsdToWebApi\Parse\ParsedInterchange.cs" />
+    <Compile Include="XsdToWebApi\Parse\ParsedSchemaAttribute.cs" />
+    <Compile Include="XsdToWebApi\Parse\ParsedSchemaComplexType.cs" />
+    <Compile Include="XsdToWebApi\Parse\ParsedSchemaElement.cs" />
+    <Compile Include="XsdToWebApi\Parse\ParsedSchemaObject.cs" />
+    <Compile Include="XsdToWebApi\Process\Association.cs" />
+    <Compile Include="XsdToWebApi\Process\Common.cs" />
+    <Compile Include="XsdToWebApi\Process\IdentificationDocumentCommonCollection.cs" />
+    <Compile Include="XsdToWebApi\Process\CommonCollection.cs" />
+    <Compile Include="XsdToWebApi\Process\CommonExpansion.cs" />
+    <Compile Include="XmlMetadata\ContextMetadata.generated.cs">
+      <DependentUpon>ContextMetadata.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="XsdToWebApi\Process\Descriptor.cs" />
+    <Compile Include="XsdToWebApi\Process\DescriptorEnumeration.cs" />
+    <Compile Include="XsdToWebApi\Process\DomainEntity.cs" />
+    <Compile Include="XsdToWebApi\Process\Enumeration.cs" />
+    <Compile Include="XsdToWebApi\Process\EnumerationCollection.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedDescriptorReference.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedDescriptorReferenceCodeValue.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedDescriptorReferenceCollection.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedDescriptorReferenceCollectionNamespace.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedDescriptorReferenceCollectionCodeValue.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedReferenceResourceCollection.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedReferenceResource.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedReference.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedReferenceCollection.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedReferenceRefAttribute.cs" />
+    <Compile Include="XsdToWebApi\Process\IdentityResource.cs" />
+    <Compile Include="XsdToWebApi\Process\Identity.cs" />
+    <Compile Include="XsdToWebApi\Process\InferredCalendarDateReference.cs" />
+    <Compile Include="XsdToWebApi\Process\InferredDateCalendarDateResource.cs" />
+    <Compile Include="XsdToWebApi\Process\Interchange.cs" />
+    <Compile Include="XsdToWebApi\Process\NoMatch.cs" />
+    <Compile Include="XsdToWebApi\Process\PriorDescriptorReference.cs" />
+    <Compile Include="XsdToWebApi\Process\Process.cs" />
+    <Compile Include="XsdToWebApi\Process\ProcessChainOfResponsibility.cs" />
+    <Compile Include="XsdToWebApi\Process\ProcessResult.cs" />
+    <Compile Include="XsdToWebApi\Process\SchoolYearResource.cs" />
+    <Compile Include="XsdToWebApi\Process\SchoolYear.cs" />
+    <Compile Include="XsdToWebApi\Process\ExtendedDescriptorReferenceNamespace.cs" />
+    <Compile Include="XsdToWebApi\Process\SkipDescriptorReferenceNamespace.cs" />
+    <Compile Include="XsdToWebApi\Process\SkipElement.cs" />
+    <Compile Include="XsdToWebApi\Process\SkipIdAttribute.cs" />
+    <Compile Include="XsdToWebApi\Process\SkipLookup.cs" />
+    <Compile Include="XsdToWebApi\Process\SkipRefAttribute.cs" />
+    <Compile Include="XsdToWebApi\Process\SkipReference.cs" />
+    <Compile Include="XsdToWebApi\Process\SkipTopLevelReference.cs" />
+    <Compile Include="XsdToWebApi\Process\SkipType.cs" />
+    <Compile Include="XsdToWebApi\Process\StringTypeCode.cs" />
+    <Compile Include="XsdToWebApi\Process\StringTypeCodeCollection.cs" />
+    <Compile Include="XsdToWebApi\Process\SystemTypeCode.cs" />
+    <Compile Include="XsdToWebApi\Process\UniqueId.cs" />
+    <EmbeddedResource Include="Models\ProfileMetadata\Ed-Fi-ODS-API-Profiles.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="App_Packages\Ed-Fi\Schema\Ed-Fi-Core.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-AssessmentMetadata.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-Descriptors.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-EducationOrganization.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-EducationOrgCalendar.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-Finance.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-MasterSchedule.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-Parent.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-PostSecondaryEvent.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StaffAssociation.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-Standards.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-Student.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentAssessment.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentAttendance.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentCohort.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentDiscipline.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentEnrollment.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentGrade.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentGradebook.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentIntervention.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentProgram.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentTranscript.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\SchemaAnnotation.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Compile Include="DatabaseSchema\Table.cs" />
+    <Compile Include="Models\CodeGenTableModel.cs" />
+    <Compile Include="Models\ColumnModel.cs" />
+    <Compile Include="DomainModelFactory.cs" />
+    <Compile Include="Models\T4ResourceModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XElementExtensions.cs" />
+    <None Include="ttInclude\Metadata.ttinclude" />
+    <None Include="packages.config" />
+    <None Include="XmlMetadata\NoForeignKeyMetadata.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NoForeignKeyMetadata.generated.cs</LastGenOutput>
+    </None>
+    <None Include="XmlMetadata\XPathMapBuilder.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XPathMapBuilder.generated.cs</LastGenOutput>
+    </None>
+    <None Include="XmlMetadata\Elements.schema.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Elements.schema.generated.cs</LastGenOutput>
+    </None>
+    <None Include="XmlMetadata\AggregateLoadOrder.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AggregateLoadOrder.generated.cs</LastGenOutput>
+    </None>
+    <None Include="XmlMetadata\SkipReference.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SkipReference.generated.cs</LastGenOutput>
+    </None>
+    <None Include="XmlShredding\app.config" />
+    <None Include="XmlShredding\packages.config" />
+    <None Include="XmlMetadata\ContextMetadata.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContextMetadata.generated.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <rootDir>$(ProjectDir)..\..\..\</rootDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <standardSchema Include="$(ProjectDir)App_Packages\Ed-Fi\Schema\*.xsd">
+      <InProject>False</InProject>
+    </standardSchema>
+    <extensionSchema Include="$(rootDir)Ed-Fi-ODS-Implementation\Extensions\Schemas\*.xsd">
+      <InProject>False</InProject>
+    </extensionSchema>
+	<standardMetadata Include="$(rootDir)Ed-Fi-ODS\Standard\Metadata\DomainMetadata.xml">
+		<InProject>False</InProject>
+	</standardMetadata>
+  </ItemGroup>
+  <Target Name="BeforeClean">
+	<RemoveDir Directories="$(ProjectDir)App_Packages\Ed-Fi\Metadata"/>
+    <RemoveDir Directories="$(schemaDir)" />
+    <Delete Files="@(myLibraries)" />
+  </Target>
+  <Target Name="BeforeBuild">
+    <Copy SourceFiles="@(standardSchema)" DestinationFolder="$(schemaDir)" />
+    <Copy SourceFiles="@(extensionSchema)" DestinationFolder="$(schemaDir)" />
+	<Copy SourceFiles="@(standardMetadata)" DestinationFolder="$(ProjectDir)App_Packages\Ed-Fi\Metadata" SkipUnchangedFiles="true"/>
+  </Target>
+  <ItemGroup>
+    <ProjectReference Include="..\EdFi.Common\EdFi.Common.csproj">
+      <Project>{c545a7d1-4054-4279-9723-f06da524e122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Common\EdFi.Ods.Common.csproj">
+      <Project>{8D7CB143-8818-47A8-89E8-702D485E8DA0}</Project>
+      <Name>EdFi.Ods.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="../T4TextTemplating.Targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <ItemGroup>
+    <myLibraries Include="$(TargetPath); $(TargetDir)$(TargetName).pdb;$(TargetDir)Newtonsoft.Json.dll">
+      <InProject>false</InProject>
+    </myLibraries>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App_Packages\Ed-Fi\Metadata\DomainMetadata.xml" />
+  </ItemGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(myLibraries)" DestinationFolder="$(ttLibsFolder)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

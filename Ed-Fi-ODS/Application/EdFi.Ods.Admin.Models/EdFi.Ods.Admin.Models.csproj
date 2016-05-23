@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.Admin.Models</RootNamespace>
+    <AssemblyName>EdFi.Ods.Admin.Models</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureProd|AnyCPU'">
+    <OutputPath>bin\AzureProd\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureDev|AnyCPU'">
+    <OutputPath>bin\AzureDev\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalTest|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureTest|AnyCPU'">
+    <OutputPath>bin\AzureTest\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalMinimal|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LocalMinimal\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalUiTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LocalUiTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebMatrix.Data, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.Data.3.2.3\lib\net45\WebMatrix.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Migrations\201412191459507_AddClaimSetNameToApplication.cs" />
+    <Compile Include="Migrations\201412191459507_AddClaimSetNameToApplication.Designer.cs">
+      <DependentUpon>201412191459507_AddClaimSetNameToApplication.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201412191503090_ReturnClaimSetNameFromAdminTokenIsValidSproc.cs" />
+    <Compile Include="Migrations\201412191503090_ReturnClaimSetNameFromAdminTokenIsValidSproc.Designer.cs">
+      <DependentUpon>201412191503090_ReturnClaimSetNameFromAdminTokenIsValidSproc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201501052052517_AddNamespacePrefixToVendor.cs" />
+    <Compile Include="Migrations\201501052052517_AddNamespacePrefixToVendor.Designer.cs">
+      <DependentUpon>201501052052517_AddNamespacePrefixToVendor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507081920539_Add-Credential-Retrieval-Management.cs" />
+    <Compile Include="Migrations\201507081920539_Add-Credential-Retrieval-Management.Designer.cs">
+      <DependentUpon>201507081920539_Add-Credential-Retrieval-Management.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201509091830283_Add-Profiles.cs" />
+    <Compile Include="Migrations\201509091830283_Add-Profiles.Designer.cs">
+      <DependentUpon>201509091830283_Add-Profiles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201509091834347_Update-AccessTokenIsValid-With-Profile-Support.cs" />
+    <Compile Include="Migrations\201509091834347_Update-AccessTokenIsValid-With-Profile-Support.Designer.cs">
+      <DependentUpon>201509091834347_Update-AccessTokenIsValid-With-Profile-Support.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201510161531320_ConvertLocalEducationAgencyToEducationOrganization.cs" />
+    <Compile Include="Migrations\201510161531320_ConvertLocalEducationAgencyToEducationOrganization.Designer.cs">
+      <DependentUpon>201510161531320_ConvertLocalEducationAgencyToEducationOrganization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="ApiClientStatus.cs" />
+    <Compile Include="Models\ClientAuthorization.cs" />
+    <Compile Include="Models\ApiClient.cs" />
+    <Compile Include="Extensions\DbContextExtensions.cs" />
+    <Compile Include="Models\Profile.cs" />
+    <Compile Include="Provisioners\ISandboxProvisioner.cs" />
+    <Compile Include="MigrationHelpers\SprocHelper.cs" />
+    <Compile Include="Migrations\201405082117221_BaseMigration.cs" />
+    <Compile Include="Migrations\201405082117221_BaseMigration.Designer.cs">
+      <DependentUpon>201405082117221_BaseMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Application.cs" />
+    <Compile Include="Models\ApplicationLocalEducationAgency.cs" />
+    <Compile Include="Migrations\201405151942315_LeaSchemaChanges.cs" />
+    <Compile Include="Migrations\201405151942315_LeaSchemaChanges.Designer.cs">
+      <DependentUpon>201405151942315_LeaSchemaChanges.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406021503032_UpdateAccessTokenSproc.cs" />
+    <Compile Include="Migrations\201406021503032_UpdateAccessTokenSproc.Designer.cs">
+      <DependentUpon>201406021503032_UpdateAccessTokenSproc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406022004546_AddLeaToContext.cs" />
+    <Compile Include="Migrations\201406022004546_AddLeaToContext.Designer.cs">
+      <DependentUpon>201406022004546_AddLeaToContext.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201406300351535_Rename-IsDedicated-To-UseSandbox.cs" />
+    <Compile Include="Migrations\201406300351535_Rename-IsDedicated-To-UseSandbox.Designer.cs">
+      <DependentUpon>201406300351535_Rename-IsDedicated-To-UseSandbox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Repositories\ClientAppRepo.cs" />
+    <Compile Include="Repositories\IClientAppRepo.cs" />
+    <Compile Include="Sql\AdminModelsSqlMarker.cs" />
+    <Compile Include="Models\Vendor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provisioners\AzureSandboxProvisioner.cs" />
+    <Compile Include="Provisioners\SandboxProvisionerTypeCalculator.cs" />
+    <Compile Include="SandboxType.cs" />
+    <Compile Include="Provisioners\SqlSandboxProvisioner.cs" />
+    <Compile Include="Provisioners\StubSandboxProvisioner.cs" />
+    <Compile Include="Contexts\UsersContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201406022004546_AddLeaToContext.resx">
+      <DependentUpon>201406022004546_AddLeaToContext.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201405082117221_BaseMigration.resx">
+      <DependentUpon>201405082117221_BaseMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201405151942315_LeaSchemaChanges.resx">
+      <DependentUpon>201405151942315_LeaSchemaChanges.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406021503032_UpdateAccessTokenSproc.resx">
+      <DependentUpon>201406021503032_UpdateAccessTokenSproc.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdFi.Common\EdFi.Common.csproj">
+      <Project>{C545A7D1-4054-4279-9723-F06DA524E122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Common\EdFi.Ods.Common.csproj">
+      <Project>{8d7cb143-8818-47a8-89e8-702d485e8da0}</Project>
+      <Name>EdFi.Ods.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201406300351535_Rename-IsDedicated-To-UseSandbox.resx">
+      <DependentUpon>201406300351535_Rename-IsDedicated-To-UseSandbox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201412191459507_AddClaimSetNameToApplication.resx">
+      <DependentUpon>201412191459507_AddClaimSetNameToApplication.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201412191503090_ReturnClaimSetNameFromAdminTokenIsValidSproc.resx">
+      <DependentUpon>201412191503090_ReturnClaimSetNameFromAdminTokenIsValidSproc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201501052052517_AddNamespacePrefixToVendor.resx">
+      <DependentUpon>201501052052517_AddNamespacePrefixToVendor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507081920539_Add-Credential-Retrieval-Management.resx">
+      <DependentUpon>201507081920539_Add-Credential-Retrieval-Management.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509091830283_Add-Profiles.resx">
+      <DependentUpon>201509091830283_Add-Profiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509091834347_Update-AccessTokenIsValid-With-Profile-Support.resx">
+      <DependentUpon>201509091834347_Update-AccessTokenIsValid-With-Profile-Support.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510161531320_ConvertLocalEducationAgencyToEducationOrganization.resx">
+      <DependentUpon>201510161531320_ConvertLocalEducationAgencyToEducationOrganization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sql\Sproc_AdminTokenIsValid_2014_05_08.sql" />
+    <EmbeddedResource Include="Sql\Sproc_AdminTokenIsValid_2014_06_02.sql" />
+    <EmbeddedResource Include="Sql\Sproc_AdminTokenIsValid_201406022004546.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Sql\Sproc_AdminTokenIsValid_201412191503090.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Sql\Sproc_AdminTokenIsValid_201501052052517.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Sql\Sproc_AdminTokenIsValid_201507200115139.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Sql\Sproc_AdminTokenIsValid_201510161531320.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>set PROJOUT=$(ProjectDir)..\..\logistics\bin\$(ProjectName)
+mkdir "%25PROJOUT%25\EntityFramework"
+copy "$(ProjectDir)..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\tools\*" "%25PROJOUT%25\EntityFramework"
+copy "$(ProjectDir)..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\*" "%25PROJOUT%25\EntityFramework"
+mkdir "%25PROJOUT%25\Migrations"
+copy "$(ProjectDir)$(OutDir)*" "%25PROJOUT%25\Migrations"
+</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="AfterClean">
+    <RemoveDir Directories="$(ProjectDir)..\..\logistics\bin\$(ProjectName)" />
+  </Target>
+</Project>

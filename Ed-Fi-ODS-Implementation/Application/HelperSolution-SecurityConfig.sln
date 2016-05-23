@@ -1,0 +1,215 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Common", "..\..\Ed-Fi-ODS\Application\EdFi.Common\EdFi.Common.csproj", "{C545A7D1-4054-4279-9723-F06DA524E122}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.Admin.Models", "..\..\Ed-Fi-ODS\Application\EdFi.Ods.Admin.Models\EdFi.Ods.Admin.Models.csproj", "{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.Common", "..\..\Ed-Fi-ODS\Application\EdFi.Ods.Common\EdFi.Ods.Common.csproj", "{8D7CB143-8818-47A8-89E8-702D485E8DA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.Security.Metadata", "..\..\Ed-Fi-ODS\Application\EdFi.Ods.Security.Metadata\EdFi.Ods.Security.Metadata.csproj", "{1ACF010B-2092-4377-844E-FD710B6404BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B890724F-B75F-4793-B029-F09A1995DD93}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit", "Unit", "{EB28BC6F-9EBB-461D-9BB4-C868347F373A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C2109273-6B28-4082-89AA-775B185578D6}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.Codegen", "..\..\Ed-Fi-ODS\Application\EdFi.Ods.CodeGen\EdFi.Ods.Codegen.csproj", "{5616C863-9B07-4BA4-A611-9F2226294B10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.SecurityConfiguration.Core", "..\..\Ed-Fi-ODS\Application\SecurityConfigurationTool\EdFi.Ods.SecurityConfiguration.Core\EdFi.Ods.SecurityConfiguration.Core.csproj", "{612460FE-E59F-4FFE-88C1-9501A20A28F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.SecurityConfiguration.Services", "..\..\Ed-Fi-ODS\Application\SecurityConfigurationTool\EdFi.Ods.SecurityConfiguration.Services\EdFi.Ods.SecurityConfiguration.Services.csproj", "{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.SecurityConfiguration.Services.Tests", "..\..\Ed-Fi-ODS\Application\SecurityConfigurationTool\EdFi.Ods.SecurityConfiguration.Services.Tests\EdFi.Ods.SecurityConfiguration.Services.Tests.csproj", "{7015D319-294C-48AB-966E-592FF42F0993}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.SecurityConfiguration.KeyRetrieval.Web", "SecurityConfigurationTool\EdFi.Ods.SecurityConfiguration.KeyRetrieval.Web\EdFi.Ods.SecurityConfiguration.KeyRetrieval.Web.csproj", "{53A83486-B927-4584-A08D-7181997A8452}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Ods.SecurityConfiguration.Administration.Web", "SecurityConfigurationTool\EdFi.Ods.SecurityConfiguration.Administration.Web\EdFi.Ods.SecurityConfiguration.Administration.Web.csproj", "{C66E0623-F947-4498-B379-490310A2A82F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		AzureDev|Any CPU = AzureDev|Any CPU
+		AzureProd|Any CPU = AzureProd|Any CPU
+		AzureTest|Any CPU = AzureTest|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		LocalMinimal|Any CPU = LocalMinimal|Any CPU
+		LocalTest|Any CPU = LocalTest|Any CPU
+		LocalUiTest|Any CPU = LocalUiTest|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C545A7D1-4054-4279-9723-F06DA524E122}.AzureDev|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.AzureDev|Any CPU.Build.0 = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.AzureProd|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.AzureProd|Any CPU.Build.0 = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.AzureTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.AzureTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.LocalMinimal|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.LocalMinimal|Any CPU.Build.0 = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.LocalTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.LocalTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.LocalUiTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.LocalUiTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C545A7D1-4054-4279-9723-F06DA524E122}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.AzureDev|Any CPU.ActiveCfg = AzureDev|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.AzureDev|Any CPU.Build.0 = AzureDev|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.AzureProd|Any CPU.ActiveCfg = AzureProd|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.AzureProd|Any CPU.Build.0 = AzureProd|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.AzureTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.AzureTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.LocalMinimal|Any CPU.ActiveCfg = LocalMinimal|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.LocalMinimal|Any CPU.Build.0 = LocalMinimal|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.LocalTest|Any CPU.ActiveCfg = LocalTest|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.LocalTest|Any CPU.Build.0 = LocalTest|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.LocalUiTest|Any CPU.ActiveCfg = LocalUiTest|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.LocalUiTest|Any CPU.Build.0 = LocalUiTest|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.AzureDev|Any CPU.ActiveCfg = AzureDev|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.AzureDev|Any CPU.Build.0 = AzureDev|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.AzureProd|Any CPU.ActiveCfg = AzureProd|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.AzureProd|Any CPU.Build.0 = AzureProd|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.AzureTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.AzureTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.LocalMinimal|Any CPU.ActiveCfg = LocalMinimal|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.LocalMinimal|Any CPU.Build.0 = LocalMinimal|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.LocalTest|Any CPU.ActiveCfg = LocalTest|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.LocalTest|Any CPU.Build.0 = LocalTest|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.LocalUiTest|Any CPU.ActiveCfg = LocalUiTest|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.LocalUiTest|Any CPU.Build.0 = LocalUiTest|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D7CB143-8818-47A8-89E8-702D485E8DA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.AzureDev|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.AzureDev|Any CPU.Build.0 = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.AzureProd|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.AzureProd|Any CPU.Build.0 = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.LocalMinimal|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.LocalMinimal|Any CPU.Build.0 = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.LocalTest|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.LocalTest|Any CPU.Build.0 = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.LocalUiTest|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.LocalUiTest|Any CPU.Build.0 = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ACF010B-2092-4377-844E-FD710B6404BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.AzureDev|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.AzureDev|Any CPU.Build.0 = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.AzureProd|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.AzureProd|Any CPU.Build.0 = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.AzureTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.AzureTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.LocalMinimal|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.LocalMinimal|Any CPU.Build.0 = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.LocalTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.LocalTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.LocalUiTest|Any CPU.ActiveCfg = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.LocalUiTest|Any CPU.Build.0 = AzureTest|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5616C863-9B07-4BA4-A611-9F2226294B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.AzureDev|Any CPU.ActiveCfg = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.AzureDev|Any CPU.Build.0 = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.AzureProd|Any CPU.ActiveCfg = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.AzureProd|Any CPU.Build.0 = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.LocalMinimal|Any CPU.ActiveCfg = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.LocalMinimal|Any CPU.Build.0 = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.LocalTest|Any CPU.ActiveCfg = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.LocalTest|Any CPU.Build.0 = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.LocalUiTest|Any CPU.ActiveCfg = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.LocalUiTest|Any CPU.Build.0 = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{612460FE-E59F-4FFE-88C1-9501A20A28F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.AzureDev|Any CPU.ActiveCfg = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.AzureDev|Any CPU.Build.0 = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.AzureProd|Any CPU.ActiveCfg = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.AzureProd|Any CPU.Build.0 = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.LocalMinimal|Any CPU.ActiveCfg = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.LocalMinimal|Any CPU.Build.0 = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.LocalTest|Any CPU.ActiveCfg = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.LocalTest|Any CPU.Build.0 = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.LocalUiTest|Any CPU.ActiveCfg = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.LocalUiTest|Any CPU.Build.0 = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.AzureDev|Any CPU.ActiveCfg = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.AzureDev|Any CPU.Build.0 = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.AzureProd|Any CPU.ActiveCfg = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.AzureProd|Any CPU.Build.0 = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.LocalMinimal|Any CPU.ActiveCfg = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.LocalMinimal|Any CPU.Build.0 = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.LocalTest|Any CPU.ActiveCfg = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.LocalTest|Any CPU.Build.0 = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.LocalUiTest|Any CPU.ActiveCfg = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.LocalUiTest|Any CPU.Build.0 = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7015D319-294C-48AB-966E-592FF42F0993}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.AzureDev|Any CPU.ActiveCfg = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.AzureDev|Any CPU.Build.0 = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.AzureProd|Any CPU.ActiveCfg = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.AzureProd|Any CPU.Build.0 = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.LocalMinimal|Any CPU.ActiveCfg = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.LocalMinimal|Any CPU.Build.0 = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.LocalTest|Any CPU.ActiveCfg = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.LocalTest|Any CPU.Build.0 = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.LocalUiTest|Any CPU.ActiveCfg = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.LocalUiTest|Any CPU.Build.0 = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53A83486-B927-4584-A08D-7181997A8452}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.AzureDev|Any CPU.ActiveCfg = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.AzureDev|Any CPU.Build.0 = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.AzureProd|Any CPU.ActiveCfg = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.AzureProd|Any CPU.Build.0 = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.AzureTest|Any CPU.ActiveCfg = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.AzureTest|Any CPU.Build.0 = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.LocalMinimal|Any CPU.ActiveCfg = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.LocalMinimal|Any CPU.Build.0 = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.LocalTest|Any CPU.ActiveCfg = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.LocalTest|Any CPU.Build.0 = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.LocalUiTest|Any CPU.ActiveCfg = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.LocalUiTest|Any CPU.Build.0 = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C66E0623-F947-4498-B379-490310A2A82F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EB28BC6F-9EBB-461D-9BB4-C868347F373A} = {B890724F-B75F-4793-B029-F09A1995DD93}
+		{7015D319-294C-48AB-966E-592FF42F0993} = {B890724F-B75F-4793-B029-F09A1995DD93}
+	EndGlobalSection
+EndGlobal

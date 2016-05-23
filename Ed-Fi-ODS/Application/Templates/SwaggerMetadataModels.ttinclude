@@ -1,0 +1,442 @@
+﻿<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#+
+    bool firstPropertyRendered = false;
+
+    void RenderModels(
+        ICodeGenHelper codeGenHelper, 
+        Dictionary<string, Table> tablesByName, 
+        IEnumerable<XElement> aggregatesElts, 
+        IEnumerable<XElement> aggregateElt, 
+        string aggregateRootName, 
+        List<string> aggregateTableNames, 
+        List<string> propertiesWithCollidingJsonNames, 
+        Profile profile, 
+        ContentTypeUsage? contentTypeUsage, 
+        string context)
+    {
+        bool firstModelRendered = false;
+
+        foreach (string aggregateTableName in aggregateTableNames) 
+        { 
+            Table tbl;
+ 
+            if (!tablesByName.TryGetValue(aggregateTableName, out tbl))
+                continue;
+
+            if (codeGenHelper.IsExcluded(tbl.Name))
+                continue;
+
+            if (!codeGenHelper.ShouldGenerateEntity(aggregateRootName, tbl.Name, context))
+                continue;
+
+            var navigableParentFKs = codeGenHelper.GetNavigableParentRelationships(tbl, aggregateTableNames);
+            var navigableChildFKs = tbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable)).ToList();
+            var navigableOneToOneParentFKs = tbl.GetNavigableOneToOneParentTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+            var navigableOneToOneChildFKs = tbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+
+            var nonNavigableParentFKs = 
+                (from fkt in codeGenHelper.GetNonNavigableParentRelationships(tbl, aggregateTableNames)
+                let nonNavigableOtherTable = tablesByName[fkt.OtherTable]
+                    // Filter out one-to-one relationships (no references should be generated for those)
+                where !(fkt.ThisColumns.All(fkcol => tbl.PrimaryKeyColumns.Any(c => c.Name == fkcol))
+                        && nonNavigableOtherTable.PrimaryKeyColumns.Count == tbl.PrimaryKeyColumns.Count)
+                select fkt)
+                .ToList();
+
+            // Get a list of properties not to render directly
+            var propertiesInReferences = nonNavigableParentFKs
+                .Where(fkt => !codeGenHelper.IsDirectLookupReference(tablesByName, fkt)) // Don't include keys that are direct references to lookup tables
+                .SelectMany(x => x.ThisColumns)
+                .ToList();
+
+            bool isRootTable = tbl.Name.Equals(aggregateRootName, StringComparison.InvariantCultureIgnoreCase); 
+
+            bool isAbstract = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name 
+                                        && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                                .Any();
+
+            if (isAbstract)
+                continue;
+
+            var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name)
+                                .Select(e => e.Attribute("isA"))
+                                .SingleOrDefault();
+
+            string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+
+            Table baseTbl = null;
+
+            if (baseTableName != null)
+                tablesByName.TryGetValue(baseTableName, out baseTbl);
+
+            bool isDerived = baseTableName != null;
+
+            string baseAggregateRootName =
+                    (from a in aggregatesElts
+                    from e in a.Descendants("Entity")
+                    where e.Attribute("table").Value == baseTableName
+                    select a.Attribute("root").Value)
+                    .SingleOrDefault();
+
+            List<string> baseAggregateTableNames = 
+                (from a in aggregatesElts
+                where a.Attribute("root").Value == baseAggregateRootName
+                from e in a.Descendants("Entity")
+                select e.Attribute("table").Value)
+                .ToList();
+
+            var baseNavigableChildFKs = baseTbl == null ? 
+                new List<FKTable>()
+                : baseTbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(baseAggregateTableNames, ct.OtherTable)).ToList();
+
+            var baseNonNavigableParentFKs = baseTbl == null ?
+                new List<FKTable>()
+                : codeGenHelper.GetNonNavigableParentRelationships(baseTbl, baseAggregateTableNames).ToList();
+            nonNavigableParentFKs = baseNonNavigableParentFKs.Union(nonNavigableParentFKs).ToList();
+            var basePropertiesInReferences = baseNonNavigableParentFKs
+                .Where(fkt => !codeGenHelper.IsDirectLookupReference(tablesByName, fkt))
+                // Don't include keys that are direct references to lookup tables
+                .SelectMany(x => x.ThisColumns);
+            propertiesInReferences = basePropertiesInReferences.Union(propertiesInReferences).ToList();
+
+
+            FKTable parentFK = isRootTable ? null : navigableParentFKs.FirstOrDefault(); 
+
+#>
+        <#= firstModelRendered ? "," : string.Empty #>"<#= GetContextualTypeName(codeGenHelper.CamelCase(tbl.ClassName), profile, contentTypeUsage, context) #>": {
+            "id":"<#= GetContextualTypeName(codeGenHelper.CamelCase(tbl.ClassName), profile, contentTypeUsage, context) #>",
+            "properties": {
+<#+             
+                string propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription;
+
+                firstPropertyRendered = false;
+
+                if (isRootTable) 
+                {
+                    propertyName = "id";
+                    propertyType = "string";
+                    propertyRequired = "true";
+                    propertyDescription = "The unique identifier of the resource.";
+                    propertyItemType = null;
+
+                    RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, context);
+                }
+
+                var referencedEntityNames = new List<string>();
+
+                if (nonNavigableParentFKs.Any()) { 
+        // =============================================================
+        //                         References
+        // -------------------------------------------------------------
+                    var referencesToGenerate = nonNavigableParentFKs
+                        .Where(fkt => !codeGenHelper.IsDirectLookupReference(tablesByName, fkt) 
+                                        && codeGenHelper.ShouldGenerateReference(aggregateRootName, tbl.Name, fkt, context));
+
+                    foreach (var reference in referencesToGenerate)
+                    {
+                        // Make a note of the name of the entity so we can generate model metadata for the reference
+                        referencedEntityNames.Add(reference.OtherTable);
+
+                        propertyName =  codeGenHelper.CamelCase(codeGenHelper.GetRoleName(reference) + reference.OtherTable + "Reference");
+                        propertyType = codeGenHelper.CamelCase(reference.OtherTable + "Reference");
+                        //propertyRequired = reference.ThisColumns.Any(n => tbl.Columns.Any(c => c.Name == n && !c.IsNullable));  // Any of the columns in this side of the reference not nullable? Then reference is required
+                        propertyRequired = reference.ThisColumns.All(tc	=> tbl.Columns.Any(c => c.Name == tc && !c.IsNullable)).ToString().ToLower();  // All of the columns in this side of the reference not nullable? Then reference is required
+                        //propertyRequired = tbl.Columns.Any(c => reference.ThisColumns.Contains(c.Name) && !c.IsNullable).ToString().ToLower();  // Any of the columns in this side of the reference not nullable? Then reference is required
+                        propertyDescription = "A reference to the related " + reference.OtherTable + " resource.";
+                        propertyItemType = null;
+
+                        RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, context);
+                    }
+        // -------------------------------------------------------------
+                }
+
+                foreach (var pkCol in tbl.PKs.Where(x => parentFK == null || !parentFK.ThisColumns.Contains(x.Name)))
+                {
+                    if (IsReferenceColumn(propertiesInReferences, pkCol))
+                        continue;
+
+                    if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) { 
+                        propertyName = codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames);
+                        propertyType = GetSwaggerType(pkCol.SysType);
+                    } else {
+                        propertyName = codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames);
+                        propertyType = "string";
+                    }
+
+                    propertyRequired = (pkCol.IsNullable || codeGenHelper.IsColumnValueAutoAssigned(tbl, pkCol, baseTbl)) ? "false" : "true";
+                    propertyDescription = codeGenHelper.CleanForSwaggerAttribute(pkCol.Description);
+                    propertyItemType = null;
+
+                    RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, context);
+               } #>
+<#+            if (isDerived) { 
+        // =============================================================
+        //                      Inherited Properties
+        // ------------------------------------------------------------- #>
+<#+
+                    foreach (var col in baseTbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) // Explicitly exclude the "DateTime" columns property here
+                    {
+                        if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, col.Name, context))
+                            ProcessColumn(codeGenHelper, tablesByName, baseTbl, col, propertiesWithCollidingJsonNames, propertiesInReferences, profile, contentTypeUsage, aggregateRootName);
+                    }
+               } 
+        // -------------------------------------------------------------
+
+        // =============================================================
+        //                          Properties
+        // -------------------------------------------------------------  #>
+<#+
+                foreach (var col in tbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) // Explicitly exclude the "DateTIme" columns property here
+                {
+                    if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, col.Name, context))
+                        ProcessColumn(codeGenHelper, tablesByName, tbl, col, propertiesWithCollidingJsonNames, propertiesInReferences, profile, contentTypeUsage, context);
+                }
+        // ------------------------------------------------------------- #>
+<#+     if (navigableOneToOneChildFKs.Any() || navigableOneToOneParentFKs.Any()) { 
+
+        // =============================================================
+        //                     One-to-one relationships
+        // ------------------------------------------------------------- #>
+<#+         foreach (var oneToOneFK in navigableOneToOneChildFKs) 
+            {
+                if (codeGenHelper.ShouldGenerateReference(aggregateRootName, tbl.Name, oneToOneFK, context))
+                {
+                    propertyName = codeGenHelper.ApplyPropertyNameConventions(oneToOneFK.OtherClass, tbl.Name, propertiesWithCollidingJsonNames);
+                    propertyType = GetContextualTypeName(codeGenHelper.CamelCase(oneToOneFK.OtherClass), profile, contentTypeUsage, context);
+                    propertyDescription = codeGenHelper.CleanForSwaggerAttribute(tablesByName[oneToOneFK.OtherTable].Description);
+                    propertyRequired = "false";
+                    propertyItemType = null;
+
+                    RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, context);
+                }
+            }
+        // -------------------------------------------------------------
+        }
+
+        if (isDerived) { 
+        // =============================================================
+        //                     Inherited Collections
+        // -------------------------------------------------------------
+            foreach (var childTable in baseNavigableChildFKs.Where(ct => 
+                codeGenHelper.IsInAggregate(baseAggregateTableNames, ct.OtherTable)
+                && !codeGenHelper.IsExcluded(ct.OtherTable))) 
+            {
+                if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, childTable.OtherQueryable, aggregateRootName)) 
+                {
+                    propertyName = codeGenHelper.ApplyPropertyNameConventions(childTable.OtherQueryable, baseTbl.Name, propertiesWithCollidingJsonNames);
+                    propertyType = "array";
+                    propertyItemType = codeGenHelper.CamelCase(childTable.OtherTable);
+                    propertyDescription = codeGenHelper.CleanForSwaggerAttribute("An unordered collection of " + codeGenHelper.CamelCase(childTable.OtherQueryable) + ".  " + tablesByName[childTable.OtherTable].Description);
+                    propertyRequired = "false";
+
+                    RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, profile == null ? null : aggregateRootName);
+                }
+            }
+        // -------------------------------------------------------------
+        }
+ 
+        // =============================================================
+        //                          Collections
+        // -------------------------------------------------------------
+        foreach (var childTable in navigableChildFKs.Where(ct => 
+                    codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable)
+                    && !codeGenHelper.IsExcluded(ct.OtherTable))) 
+        {
+            if (codeGenHelper.ShouldGenerateMember(aggregateRootName, tbl.Name, childTable.OtherQueryable, context))
+            {
+                propertyName = codeGenHelper.ApplyPropertyNameConventions(childTable.OtherQueryable, tbl.Name, propertiesWithCollidingJsonNames);
+                propertyType = "array"; 
+                propertyItemType = codeGenHelper.CamelCase(childTable.OtherTable);
+                propertyDescription = codeGenHelper.CleanForSwaggerAttribute("An unordered collection of " + codeGenHelper.CamelCase(childTable.OtherQueryable) + ".  " + tablesByName[childTable.OtherTable].Description);
+                propertyRequired = "false";
+
+                RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, context);
+            }
+        }
+        // -------------------------------------------------------------
+
+        if (isRootTable) 
+        {
+            propertyName = "_etag";
+            propertyType = "string";
+            propertyDescription = "A unique system-generated value that identifies the version of the resource."; //, and be used subsequently via the If-Match and If-None-Match HTTP headers.  The If-Match header is used with PUT and DELETE to prevent the overwriting/deletion of another consumer's changes to the same resource (i.e. optimistic concurrency).  The If-None-Match header can be used with a GET operation to avoid the unnecessary data transfer of an unmodified resource.";
+            propertyRequired = "false";
+            propertyItemType = null;
+
+            RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, context);
+        }
+#>
+            }
+        }
+<#+     
+            RenderReferencedModels(codeGenHelper, aggregateElt, tablesByName, referencedEntityNames, propertiesWithCollidingJsonNames, propertiesInReferences, profile, contentTypeUsage, context);
+
+            firstModelRendered = true;
+        } // foreach aggregateTableName #>
+<#+
+    } // RenderModels
+
+        const string boilerPlateLink =
+            @"        ,""link"": {
+                ""id"":""link"",
+                ""properties"": {
+                    ""rel"": {
+                        ""type"":""string"",
+                        ""required"":false,
+                        ""description"":""Describes the nature of the relationship to the referenced resource.""
+                    },
+                    ""href"": {
+                        ""type"":""string"",
+                        ""required"":false,
+                        ""description"":""The URL to the related resource.""
+                    }
+                }
+            }";
+
+        const string boilerPlateErrorModel =
+                @"        ,""webServiceError"": {
+                    ""id"":""webServiceError"",
+                    ""properties"": {
+                        ""message"": {
+                            ""type"":""string"",
+                            ""required"":false,
+                            ""description"":""The \""user-friendly\"" error message.""
+                        },
+                        ""exceptionMessage"": {
+                            ""type"":""string"",
+                            ""required"":false,
+                            ""description"":""The system-generated exception message.""
+                        },
+                        ""exceptionType"": {
+                            ""type"":""string"",
+                            ""required"":false,
+                            ""description"":""The type of the exception.""
+                        },
+                        ""stackTrace"": {
+                            ""type"":""string"",
+                            ""required"":false,
+                            ""description"":""The server-side stack trace (only available in DEBUG builds).""
+                        }
+                    }
+                }";
+
+    void RenderLinkAndErrorModels()
+    { #>
+<#= boilerPlateErrorModel #>
+<#= boilerPlateLink #>
+<#+
+    }
+
+    void ProcessColumn(ICodeGenHelper codeGenHelper, Dictionary<string, Table> tablesByName, Table tbl, Column col, List<string> propertiesWithCollidingJsonNames, List<string> propertiesInReferences, Profile profile, ContentTypeUsage? contentTypeUsage, string context)
+    {
+        if (IsReferenceColumn(propertiesInReferences, col))
+            return;
+
+        string propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription;
+
+        if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) 
+        {
+            propertyName = codeGenHelper.ApplyPropertyNameConventions(col.CleanName, tbl.Name, propertiesWithCollidingJsonNames);
+            propertyType = GetSwaggerType(codeGenHelper.GetPropertyType(col));
+        }
+        else 
+        {
+            propertyName = codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(col.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames);
+            propertyType = "string";
+        }                    
+
+        propertyRequired = col.IsNullable ? "false" : "true";
+        propertyDescription = codeGenHelper.CleanForSwaggerAttribute(col.Description);
+        propertyItemType = null;
+
+        RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, context);
+    }
+
+    void RenderReferencedModels(ICodeGenHelper codeGenHelper, IEnumerable<XElement> aggregateElt, Dictionary<string, Table> tablesByName, List<string> referencedEntityNames, List<string> propertiesWithCollidingJsonNames, List<string> propertiesInReferences, Profile profile, ContentTypeUsage? contentTypeUsage, string context)
+    {
+        foreach (string referencedEntityName in referencedEntityNames)
+        {
+            firstPropertyRendered = false;
+            Table tbl = tablesByName[referencedEntityName];
+
+            var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name)
+                                .Select(e => e.Attribute("isA"))
+                                .SingleOrDefault();
+
+            string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+
+            Table baseTbl = null;
+
+            if (baseTableName != null)
+                tablesByName.TryGetValue(baseTableName, out baseTbl);
+#>
+        , "<#= codeGenHelper.CamelCase(tbl.ClassName) #>Reference": {
+            "id":"<#= codeGenHelper.CamelCase(tbl.ClassName) #>Reference",
+            "properties": {
+<#+
+            foreach (var pkCol in tbl.PrimaryKeyColumns)
+            {
+                string propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription;
+                
+                if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) { 
+                    propertyName = codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames);
+                    propertyType = GetSwaggerType(pkCol.SysType);
+                } else {
+                    propertyName = codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames);
+                    propertyType = "string";
+                }
+
+                propertyRequired = (pkCol.IsNullable ||codeGenHelper. IsColumnValueAutoAssigned(tbl, pkCol, baseTbl)) ? "false" : "true";
+                propertyDescription = codeGenHelper.CleanForSwaggerAttribute(pkCol.Description);
+                propertyItemType = null;
+
+                RenderProperty(propertyName, propertyType, propertyItemType, propertyRequired, propertyDescription, profile, contentTypeUsage, context);
+            }
+#>
+                , "link": {
+                    "type":"link",
+                    "required":false,
+                    "description":"Represents a hyperlink to the related <#= codeGenHelper.CamelCase(tbl.ClassName) #> resource."
+                }
+            }
+        }
+<#+
+        } #>
+<#+
+    }
+
+    bool IsReferenceColumn(List<string> propertiesInReferences, Column col)
+    {
+        return propertiesInReferences.Contains(col.Name);
+    }
+
+    void RenderProperty(string propertyName, string propertyType, string propertyItemType, string propertyRequired, string propertyDescription,
+        Profile profile, ContentTypeUsage? contentTypeUsage, string context)
+    {
+        if (propertyItemType == null) {
+#>
+                <#= firstPropertyRendered ? "," : string.Empty#>"<#= propertyName #>": {
+                    "type":"<#= propertyType #>",
+                    "required":<#= propertyRequired #>,
+                    "description":"<#= propertyDescription #>"
+                }
+<#+     } else {
+#>
+                <#= firstPropertyRendered ? "," : string.Empty#>"<#= propertyName #>": {
+                    "type":"array",
+                    "items":{"$ref":"<#= GetContextualTypeName(propertyItemType, profile, contentTypeUsage, context) #>"},
+                    "required":<#= propertyRequired #>,
+                    "description":"<#= propertyDescription #>"
+                }
+<#+
+        }
+
+        // Generate leading commas on each subsequent property
+        firstPropertyRendered = true;
+    }
+#>

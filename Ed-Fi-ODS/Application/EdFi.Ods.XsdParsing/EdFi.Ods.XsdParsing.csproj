@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{911B7461-CDDE-4F38-9840-BEDFD1611533}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.XsdParsing</RootNamespace>
+    <AssemblyName>EdFi.Ods.XsdParsing</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureDev|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\AzureDev\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureProd|AnyCPU'">
+    <OutputPath>bin\AzureProd\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalTest|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\AzureTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalMinimal|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LocalMinimal\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalUiTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LocalUiTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="InterchangeLoader.cs" />
+    <Compile Include="Parse\ISchemaValidation.cs" />
+    <Compile Include="Parse\Parse.cs" />
+    <Compile Include="Parse\ParsedInterchange.cs" />
+    <Compile Include="Parse\ParsedSchemaAttribute.cs" />
+    <Compile Include="Parse\ParsedSchemaElement.cs" />
+    <Compile Include="Parse\ParsedSchemaObject.cs" />
+    <Compile Include="Process\Association.cs" />
+    <Compile Include="Process\Common.cs" />
+    <Compile Include="Process\CommonCollection.cs" />
+    <Compile Include="Process\CommonExpansion.cs" />
+    <Compile Include="Process\Descriptor.cs" />
+    <Compile Include="Process\DescriptorEnumeration.cs" />
+    <Compile Include="Process\DomainEntity.cs" />
+    <Compile Include="Process\Enumeration.cs" />
+    <Compile Include="Process\EnumerationCollection.cs" />
+    <Compile Include="Process\ExtendedDescriptorReference.cs" />
+    <Compile Include="Process\ExtendedDescriptorReferenceCodeValue.cs" />
+    <Compile Include="Process\ExtendedDescriptorReferenceCollection.cs" />
+    <Compile Include="Process\ExtendedDescriptorReferenceCollectionCodeValue.cs" />
+    <Compile Include="Process\ExtendedReference.cs" />
+    <Compile Include="Process\ExtendedReferenceCollection.cs" />
+    <Compile Include="Process\ExtendedReferenceRefAttribute.cs" />
+    <Compile Include="Process\Identity.cs" />
+    <Compile Include="Process\Interchange.cs" />
+    <Compile Include="Process\NoMatch.cs" />
+    <Compile Include="Process\PriorDescriptorReference.cs" />
+    <Compile Include="Process\Process.cs" />
+    <Compile Include="Process\ProcessChainOfResponsiblity.cs" />
+    <Compile Include="Process\ProcessResult.cs" />
+    <Compile Include="Process\SchoolYear.cs" />
+    <Compile Include="Process\SkipDescriptorReferenceNamespace.cs" />
+    <Compile Include="Process\SkipElement.cs" />
+    <Compile Include="Process\SkipIdAttribute.cs" />
+    <Compile Include="Process\SkipRefAttribute.cs" />
+    <Compile Include="Process\SkipReference.cs" />
+    <Compile Include="Process\SkipTopLevelReference.cs" />
+    <Compile Include="Process\SkipType.cs" />
+    <Compile Include="Process\StringTypeCode.cs" />
+    <Compile Include="Process\StringTypeCodeCollection.cs" />
+    <Compile Include="Process\SystemTypeCode.cs" />
+    <Compile Include="Process\UniqueId.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdFi.Common\EdFi.Common.csproj">
+      <Project>{C545A7D1-4054-4279-9723-F06DA524E122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.CodeGen\EdFi.Ods.CodeGen.csproj">
+      <Project>{5616C863-9B07-4BA4-A611-9F2226294B10}</Project>
+      <Name>EdFi.Ods.CodeGen</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <myLibraries Include="$(TargetPath); $(TargetDir)$(TargetName).pdb;" >
+	  <InProject>false</InProject>
+	</myLibraries>
+  </ItemGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(myLibraries)" DestinationFolder="$(ttLibsFolder)" />
+  </Target>
+</Project>

@@ -1,0 +1,34 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="..\ttInclude\Metadata.ttinclude" #>
+<#@ output extension=".generated.cs" #>
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace EdFi.Ods.CodeGen.XsdToWebApi.Process 
+{
+    public class NoForeignKeyMetadata
+    {
+        public string ElementName { get; set; }
+        public string ParentElementName { get; set; }
+        
+        public static readonly List<NoForeignKeyMetadata> PredefinedNoForeignKeyMetadata = new List<NoForeignKeyMetadata> {
+<#
+    var doc = GetExtendedXmlDocument(this.Host, "PredefinedNoForeignKeyMetadata.xml");
+    foreach (var pcm in doc.Elements("PredefinedNoForeignKeyMetadata"))
+    {
+        foreach (var cm in pcm.Elements("NoForeignKeyMetadata"))
+        {
+            var elementName = cm.Element("ElementName").Value;
+            var parentElementName = cm.Element("ParentElementName").Value;
+#>
+            new NoForeignKeyMetadata { ElementName = "<#=elementName #>", ParentElementName = "<#=parentElementName #>" },
+<#
+        }
+    }
+#>
+        };
+    }
+}

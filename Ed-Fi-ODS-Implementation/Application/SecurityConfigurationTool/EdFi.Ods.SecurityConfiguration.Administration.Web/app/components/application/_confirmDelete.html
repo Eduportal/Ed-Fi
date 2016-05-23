@@ -1,0 +1,29 @@
+﻿<div class="modal {{$root.fadeClass}}" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-labelledby="confirmDelete" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content panel-danger">
+            <div class="modal-header panel-heading">
+                <h4>Delete Application</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the following application?</p>
+                <blockquote>
+                    <dl class="dl-horizontal">
+                        <dt>Application Name:</dt>
+                        <dd><p>{{activeApp.applicationName}}</p></dd>
+                        <dt>Vendor:</dt>
+                        <dd>{{vendor.vendorName}}</dd>
+                        <dt>Key Status:</dt>
+                        <dd>{{activeApp.keyStatus}}</dd>
+                    </dl>
+                </blockquote>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger btn-ok" ng-click="performDeleting(activeApp)" ng-disabled="disableActionButton">
+                    <i class="fa fa-spinner fa-spin fa-lg" ng-show="disableActionButton"></i>
+                    Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

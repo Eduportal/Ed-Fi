@@ -1,0 +1,1 @@
+$usersToReinitialize = @{$applicationUser.UserName = $applicationUser.Password}

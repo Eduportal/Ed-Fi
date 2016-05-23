@@ -1,0 +1,29 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+@section scripts
+{
+    <script>
+
+        $(function () {
+            $('#btn-session').click(function () {
+                EdFiAdmin.Auth.getSessionInfo(function (data) {
+                    var sessionJson = JSON.stringify(data, null, 3);
+                    $('#session-info-output')
+                        .text(sessionJson)
+                        .removeClass('hidden');
+                });
+            });
+        });
+    </script>
+}
+
+<h2>Login</h2>
+
+<div><button id="btn-session">Session</button></div>
+<div style="margin-top: 20px;">
+    <pre id="session-info-output" class="hidden"></pre>
+</div>

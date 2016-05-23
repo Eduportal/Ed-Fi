@@ -1,0 +1,133 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ output extension=".generated.cs" #>
+using System.Collections.Generic;
+using EdFi.Ods.Security.Metadata.Models;
+
+namespace EdFi.Ods.Security.Metadata.Contexts
+{
+    internal partial class SeedData
+    {
+        internal List<ResourceClaim> ResourceClaims { get; private set; }
+
+        partial void InitializeResourceClaims()
+        {
+            //default parent resources
+            var types = new ResourceClaim { ResourceName = "types", DisplayName = "types", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/edFiTypes", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var systemDescriptors    = new ResourceClaim { ResourceName = "systemDescriptors", DisplayName = "systemDescriptors", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/systemDescriptors", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var managedDescriptors    = new ResourceClaim { ResourceName = "managedDescriptors", DisplayName = "managedDescriptors", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/managedDescriptors", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var educationOrganizations = new ResourceClaim { ResourceName = "educationOrganizations", DisplayName = "educationOrganizations", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/educationOrganizations", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var people = new ResourceClaim { ResourceName = "people", DisplayName = "people", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/people", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var relationshipBasedData    = new ResourceClaim { ResourceName = "relationshipBasedData", DisplayName = "relationshipBasedData", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/relationshipBasedData", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var assessmentMetadata    = new ResourceClaim { ResourceName = "assessmentMetadata", DisplayName = "assessmentMetadata", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/assessmentMetadata", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var identity = new ResourceClaim { ResourceName = "identity", DisplayName = "identity", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/identity", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var educationStandards = new ResourceClaim { ResourceName = "educationStandards", DisplayName = "educationStandards", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/educationStandards", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+            var primaryRelationships = new ResourceClaim { ResourceName = "primaryRelationships", DisplayName = "primaryRelationships", ClaimName = "http://ed-fi.org/ods/identity/claims/domains/primaryRelationships", ParentResourceClaimId = null, ParentResourceClaim = null, Application = OdsApplication };
+
+            ResourceClaims = new List<ResourceClaim>
+            {
+                types,
+                systemDescriptors,
+                managedDescriptors,
+                educationOrganizations,
+                people,
+                relationshipBasedData,
+                assessmentMetadata,
+                identity,
+                educationStandards,
+                primaryRelationships,
+
+<#
+var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath());
+var aggregates = domainMetadataDoc.Descendants("Aggregate");
+foreach (var aggregate in aggregates)
+{
+    if (aggregate.Descendants("Entity").Where(e => e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null).Any())
+        continue;
+
+    var aggregateRootName = aggregate.Attribute("root").Value;
+    aggregateRootName = Char.ToLowerInvariant(aggregateRootName[0]) + aggregateRootName.Substring(1);
+    var parentResource = GetParentResource(aggregateRootName);
+#>
+                new ResourceClaim { ClaimName = "http://ed-fi.org/ods/identity/claims/<#= aggregateRootName #>", DisplayName = "<#= aggregateRootName #>", ResourceName = "<#= aggregateRootName #>", ParentResourceClaim = <#= parentResource #>, Application = OdsApplication },
+<#}#>
+            };
+        }
+    }
+}
+<#+
+    private string GetParentResource(string resourceName)
+    {
+        if (resourceName.EndsWith("type", StringComparison.InvariantCultureIgnoreCase))
+            return "types";
+
+        if (resourceName.Equals("accommodationDescriptor", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("assessmentPeriodDescriptor", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("competencyLevelDescriptor", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("diagnosisDescriptor", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("performanceLevelDescriptor", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return "managedDescriptors";
+        }
+
+        if (resourceName.EndsWith("descriptor", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return "systemDescriptors";
+        }
+
+        if (resourceName.Equals("educationOrganizationNetwork", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("educationOrganizationNetworkAssociation", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("educationServiceCenter", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("localEducationAgency", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("school", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("stateEducationAgency", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return "educationOrganizations";
+        }
+
+        if (resourceName.Equals("parent", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("staff", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("student", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return "people";
+        }
+
+        if (resourceName.Equals("assessment", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("assessmentItem", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("objectiveAssessment", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("studentAssessment", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return "assessmentMetadata";
+        }
+
+        if (resourceName.Equals("assessmentFamily", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("educationContent", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return "null";
+        }
+
+        if (resourceName.Equals("learningStandard", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("learningObjective", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return "educationStandards";
+        }
+
+        if (resourceName.Equals("studentSchoolAssociation", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("staffEducationOrganizationAssignmentAssociation", StringComparison.InvariantCultureIgnoreCase)
+            || resourceName.Equals("staffEducationOrganizationEmploymentAssociation", StringComparison.InvariantCultureIgnoreCase))
+        {
+            return "primaryRelationships";
+        }
+
+        return "relationshipBasedData";
+
+
+    }
+#>

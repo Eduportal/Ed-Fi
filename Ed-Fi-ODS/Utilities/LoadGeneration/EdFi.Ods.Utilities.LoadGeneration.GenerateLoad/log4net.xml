@@ -1,0 +1,98 @@
+<log4net>
+  <!-- A1 is set to be a ConsoleAppender -->
+  <appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
+    <!-- A1 uses PatternLayout -->
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%-4timestamp [%thread] %-5level %logger %ndc - %message%newline" />
+    </layout>
+  </appender>
+
+  <appender name="ColoredConsoleAppender" type="log4net.Appender.ColoredConsoleAppender">
+    <mapping>
+      <level value="ERROR" />
+      <foreColor value="White" />
+      <backColor value="Red, HighIntensity" />
+    </mapping>
+    <mapping>
+      <level value="WARN" />
+      <backColor value="Red" />
+    </mapping>
+    <mapping>
+      <level value="INFO" />
+      <backColor value="White, HighIntensity" />
+    </mapping>
+    <mapping>
+      <level value="DEBUG" />
+      <backColor value="White" />
+    </mapping>
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %-5level %logger [%property{NDC}] - %message%newline" />
+    </layout>
+  </appender>
+
+  <appender name="FileAppender" type="log4net.Appender.FileAppender">
+    <file value="${LOCALAPPDATA}\EdFiLoadGen\log.txt" />
+    <appendToFile value="false" />
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %-5level %logger [%property{NDC}] - %message%newline" />
+    </layout>
+  </appender>  
+
+  <!-- Set root logger level to DEBUG and its only appender to A1 -->
+  <root>
+    <level value="WARN" />
+    <appender-ref ref="ColoredConsoleAppender" />
+    <appender-ref ref="FileAppender" />
+  </root>
+
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.LoggerProgressNotifier">
+    <level value="INFO" />
+  </logger>
+  
+  <!-- =============================== -->
+  <!-- BEGIN recommended DEBUG loggers -->
+  <!-- =============================== -->
+  <!-- Control all load generation value builders, set to DEBUG to get all sorts of diagnostics -->
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.ValueBuilders">
+    <level value="WARN" />
+  </logger>
+
+  <logger name="Castle.Proxies">
+    <level value="WARN" />
+  </logger>
+
+  <logger name="EdFi.TestObjects.TestObjectFactory">
+    <level value="WARN" />
+  </logger>
+  
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.ApiSdkFacade">
+    <level value="INFO" />
+  </logger>
+  
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.ReferenceValueBuilders">
+    <level value="WARN" />
+  </logger>
+  <!-- =============================== -->
+  <!--  END recommended DEBUG loggers -->
+  <!-- =============================== -->
+
+  <!-- Control the EdFiTypeValueBuilder -->
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.ValueBuilders.EdFiTypeValueBuilder">
+    <level value="ERROR" />
+  </logger>
+
+  <!-- Control the EdFiDescriptorValueBuilder -->
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.ValueBuilders.EdFiDescriptorValueBuilder">
+    <level value="ERROR" />
+  </logger>
+
+  <!-- Control the standard value builders for the TestObjectFactory -->
+  <logger name="EdFi.TestObjects.Builders">
+    <level value="ERROR" />
+  </logger>
+
+  <!-- Control the logging of RestCient requests/responses -->
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.RestClientLoggingInterceptor">
+    <level value="ERROR" />
+  </logger>
+</log4net>

@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InterchangeDescriptors>
+  <LevelDescriptor>
+    <CodeValue>01</CodeValue>
+    <ShortDescription>Adult Education</ShortDescription>
+    <Description>Adult Education</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Adult-Education</Namespace>
+    <LevelDescriptorId>168</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>02</CodeValue>
+    <ShortDescription>Early Education</ShortDescription>
+    <Description>Early Education</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Early-Education</Namespace>
+    <LevelDescriptorId>169</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>03</CodeValue>
+    <ShortDescription>Eighth grade</ShortDescription>
+    <Description>Eighth grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Eighth-grade</Namespace>
+    <LevelDescriptorId>170</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>04</CodeValue>
+    <ShortDescription>Eleventh grade</ShortDescription>
+    <Description>Eleventh grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Eleventh-grade</Namespace>
+    <LevelDescriptorId>171</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>05</CodeValue>
+    <ShortDescription>Fifth grade</ShortDescription>
+    <Description>Fifth grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Fifth-grade</Namespace>
+    <LevelDescriptorId>172</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>06</CodeValue>
+    <ShortDescription>First grade</ShortDescription>
+    <Description>First grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/First-grade</Namespace>
+    <LevelDescriptorId>173</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>07</CodeValue>
+    <ShortDescription>Fourth grade</ShortDescription>
+    <Description>Fourth grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Fourth-grade</Namespace>
+    <LevelDescriptorId>174</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>08</CodeValue>
+    <ShortDescription>Grade 13</ShortDescription>
+    <Description>Grade 13</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Grade-13</Namespace>
+    <LevelDescriptorId>175</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>09</CodeValue>
+    <ShortDescription>Infant/toddler</ShortDescription>
+    <Description>Infant/toddler</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Infant-toddler</Namespace>
+    <LevelDescriptorId>176</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>10</CodeValue>
+    <ShortDescription>Kindergarten</ShortDescription>
+    <Description>Kindergarten</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Kindergarten</Namespace>
+    <LevelDescriptorId>177</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>11</CodeValue>
+    <ShortDescription>Ninth grade</ShortDescription>
+    <Description>Ninth grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Ninth-grade</Namespace>
+    <LevelDescriptorId>178</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>12</CodeValue>
+    <ShortDescription>Other</ShortDescription>
+    <Description>Other</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Other</Namespace>
+    <LevelDescriptorId>179</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>13</CodeValue>
+    <ShortDescription>Postsecondary</ShortDescription>
+    <Description>Postsecondary</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Postsecondary</Namespace>
+    <LevelDescriptorId>180</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>14</CodeValue>
+    <ShortDescription>Preschool/Prekindergarten</ShortDescription>
+    <Description>Preschool/Prekindergarten</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Preschool-Prekindergarten</Namespace>
+    <LevelDescriptorId>181</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>15</CodeValue>
+    <ShortDescription>Second grade</ShortDescription>
+    <Description>Second grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Second-grade</Namespace>
+    <LevelDescriptorId>182</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>16</CodeValue>
+    <ShortDescription>Seventh grade</ShortDescription>
+    <Description>Seventh grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Seventh-grade</Namespace>
+    <LevelDescriptorId>183</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>17</CodeValue>
+    <ShortDescription>Sixth grade</ShortDescription>
+    <Description>Sixth grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Sixth-grade</Namespace>
+    <LevelDescriptorId>184</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>18</CodeValue>
+    <ShortDescription>Tenth grade</ShortDescription>
+    <Description>Tenth grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Tenth-grade</Namespace>
+    <LevelDescriptorId>185</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>19</CodeValue>
+    <ShortDescription>Third grade</ShortDescription>
+    <Description>Third grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Third-grade</Namespace>
+    <LevelDescriptorId>186</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>20</CodeValue>
+    <ShortDescription>Twelfth grade</ShortDescription>
+    <Description>Twelfth grade</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Twelfth-grade</Namespace>
+    <LevelDescriptorId>187</LevelDescriptorId>
+  </LevelDescriptor>
+  <LevelDescriptor>
+    <CodeValue>21</CodeValue>
+    <ShortDescription>Ungraded</ShortDescription>
+    <Description>Ungraded</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Level/Ungraded</Namespace>
+    <LevelDescriptorId>188</LevelDescriptorId>
+  </LevelDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>01</CodeValue>
+    <ShortDescription>Removal from Classroom</ShortDescription>
+    <Description>Removal from Classroom</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Removal-from-Classroom</Namespace>
+    <DisciplineDescriptorId>83</DisciplineDescriptorId>
+    <DisciplineTypeId>1</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>04</CodeValue>
+    <ShortDescription>Expulsion</ShortDescription>
+    <Description>Expulsion</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Expulsion</Namespace>
+    <DisciplineDescriptorId>86</DisciplineDescriptorId>
+    <DisciplineTypeId>4</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>05</CodeValue>
+    <ShortDescription>Community Service</ShortDescription>
+    <Description>Community Service</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Community-Service</Namespace>
+    <DisciplineDescriptorId>87</DisciplineDescriptorId>
+    <DisciplineTypeId>5</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>06</CodeValue>
+    <ShortDescription>Other</ShortDescription>
+    <Description>Other</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Other</Namespace>
+    <DisciplineDescriptorId>88</DisciplineDescriptorId>
+    <DisciplineTypeId>6</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>07</CodeValue>
+    <ShortDescription>Partial Day Out-Of-School Suspension</ShortDescription>
+    <Description>Partial Day Out-Of-School Suspension</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Partial-Day-Out-Of-School-Suspension</Namespace>
+    <DisciplineDescriptorId>326</DisciplineDescriptorId>
+    <DisciplineTypeId>3</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>08</CodeValue>
+    <ShortDescription>No action for incident</ShortDescription>
+    <Description>No action for incident</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/No-action-for-incident</Namespace>
+    <DisciplineDescriptorId>331</DisciplineDescriptorId>
+    <DisciplineTypeId>6</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>09</CodeValue>
+    <ShortDescription>In-School Suspension</ShortDescription>
+    <Description>In-School Suspension</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/In-School-Suspension</Namespace>
+    <DisciplineDescriptorId>332</DisciplineDescriptorId>
+    <DisciplineTypeId>2</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>10</CodeValue>
+    <ShortDescription>Out-Of-School Suspension</ShortDescription>
+    <Description>Out-Of-School Suspension</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Out-Of-School-Suspension</Namespace>
+    <DisciplineDescriptorId>333</DisciplineDescriptorId>
+    <DisciplineTypeId>3</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>E</CodeValue>
+    <ShortDescription>Expulsion without services</ShortDescription>
+    <Description>Expulsion without services</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Expulsion-without-services</Namespace>
+    <DisciplineDescriptorId>10057</DisciplineDescriptorId>
+    <DisciplineTypeId>4</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>I</CodeValue>
+    <ShortDescription>Suspension, in-school</ShortDescription>
+    <Description>Suspension, in-school</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Suspension-in-school</Namespace>
+    <DisciplineDescriptorId>10058</DisciplineDescriptorId>
+    <DisciplineTypeId>2</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>R</CodeValue>
+    <ShortDescription>Change of placement (long-term)</ShortDescription>
+    <Description>Change of placement (long-term)</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Change-of-placement-long-term</Namespace>
+    <DisciplineDescriptorId>10059</DisciplineDescriptorId>
+    <DisciplineTypeId>6</DisciplineTypeId>
+  </DisciplineDescriptor>
+  <DisciplineDescriptor>
+    <CodeValue>S</CodeValue>
+    <ShortDescription>Suspension, out-of-school, without services</ShortDescription>
+    <Description>Suspension, out-of-school, without services</Description>
+    <EffectiveBeginDate>2012-07-01</EffectiveBeginDate>
+    <Namespace>uri://ed-fi.org/Descriptors/Discipline/Suspension-out-of-school-without-services</Namespace>
+    <DisciplineDescriptorId>10060</DisciplineDescriptorId>
+    <DisciplineTypeId>3</DisciplineTypeId>
+  </DisciplineDescriptor>
+</InterchangeDescriptors>

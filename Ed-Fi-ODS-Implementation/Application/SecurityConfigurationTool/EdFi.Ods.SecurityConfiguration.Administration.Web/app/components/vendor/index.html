@@ -1,0 +1,85 @@
+﻿<h2>Vendors</h2>
+
+<div>
+    <div class="text-right">
+        <button class="btn btn-default" ng-click="add()" data-toggle="modal" data-target="#edit-vendor-modal">Add Vendor</button>
+    </div>
+
+    <div class="table"></div> <!-- Spacer -->
+
+    <table class="table table-striped">
+        <tr>
+            <th>Vendor Name</th>
+            <th>Namespace Prefix</th>
+            <th class="text-center"># of Applications</th>
+            <th class="text-right">Actions</th>
+        </tr>
+        <tr><td class="text-center text-info" colspan="4" ng-show="loading"><span class="text-info fa fa-spinner fa-spin"></span> Loading...</td></tr>
+        <tr><td class="text-center text-warning" colspan="4" ng-show="!vendorList.length && !loading">There is no vendor in the database</td></tr>
+        <tr ng-repeat="vendor in vendorList | orderBy: 'vendorName'">
+            <td><span class="btn-link pointer" data-toggle="modal" data-target="#edit-vendor-modal" ng-click="edit(vendor, $index)">{{vendor.vendorName}}</span></td>
+            <td>{{vendor.namespacePrefix}}</td>
+            <td class="text-center"><a href="#/vendors/{{vendor.vendorId}}/applications"><span class="badge" ng-show="vendor.applicationCount">{{vendor.applicationCount}}</span></a></td>
+            <td class="text-right">
+                <a href="#/vendors/{{vendor.vendorId}}/applications"><span class="glyphicon glyphicon glyphicon-list" aria-hidden="true" style="color:navy;" title="Manage Applications"></span></a>
+                <span class="glyphicon glyphicon-pencil pointer" aria-hidden="true" style="color:navy;" ng-click="edit(vendor, $index)" data-toggle="modal" data-target="#edit-vendor-modal" title="Edit Vendor"></span>
+                <span class="glyphicon glyphicon-remove pointer" aria-hidden="true" style="color:darkred;" ng-click="delete(vendor, $index)" title="Delete Vendor" data-toggle="modal" data-target="#confirm-delete-modal"></span>
+            </td>
+        </tr>
+    </table>
+
+    <div class="text-right">
+        <button class="btn btn-default" ng-click="add()" data-toggle="modal" data-target="#edit-vendor-modal">Add Vendor</button>
+    </div>
+
+    <div class="modal {{$root.fadeClass}}" id="edit-vendor-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 ng-show="editMode">Edit Vendor</h4>
+                    <h4 ng-show="!editMode">Add Vendor</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" name="editVendorForm" novalidate>
+                        <div class="form-group required" ng-class="error('vendorName')">
+                            <label class="control-label col-sm-4" for="vendorName">Company Name:</label>
+                            <input class="form-control" type="text" id="vendorName" name="vendorName" ng-model="activeVendor.vendorName" placeholder="Enter Vendor Name" required />
+                            <span class="help-block col-sm-offset-4" ng-show="submitted && editVendorForm.vendorName.$invalid">Vendor Name is required</span>
+                        </div>
+                        <div class="form-group" ng-class="error('vendorNamespace')">
+                            <label class="control-label col-sm-4" for="vendorNamespace">Namespace Prefix:</label>
+                            <input class="form-control" type="url" id="vendorNamespace" name="vendorNamespace" ng-model="activeVendor.namespacePrefix" placeholder="Enter Vendor Namespace prefix" />
+                            <span class="help-block col-sm-offset-4" ng-show="submitted && editVendorForm.vendorNamespace.$invalid">Namespace should be a valid URL starting with http(s)://</span>
+                        </div>
+                        <div class="form-group required" ng-class="error('vendorContact')">
+                            <label class="control-label col-sm-4" for="vendorContact">Contact Name:</label>
+                            <input class="form-control" type="text" id="vendorContact" name="vendorContact" ng-model="activeVendor.mainContact.contactName" placeholder="Enter Vendor Contact" required />
+                            <span class="help-block col-sm-offset-4" ng-show="submitted && editVendorForm.vendorContact.$invalid">Contact name is required</span>
+                        </div>
+                        <div class="form-group required" ng-class="error('vendorEmail')">
+                            <label class="control-label col-sm-4" for="vendorEmail">Contact Email:</label>
+                            <input class="form-control" type="email" id="vendorEmail" name="vendorEmail" ng-model="activeVendor.mainContact.contactEmailAddress" placeholder="Enter Vendor Email Address" required />
+                            <span class="help-block col-sm-offset-4" ng-show="submitted && editVendorForm.vendorEmail.$error.required">Email is required</span>
+                            <span class="help-block col-sm-offset-4" ng-show="submitted && editVendorForm.vendorEmail.$error.email">Invalid email address</span>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="pull-right">
+                        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary" ng-show="!editMode" ng-click="performAdding(activeVendor)" ng-disabled="disableActionButton">
+                            <i class="fa fa-spinner fa-spin fa-lg" ng-show="disableActionButton"></i>
+                            Create
+                        </button>
+                        <button class="btn btn-primary" ng-show="editMode" ng-click="performUpdating(activeVendor)" ng-disabled="disableActionButton">
+                            <i class="fa fa-spinner fa-spin fa-lg" ng-show="disableActionButton"></i>
+                            Apply
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-ng-include="'app/components/vendor/_confirmDelete.html'"></div>
+    <div data-ng-include="'app/components/shared/_alertMessage.html'"></div>
+</div>

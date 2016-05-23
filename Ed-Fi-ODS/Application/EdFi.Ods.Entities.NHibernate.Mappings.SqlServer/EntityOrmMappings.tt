@@ -1,0 +1,351 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ output extension=".generated.hbm.xml" #>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" 
+                   assembly="EdFi.Ods.Entities.NHibernate" 
+                           default-access="property">
+<# 
+// Delete all mapping files before generating anything new
+
+databaseSchemaProvider = new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath());
+codeGenHelper = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath()); 
+var tables = databaseSchemaProvider.LoadTables();
+var forBaseMappings = new List<string>();
+
+var tablesByName = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
+
+foreach (var t in tables)
+    tablesByName[t.Name] = t;
+
+// Determine what tables in the database have not been explicitly handled
+var unhandledTableNames = 
+    tablesByName.Keys
+    .Except(domainMetadataDoc.Descendants("Entity").Select(x => x.Attribute("table").Value))
+    .Where(x => !codeGenHelper.IsExcluded(x) && !x.EndsWith("Extension")) // Ignore extension tables from this check
+    .ToList();
+
+// Provide explicit message related to any unhandled tables
+if (unhandledTableNames.Any())
+    throw new Exception(string.Format("The following tables have not been explicitly handled:\r\n{0}", string.Join("\r\n\t", unhandledTableNames)));
+
+var aggregatesElts = domainMetadataDoc.Descendants("Aggregate");
+
+foreach (var aggregateElt in aggregatesElts)
+{ 
+    string aggregateRootName = aggregateElt.Attribute("root").Value;
+
+    if (codeGenHelper.IsExcluded(aggregateRootName))
+        continue;
+
+    List<string> aggregateTableNames = 
+        (from e in aggregateElt.Descendants("Entity")
+        select e.Attribute("table").Value)
+        .ToList();
+
+    List<string> aggregateTableSchemas = 
+        (from e in aggregateElt.Descendants("Entity")
+        let attr = e.Attributes("schema").SingleOrDefault()
+        select attr == null ? "edfi" : attr.Value)
+        .ToList();
+
+    var orderedPKFieldsByTableName = new Dictionary<string, List<string>>();
+
+    int aggregateTableIndex = 0;
+
+    foreach (string aggregateTableName in aggregateTableNames)
+    {
+        string aggregateTableSchema = aggregateTableSchemas[aggregateTableIndex++];
+
+        Table tbl = tables.SingleOrDefault(t => 
+            t.Name.Equals(aggregateTableName, StringComparison.InvariantCultureIgnoreCase)
+            && t.Schema.Equals(aggregateTableSchema, StringComparison.InvariantCultureIgnoreCase));
+
+        if (tbl == null) { #>
+<!-- WARNING: Unable to find table '<#= aggregateTableName #>' for aggregate '<#= aggregateElt.Attribute("name").Value #>' -->
+<#            
+            continue;
+        } 
+        var navigableParentFKs = codeGenHelper.GetNavigableParentRelationships(tbl, aggregateTableNames);
+        var navigableChildFKs = tbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+        var navigableOneToOneParentFKs = tbl.GetNavigableOneToOneParentTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+        var navigableOneToOneChildFKs = tbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+
+        var extensionTable = 
+            (from t in tables
+            where tbl.Name + "Extension" == t.Name && tbl.Schema != t.Schema
+            select t)
+            .SingleOrDefault();
+
+        if (!codeGenHelper.ExcludedTables.Contains(tbl.Name))
+        { 
+            bool isRootTable = tbl.Name.Equals(aggregateRootName, StringComparison.InvariantCultureIgnoreCase); 
+            bool isAbstract = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name 
+                                        && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                               .Any();
+
+            bool isBase = aggregatesElts.Descendants("Entity")
+                                .Where(e => e.Attributes("isA").FirstOrDefault(a => a.Value == tbl.Name) != null)
+                               .Any();
+
+            bool isDerived = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name
+                                        && e.Attributes("isA").Any())
+                                .Any();
+
+            if (isDerived) {
+                // Current table is derived, so it's mapping information will be included with base class mapping
+                continue;
+            }
+            if (!isAbstract && isBase){
+                GenerateMappingFile(aggregateRootName, false, false, tbl, extensionTable, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isAbstract, isBase, domainMetadataDoc, tables, tablesByName, null, orderedPKFieldsByTableName);
+                GenerateMappingFile(aggregateRootName, true, false, tbl, extensionTable, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isAbstract, isBase, domainMetadataDoc, tables, tablesByName, forBaseMappings, orderedPKFieldsByTableName);
+            }
+            else if (forBaseMappings.Contains(tbl.Name)){
+                GenerateMappingFile(aggregateRootName, false, false, tbl, extensionTable, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isAbstract, isBase, domainMetadataDoc, tables, tablesByName, null, orderedPKFieldsByTableName);
+                GenerateMappingFile(aggregateRootName, false, true, tbl, extensionTable, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isAbstract, isBase, domainMetadataDoc, tables, tablesByName, null, orderedPKFieldsByTableName);
+            }
+            else{
+                GenerateMappingFile(aggregateRootName, false, false, tbl, extensionTable, isRootTable, navigableParentFKs, navigableOneToOneChildFKs, navigableChildFKs, isAbstract, isBase, domainMetadataDoc, tables, tablesByName, null, orderedPKFieldsByTableName);
+            }                       
+
+        } 
+    } 
+} #>
+</hibernate-mapping>
+
+
+<#+
+
+private void GenerateMappingFile(string aggregateRootName, bool isConcreteBase, bool isService, Table tbl, Table extensionTable, bool isRootTable, IEnumerable<FKTable> navigableParentFKs, IEnumerable<FKTable> navigableOneToOneChildFKs, IEnumerable<FKTable> navigableChildFKs, bool isAbstract, bool isBase, XDocument domainMetadataDoc, List<Table> tables, Dictionary<string, Table> tablesByName, List<string> forBaseMappings, Dictionary<string, List<string>> orderedPKFieldsByTableName){
+
+    if (!isRootTable && navigableParentFKs.Count() != 1) { #>
+    <!-- WARNING: Unexpected parent FK count! <#= string.Join("|", navigableParentFKs.Select(x => x.OtherTable)) #> -->
+<#+
+    }
+    FKTable parentFK = isRootTable ? null : navigableParentFKs.FirstOrDefault();
+    var orderedPKFields = new List<string>();
+#>
+
+  <!-- Class definition -->
+  <class name="EdFi.Ods.Entities.NHibernate.<#= aggregateRootName #>Aggregate.<#= tbl.Name #><#=isConcreteBase?"Base":""#><#=isService?"ForBase":""#>" table="<#= tbl.Name #>" lazy="false"<#+ if (tbl.Schema != codeGenHelper.DefaultSchema) { Write(" schema=\"" + tbl.Schema + "\""); } #>>
+<#+
+    if (parentFK != null && codeGenHelper.IsFKPartOfPK(tbl, parentFK)) { // Aggregate child table    #>
+    <!-- Composite primary key -->
+    <composite-id>
+<#+        foreach (var pkCol in tbl.PKs.OrderBy(x => x.Name).Where(c => !parentFK.ThisColumns.Contains(c.Name))) { #>
+        <key-property name="<#= pkCol.CleanName #>" column="<#= pkCol.Name #>" type="<#= pkCol.NHType #>"<#= pkCol.NHType == "string" ? " length=\"" + pkCol.MaxLength + "\"" : string.Empty #> />
+<#+            orderedPKFields.Add(pkCol.CleanName); #>
+<#+        } #>
+        <key-many-to-one name="<#= parentFK.OtherTable #>"<#+ if(isService) Write(" class=\"EdFi.Ods.Entities.NHibernate." + aggregateRootName + "Aggregate."+parentFK.OtherTable+"Base\"");#>>
+<#+              
+        List<string> orderedPKFieldsForManyToOne; 
+
+        // If we don't have an ordered list of PK fields from the generation of the parent table, then use the alphabetic ordering
+        if (!orderedPKFieldsByTableName.TryGetValue(parentFK.OtherTable, out orderedPKFieldsForManyToOne))
+            orderedPKFieldsForManyToOne = parentFK.ThisColumns.OrderBy(x => x).ToList();
+
+        foreach (var thisColumn in orderedPKFieldsForManyToOne) 
+        { 
+            var pkCol = tbl.PKs.SingleOrDefault(c => c.Name == thisColumn);
+            if (pkCol == null) throw new Exception(string.Format("Unable to find PK column '{0}' in table '{1}'.", thisColumn, tbl.Name));
+            orderedPKFields.Add(pkCol.CleanName);#>
+            <column name="<#= pkCol.Name #>" />
+<#+        } #>
+        </key-many-to-one>
+    </composite-id>
+
+<#+ }
+    else {
+        if (tbl.PKs.Count() == 1) { 
+            var pkCol = tbl.PKs.Single();
+            //orderedPKFields.Add(pkCol.CleanName); #>
+    <id name="<#= pkCol.CleanName #>" column="<#= pkCol.Name #>" type="<#= pkCol.NHType #>"<#= pkCol.NHType == "string" ? " length=\"" + pkCol.MaxLength + "\"" : string.Empty #>>
+      <generator class="<#= pkCol.AutoIncrement ? "identity" : "assigned"#>" />
+    </id><#+    } else { #>    <!-- Composite primary key -->
+    <composite-id>
+<#+            foreach (var pkCol in tbl.PKs.OrderBy(x => x.Name)) { #>
+      <key-property name="<#= pkCol.CleanName #>" column="<#= pkCol.Name #>" type="<#= pkCol.NHType #>"<#= pkCol.NHType == "string" ? " length=\"" + pkCol.MaxLength + "\"" : string.Empty #> />
+<#+            //orderedPKFields.Add(pkCol.CleanName); #>
+<#+            } #>
+    </composite-id><#+        }
+    }
+
+    if (isRootTable) { #>
+
+
+    <!-- Optimistic locking for aggregate root -->
+    <version name="LastModifiedDate" column="LastModifiedDate" type="timestamp" />
+
+<#+    } #>
+    <!-- Transient state detection -->
+    <property name="CreateDate" column="CreateDate" type="DateTime" not-null="true" />
+
+<#+    if (isRootTable) { #>
+    <!-- Unique Guid-based identifier for aggregate root -->
+    <property name="Id" column="Id" type="guid" not-null="true" />
+<#+    } #>
+
+    <!-- Properties -->
+<#+    foreach (var col in tbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) { // Explicitly exclude the "Id" property here #>
+    <property name="<#= col.CleanName #>" column="<#= col.Name #>" type="<#= col.NHType #>"<#= col.NHType == "string" ? " length=\"" + col.MaxLength + "\"": string.Empty #><#= col.IsNullable ? string.Empty : " not-null=\"true\"" #> />
+<#+    } 
+    if (orderedPKFields.Count > 0)
+        orderedPKFieldsByTableName[tbl.Name] = orderedPKFields;
+#>
+
+<#+
+    if (navigableOneToOneChildFKs.Any()) { #>
+
+    <!-- One-to-one child mappings -->
+<#+     foreach (var childTable in navigableOneToOneChildFKs){ #>
+    <bag name="<#= childTable.OtherClass #>PersistentList" cascade="all-delete-orphan" inverse="true" lazy="false">
+      <key>
+<#+          List<string> orderedPKFieldsForOneToOne;
+
+            // If we don't have an ordered list of PK fields from the generation of the parent table, then use the alphabetic ordering
+            if (!orderedPKFieldsByTableName.TryGetValue(tbl.Name, out orderedPKFieldsForOneToOne))
+                orderedPKFieldsForOneToOne = childTable.ThisColumns.OrderBy(x => x).ToList(); 
+            foreach (string keyColumn in orderedPKFieldsForOneToOne) { #>
+        <column name="<#= codeGenHelper.GetFKOtherColumnName(childTable, keyColumn) #>" />
+<#+            } #>
+      </key>
+      <one-to-many class="EdFi.Ods.Entities.NHibernate.<#= aggregateRootName #>Aggregate.<#= childTable.OtherTable #>" />
+    </bag>
+
+<#+     }
+    }
+#>
+
+    <!-- Collections -->
+<#+ foreach (var childTable in navigableChildFKs){ #>
+    <bag name="<#= childTable.OtherQueryable #>" cascade="all-delete-orphan" inverse="true" lazy="false">
+      <key>
+<#+                
+        List<string> orderedPKFieldsForBag; 
+        // If we don't have an ordered list of PK fields from the generation of the parent table, then use the alphabetic ordering
+        if (!orderedPKFieldsByTableName.TryGetValue(tbl.Name, out orderedPKFieldsForBag))
+            orderedPKFieldsForBag = childTable.ThisColumns.OrderBy(x => x).ToList();
+
+        foreach (string keyColumn in orderedPKFieldsForBag) { #>
+        <column name="<#= codeGenHelper.GetFKOtherColumnName(childTable, keyColumn) #>" />
+<#+        } #>
+      </key>
+      <one-to-many class="EdFi.Ods.Entities.NHibernate.<#= aggregateRootName #>Aggregate.<#= childTable.OtherTable #><#=isConcreteBase?"ForBase":""#>" />
+    <#+ if (forBaseMappings!=null) forBaseMappings.Add(childTable.OtherTable); #></bag>
+
+<#+    }
+            if (extensionTable != null) { #>
+    <!-- Extension Properties -->
+    <join table="<#= extensionTable.Name #>" schema="<#= extensionTable.Schema #>">
+        <key>
+<#+
+            if (parentFK != null && codeGenHelper.IsFKPartOfPK(tbl, parentFK)) { // Aggregate child table    #>
+            <!-- Composite primary key -->
+<#+                foreach (var pkCol in tbl.PKs.OrderBy(x => x.Name).Where(c => !parentFK.ThisColumns.Contains(c.Name))) { #>
+            <column name="<#= pkCol.Name #>" />
+<#+                } #>
+<#+
+                List<string> orderedPKFieldsForManyToOne; 
+
+                // If we don't have an ordered list of PK fields from the generation of the parent table, then use the alphabetic ordering
+                if (!orderedPKFieldsByTableName.TryGetValue(parentFK.OtherTable, out orderedPKFieldsForManyToOne))
+                    orderedPKFieldsForManyToOne = parentFK.ThisColumns.OrderBy(x => x).ToList();
+
+                foreach (var thisColumn in orderedPKFieldsForManyToOne) 
+                { 
+                    var pkCol = tbl.PKs.SingleOrDefault(c => c.Name == thisColumn);
+                    if (pkCol == null) throw new Exception(string.Format("Unable to find PK column '{0}' in table '{1}'.", thisColumn, tbl.Name));
+                    #>
+            <column name="<#= pkCol.Name #>" />
+<#+                }
+            } else { 
+                // Just copy the keys in alphabetical order, as with other tables
+                foreach (var pkCol in extensionTable.PKs.OrderBy(x => x.Name)) { #>
+            <column name="<#= pkCol.Name #>" />
+<#+                }
+            } #>
+        </key>
+<#+                foreach (var col in extensionTable.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) { // Explicitly exclude the "Id" property here #>
+        <property name="<#= col.CleanName #>" column="<#= col.Name #>" type="<#= col.NHType #>"<#= col.NHType == "string" ? " length=\"" + col.MaxLength + "\"": string.Empty #><#= col.IsNullable ? string.Empty : " not-null=\"true\"" #> />
+<#+                } #>
+    </join>
+
+<#+            }
+
+    // Look for derived classes if class is abstract
+    if  ( isAbstract || isConcreteBase ) { #>
+    <!-- Derived classes -->
+<#+
+        var derivedTablesInfo = 
+            from e in domainMetadataDoc.Descendants("Entity")
+                where e.Attribute("isA") != null && e.Attribute("isA").Value == tbl.Name
+                select new { TableName = e.Attribute("table").Value, AggregateElt = e.Ancestors().First(), AggregateName = e.Ancestors().First().Attribute("root").Value };
+
+        foreach (var derivedTableInfo in derivedTablesInfo) { 
+            Table derivedTbl = tables.SingleOrDefault(t => t.Name.Equals(derivedTableInfo.TableName, StringComparison.InvariantCultureIgnoreCase));
+#>    <joined-subclass name="EdFi.Ods.Entities.NHibernate.<#= derivedTableInfo.AggregateName #>Aggregate.<#= derivedTableInfo.TableName #>" table="<#= derivedTableInfo.TableName #>"<#+ if (derivedTbl.Schema != codeGenHelper.DefaultSchema) { Write(" schema=\"" + derivedTbl.Schema + "\""); } #> lazy="false">
+      <key>
+<#+          foreach (var pkCol in derivedTbl.PKs.OrderBy(x => x.Name)) { #>
+        <column name="<#= pkCol.Name #>" />
+<#+          } #>
+      </key>
+
+      <!-- PK properties -->
+<#+          foreach (var pkCol in derivedTbl.PKs) { #>
+      <property name="<#= pkCol.CleanName #>" column="<#= pkCol.Name #>" type="<#= pkCol.NHType #>"<#= pkCol.NHType == "string" ? " length=\"" + pkCol.MaxLength + "\"": string.Empty #><#= pkCol.IsNullable ? string.Empty : " not-null=\"true\"" #> insert="false" />
+<#+          } #>
+
+      <!-- Properties -->
+<#+            foreach (var col in derivedTbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) { // Explicitly exclude the "Id" property here #>
+      <property name="<#= col.CleanName #>" column="<#= col.Name #>" type="<#= col.NHType #>"<#= col.NHType == "string" ? " length=\"" + col.MaxLength + "\"": string.Empty #><#= col.IsNullable ? string.Empty : " not-null=\"true\"" #> />
+<#+            } #>
+
+      <!-- Collections -->
+<#+
+            List<string> derivedAggregateTableNames = 
+                (from e in derivedTableInfo.AggregateElt.Descendants("Entity")
+                select e.Attribute("table").Value)
+                .ToList();
+
+            var derivedNavigableChildFKs = derivedTbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(derivedAggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+
+            foreach (var derivedChildTable in derivedNavigableChildFKs) { 
+                List<string> derivedOrderedPKFieldsForBag; 
+
+                // If we don't have an ordered list of PK fields from the generation of the parent table, then use the alphabetic ordering
+                if (!orderedPKFieldsByTableName.TryGetValue(derivedTbl.Name, out derivedOrderedPKFieldsForBag))
+                    derivedOrderedPKFieldsForBag = derivedChildTable.ThisColumns.OrderBy(x => x).ToList();
+#>
+      <bag name="<#= derivedChildTable.OtherQueryable #>" cascade="all-delete-orphan" inverse="true" lazy="false">
+        <key>
+<#+             foreach (string keyColumn in derivedOrderedPKFieldsForBag) { #>
+          <column name="<#= codeGenHelper.GetFKOtherColumnName(derivedChildTable, keyColumn) #>" />
+<#+                } #>
+        </key>
+        <one-to-many class="EdFi.Ods.Entities.NHibernate.<#= derivedTableInfo.AggregateName #>Aggregate.<#= derivedChildTable.OtherTable #>" />
+      </bag>
+
+<#+}#>
+    </joined-subclass>
+
+<#+     } #>
+<#+
+    }
+#>
+</class>
+
+<#+
+
+}
+private IDatabaseSchemaProvider databaseSchemaProvider;
+private ICodeGenHelper codeGenHelper;
+#>

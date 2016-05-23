@@ -1,0 +1,118 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ output extension=".generated.cs"#>
+using System;
+using System.Collections.Generic;
+using EdFi.Ods.Common;
+using EdFi.Ods.Api.Common;
+<# 
+    var templatesPath = GetTemplatesPath();
+
+    var databaseSchemaProvider = 
+        new UsiToUniqueIdTransformingDatabaseSchemaProviderDecorator(
+            new EdFiExtensionsDatabaseSchemaProviderDecorator(
+                new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath())));
+
+    var codeGenLogic = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+
+    var model = new DomainModelFactory(codeGenLogic, GetExtensionsMetadataPath()).GetModel();
+#>
+
+namespace <#=codeGenLogic.Namespace#>.Common
+{ 
+<# foreach (var table in model.Classes)
+{
+    #>
+
+    /// <summary>
+    /// Interface for the <#=table.Schema #>.<#=table.Name #> table of the <#= table.AggregateRootName #> aggregate in the <#=codeGenLogic.DatabaseName#> Database.
+    /// </summary>
+    public interface I<#= table.Name #><#= table.Implements #>
+    {
+        void SuspendReferenceAssignmentCheck();
+
+        // Primary Key properties
+<#
+    // If we have a parent reference, and it IS part of the primary key
+    if (table.ParentFkTable != null && table.IsParentFkPartOfPrimary)
+    { #>
+        [NaturalKeyMember]
+        I<#= table.ParentFkTable.OtherClass #> <#= table.ParentFkTable.OtherClass #> { get; set; }
+<#    }
+    foreach (var pkCol in table.NonInheritedPKs) // Remove inherited primary keys from derived interface
+    { #>
+        [NaturalKeyMember]<#= pkCol.IsAutoIncrement ? "[AutoIncrement]" : string.Empty #><#= pkCol.IsUniqueId ? "[UniqueId]" : string.Empty #>
+<#
+        if (!pkCol.IsLookup) { #>
+        <#= pkCol.SysType #> <#= pkCol.CleanName #> { get; set; }
+<#      }
+        else { #>
+        string <#= TrimSuffix(pkCol.CleanName, "Id") #> { get; set; }
+<#      }
+    } 
+    
+    // If we have a parent reference, and it IS NOT part of the primary key
+    if (table.ForeignKeyColumn != null && !table.PKs.Contains(table.ForeignKeyColumn))
+    { #>
+        I<#= table.ParentFkTable.OtherClass #> <#= table.ParentFkTable.OtherClass #> { get; set; }
+<#    }
+
+    if (table.IsDerived) { #>
+
+        // Inherited non-PK properties
+<#            
+        foreach (var col in table.InheritedNonPkColumns) // Explicitly exclude the "Id" and "DateTime" columns property here
+        {
+            if (!col.IsLookup) { #>
+        //<#= col.PropertyType #> <#= col.CleanName #> { get; set; }
+<#          }
+            else { #>
+        //string <#= TrimSuffix(col.CleanName, "Id") #> { get; set; }
+<#          }
+        } #>
+<#  }
+#>
+
+        // Non-PK properties
+<#  foreach (var col in table.NonPrimaryKeyColumnsToShow) // Was --> (!isRootTable || c.Name != "LastModifiedDate")))
+    {
+        if (!col.IsLookup) { #>
+        <#= col.PropertyType #> <#= col.CleanName #> { get; set; }
+<#      }
+        else { #>
+        string <#= TrimSuffix(col.CleanName, "Id") #> { get; set; }
+<#      }
+    } #>
+<#  if (table.HasAnyOneToOneChildFKs) { #>
+
+        // =============================================================
+        //                     One-to-one relationships
+        // -------------------------------------------------------------
+<#      foreach (var oneToOneFK in table.OneToOneChildFKs) { #>
+        I<#= oneToOneFK.OtherClass #> <#= oneToOneFK.OtherClass #> { get; set; }
+<#      } #>
+
+        // -------------------------------------------------------------
+<#  } #>
+<#            
+    if (table.IsDerived) { #>
+
+        // Inherited lists
+<#      foreach (var childTable in table.BaseChildTables)
+        {  #>
+        //IList<I<#= childTable.OtherTable #>> <#= childTable.OtherQueryable #> { get; set; }
+<#      } #>
+<#  } #>
+
+        // Lists
+<#  foreach (var childTable in table.ChildTables) 
+    { #>
+        IList<I<#= childTable.OtherTable #>> <#= childTable.OtherQueryable #> { get; set; }
+<#    } #>
+    } 
+<# } #>
+}

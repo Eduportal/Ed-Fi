@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InterchangeEducationOrganization xmlns:ann="http://ed-fi.org/annotation" xsi:schemaLocation="http://ed-fi.org/Interchange-EducationOrganization.xsd" xmlns="http://ed-fi.org/0200-Draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<LocalEducationAgency>
+		<StateOrganizationId>10</StateOrganizationId>
+		<NameOfInstitution>Anderson County</NameOfInstitution>
+		<EducationOrganizationCategory>Local Education Agency</EducationOrganizationCategory>
+		<Address>
+			<StreetNumberName>Unknown</StreetNumberName>
+			<City>Unknown</City>
+			<StateAbbreviation>TN</StateAbbreviation>
+			<PostalCode>a</PostalCode>
+			<AddressType>Physical</AddressType>
+			</Address>
+		<InstitutionTelephone>
+			<TelephoneNumber>865-463-8631</TelephoneNumber>
+			<InstitutionTelephoneNumberType>Main</InstitutionTelephoneNumberType>
+		</InstitutionTelephone>
+		<InstitutionTelephone>
+			<TelephoneNumber>865-457-9157</TelephoneNumber>
+			<InstitutionTelephoneNumberType>Fax</InstitutionTelephoneNumberType>
+		</InstitutionTelephone>
+		<LocalEducationAgencyId>10</LocalEducationAgencyId>
+		<LocalEducationAgencyCategory>Independent</LocalEducationAgencyCategory>
+	</LocalEducationAgency>
+	<School>
+		<StateOrganizationId>100070</StateOrganizationId>
+		<NameOfInstitution>Norris Elementary</NameOfInstitution>
+		<EducationOrganizationCategory>School</EducationOrganizationCategory>
+		<Address>
+			<StreetNumberName>42 East Circle</StreetNumberName>
+			<City>Norris</City>
+			<StateAbbreviation>TN</StateAbbreviation>
+			<PostalCode>37828</PostalCode>
+			<AddressType>Physical</AddressType>
+		</Address>
+		<SchoolId>100070</SchoolId>
+		<GradeLevel>
+			<CodeValue>07</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>08</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>11</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>12</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>P4</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>T1</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>T3</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>T4</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>05</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>T6</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>T7</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>T8</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>T5</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>04</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>01</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>T2</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>P3</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>K</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>10</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>09</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>06</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>02</CodeValue>
+		</GradeLevel>
+		<GradeLevel>
+			<CodeValue>03</CodeValue>
+		</GradeLevel>
+		<SchoolCategory>Elementary School</SchoolCategory>
+		<LocalEducationAgencyReference>
+			<LocalEducationAgencyIdentity>
+				<LocalEducationAgencyId>10</LocalEducationAgencyId>
+			</LocalEducationAgencyIdentity>
+		</LocalEducationAgencyReference>
+	</School>
+	<Course>
+		<CourseCode>9108</CourseCode>
+		<CourseTitle>Modified Program Grades 7-12 (Math)</CourseTitle>
+		<NumberOfParts>1</NumberOfParts>
+		<CourseIdentificationCode>
+			<IdentificationCode>9108</IdentificationCode>
+			<CourseCodeSystem>State course code</CourseCodeSystem>
+		</CourseIdentificationCode>
+		<CourseLevelCharacteristic>Students with disabilities</CourseLevelCharacteristic>
+		<AcademicSubject>
+			<CodeValue>03</CodeValue>
+		</AcademicSubject>
+		<EducationOrganizationReference>
+			<EducationOrganizationIdentity>
+				<EducationOrganizationId>7800070</EducationOrganizationId>
+			</EducationOrganizationIdentity>
+		</EducationOrganizationReference>
+	</Course>
+	<Program>
+		<EducationOrganizationReference>
+			<EducationOrganizationIdentity>
+				<EducationOrganizationId>963</EducationOrganizationId>
+			</EducationOrganizationIdentity>
+		</EducationOrganizationReference>
+		<ProgramName>Migrant Education</ProgramName>
+		<ProgramType>Migrant Education</ProgramType>
+	</Program>
+</InterchangeEducationOrganization>

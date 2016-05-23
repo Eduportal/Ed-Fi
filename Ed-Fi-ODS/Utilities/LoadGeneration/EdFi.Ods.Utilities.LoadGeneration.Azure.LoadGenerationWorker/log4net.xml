@@ -1,0 +1,52 @@
+<log4net>
+  <appender name="TraceAppender" type="log4net.Appender.TraceAppender">
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %-5level %logger [%property{NDC}] - %message%newline" />
+    </layout>
+  </appender>
+
+  <!--
+  <appender name="FileAppender" type="log4net.Appender.FileAppender">
+    <file value="${LOCALAPPDATA}\EdFiLoadGen" />
+    <appendToFile value="false" />
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %-5level %logger [%property{NDC}] - %message%newline" />
+    </layout>
+  </appender>
+  -->
+
+  <!-- does not have to be at the root level -->
+  <root>
+    <level value="WARN" />
+    
+    <appender-ref ref="TraceAppender">
+      <!--<threshold value="INFO" />-->
+    </appender-ref>
+      
+    <!--<appender-ref ref="FileAppender" />-->
+  </root>
+
+  <!-- Show progress notifications -->
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.LoggerProgressNotifier">
+    <level value="INFO" />
+  </logger>
+  
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.Azure.LoadGenerationWorker">
+    <level value="INFO" />
+  </logger>
+
+  <!-- Control "noise" from warnings coming from the API reflection provider related to missing or unsupported model types -->
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.ApiSdkReflectionProvider">
+    <level value="ERROR"/>
+  </logger>
+  
+  <!-- Control "noise" from warnings (often related to authorization errors) coming from the API SDK facade (which are also subsequently reported as errors further up the call stack) -->
+  <logger name="EdFi.Ods.Utilities.LoadGeneration.ApiSdkFacade">
+    <level value="ERROR" />
+  </logger>
+
+  <!-- Control the logging of low-level RestCient requests -->
+  <!--<logger name="EdFi.Ods.Utilities.LoadGeneration.RestClientLoggingInterceptor">
+    <level value="DEBUG" />
+  </logger>-->
+</log4net>

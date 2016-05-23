@@ -1,0 +1,628 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D642F18C-9E3A-40E0-9A8E-B4BEA3EB65C0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.WebService.Tests</RootNamespace>
+    <AssemblyName>EdFi.Ods.WebService.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LocalTest|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\AzureTest\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalMinimal|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LocalMinimal\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LocalUiTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LocalUiTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="Coypu, Version=2.9.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Coypu.2.9.1\lib\net40\Coypu.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation, Version=5.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\FluentValidation.5.6.2.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="HttpSimulator">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\HttpSimulator.1.0.0.0\lib\Net40\HttpSimulator.dll</HintPath>
+    </Reference>
+    <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=1.7.3.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\CompareNETObjects.1.7.3.0\lib\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.FileSystems, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.FileSystems.3.0.1\lib\net45\Microsoft.Owin.FileSystems.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.Host.HttpListener.3.0.1\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.Hosting.3.0.1\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.StaticFiles, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.StaticFiles.3.0.1\lib\net45\Microsoft.Owin.StaticFiles.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Testing, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Owin.Testing.3.0.1\lib\net45\Microsoft.Owin.Testing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.SqlServer.Scripting.11.0.2100.61\lib\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.SqlServer.Scripting.11.0.2100.61\lib\Microsoft.SqlServer.Management.Sdk.Sfc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.SqlServer.Scripting.11.0.2100.61\lib\Microsoft.SqlServer.Smo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NCrunch.Framework, Version=2.15.0.9, Culture=neutral, PublicKeyToken=01d101bf6f3e0aea, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\NCrunch.Framework.2.15.0.9\lib\portable-windows8+net45\NCrunch.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="NDevConfig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Scripts\lib\nDevConfig\NDevConfig.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Should">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Should.1.1.20\lib\Should.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Cors">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebApi.Cors.5.2.3\lib\net45\System.Web.Http.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.Owin, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Tracing, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TechTalk.SpecFlow, Version=1.9.0.77, Culture=neutral, PublicKeyToken=0778194805d6db41, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\SpecFlow.1.9.0\lib\net35\TechTalk.SpecFlow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebDriver, Version=2.47.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Selenium.WebDriver.2.47.0\lib\net40\WebDriver.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebDriver.Support, Version=2.47.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Selenium.Support.2.47.0\lib\net40\WebDriver.Support.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UniqueIdentifierWebApi\IntegratedUniqueIdentityTests.cs" />
+    <Compile Include="AuthorizationTests\AssessmentAuthorizationTests.cs" />
+    <Compile Include="AuthorizationTests\AssessmentMetadataAuthorizationTests.cs" />
+    <Compile Include="AuthorizationTests\DataSeedHelper.cs" />
+    <Compile Include="AuthorizationTests\GetAllAuthorizationTests.cs" />
+    <Compile Include="AuthorizationTests\ManagedResourceAuthorizationTests.cs" />
+    <Compile Include="AuthorizationTests\ParentAuthorizationTests.cs" />
+    <Compile Include="AuthorizationTests\ProgramAuthorizationTests.cs" />
+    <Compile Include="AuthorizationTests\StaffAuthorizationTests.cs" />
+    <Compile Include="AuthorizationTests\StudentAuthorizationTests.cs" />
+    <Compile Include="Bugs_NotResolved\GradeLevelDescriptors_GetAll_OnlyReturnsKindergarten.cs" />
+    <Compile Include="Controllers\BulkOperationsControllerPostTests.cs" />
+    <Compile Include="Controllers\BulkOperationsControllerGetTests.cs" />
+    <Compile Include="Controllers\UploadControllerTests.cs" />
+    <Compile Include="Owin\OwinBulkHelper.cs" />
+    <Compile Include="Owin\OwinBulkTestBase.cs" />
+    <Compile Include="Owin\OwinSecurityRepository.cs" />
+    <Compile Include="Owin\OwinTestBase.cs" />
+    <Compile Include="Owin\OwinUriHelper.cs" />
+    <Compile Include="Owin\OwinTestStartupBase.cs" />
+    <Compile Include="Owin\OwinAuthorizationTokenHelper.cs" />
+    <Compile Include="Profiles\Embedded one to one references can be included and excluded.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Embedded one to one references can be included and excluded.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\EntityParentBackreferenceValueBuilder.cs" />
+    <Compile Include="Profiles\FakePersonUniqueIdToUsiCache.cs" />
+    <Compile Include="Profiles\FakeRepository.cs" />
+    <Compile Include="Profiles\FakeStudentIdentifierValueBuilder.cs" />
+    <Compile Include="Profiles\FakeTypesAndDescriptorsCache.cs" />
+    <Compile Include="Profiles\FeatureHooks.cs" />
+    <Compile Include="Profiles\Profile definitions can be readable or writable only.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profile definitions can be readable or writable only.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profile definitions can filter nested child collections to include or exclude items based on Type and Descriptor values.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profile definitions can filter nested child collections to include or exclude items based on Type and Descriptor values.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profile definitions can include and exclude certain references on resources.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profile definitions can include and exclude certain references on resources.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profile definitions can include and exclude specific properties on multiple derived resource child collections.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profile definitions can include and exclude specific properties on multiple derived resource child collections.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profile-specific content type headers in requests are validated to match target resources.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profile-specific content type headers in requests are validated to match target resources.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profile definitions can include all members of a resource or collection.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profile definitions can include all members of a resource or collection.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profile definitions can filter child collections to include or exclude items based on Type and Descriptor values.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profile definitions can filter child collections to include or exclude items based on Type and Descriptor values.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profiles assigned to callers must be used for covered resources.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profiles assigned to callers must be used for covered resources.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profiles can exclude optional references.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profiles can exclude optional references.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\ProfileSDKComponents.cs" />
+    <Compile Include="Profiles\ProfilesFilteringSteps.cs" />
+    <Compile Include="Profiles\ProfilesSdkTestStartup.cs" />
+    <Compile Include="Profiles\ProfilesTestStartup.cs" />
+    <Compile Include="Profiles\ProfilesSteps.cs" />
+    <Compile Include="Profiles\Profile definitions can include and exclude specific properties on child collections.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Profile definitions can include and exclude specific properties on child collections.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Profile definitions can include and exclude certain properties on resources.feature.cs">
+      <DependentUpon>Profile definitions can include and exclude certain properties on resources.feature</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Profiles\Requests using content types referencing undefined profiles will fail.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Requests using content types referencing undefined profiles will fail.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\Resources not covered by an assigned profile are accessible using either the standard JSON content type or a valid profile content type.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources not covered by an assigned profile are accessible using either the standard JSON content type or a valid profile content type.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\ScenarioHooks.cs" />
+    <Compile Include="Profiles\SdkClientGenerator.cs" />
+    <Compile Include="Profiles\SwaggerUI includes profiles in drop down list.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SwaggerUI includes profiles in drop down list.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Profiles\SwaggerUISteps.cs" />
+    <Compile Include="Profiles\SwaggerUITestStartup.cs" />
+    <Compile Include="Profiles\TypesAndDescriptorValueBuilder.cs" />
+    <Compile Include="ResponseTests\Get\GetByExample_400_Tests.cs" />
+    <Compile Include="_Helpers\ResourceHelper.cs" />
+    <Compile Include="_Helpers\PersonHelper.cs" />
+    <Compile Include="ResponseTests\Get\GetByExample_200_Tests.cs" />
+    <Compile Include="ResponseTests\Post\when_posting_a_resource_with_decimal_overflow.cs" />
+    <Compile Include="ResponseTests\when_an_internal_server_error_occurs.cs" />
+    <Compile Include="XmlShredding\XmlBulkDescriptorTests.cs" />
+    <Compile Include="YearSpecificSharedInstanceTests\BulkOperationYearSpecificTests.cs" />
+    <Compile Include="YearSpecificSharedInstanceTests\WebApiYearSpecificTests.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
+    <Compile Include="ResponseTests\Delete\when_deleting_a_resource.cs" />
+    <Compile Include="ResponseTests\Delete\when_deleting_a_resource_breaks_referencial_integrity.cs" />
+    <Compile Include="ResponseTests\Delete\when_deleting_a_resource_that_doesnt_exist.cs" />
+    <Compile Include="ResponseTests\Delete\when_deleting_a_resource_with_mismatched_etag.cs" />
+    <Compile Include="ResponseTests\Delete\when_deleting_a_resource_with_a_malformed_id.cs" />
+    <Compile Include="ResponseTests\Get\GetStudentsById_401_Tests.cs" />
+    <Compile Include="ResponseTests\Get\GetAll_200_Tests.cs" />
+    <Compile Include="ResponseTests\Get\GetAll_400_Tests.cs" />
+    <Compile Include="ResponseTests\Get\GetByKey_200_Tests.cs" />
+    <Compile Include="ResponseTests\Get\GetByKey_400_Tests.cs" />
+    <Compile Include="ResponseTests\Get\GetByKey_404_Tests.cs" />
+    <Compile Include="ResponseTests\Get\when_getting_an_unchanged_resource_by_id.cs" />
+    <Compile Include="ResponseTests\Get\when_getting_a_resource_by_id.cs" />
+    <Compile Include="ResponseTests\Get\when_getting_a_resource_by_id_that_doesnt_exist.cs" />
+    <Compile Include="ResponseTests\Post\when_posting_an_existing_resource.cs" />
+    <Compile Include="ResponseTests\Post\when_posting_a_resource_missing_a_required_value.cs" />
+    <Compile Include="ResponseTests\Post\when_posting_a_resource.cs" />
+    <Compile Include="ResponseTests\Put\when_putting_a_resource_with_invalid_state.cs" />
+    <Compile Include="ResponseTests\Put\when_putting_a_resource_missing_a_required_value.cs" />
+    <Compile Include="ResponseTests\Put\when_putting_a_resource_with_matching_etag.cs" />
+    <Compile Include="ResponseTests\Put\when_putting_a_resource_with_mismatched_etag.cs" />
+    <Compile Include="ResponseTests\Put\when_putting_a_resource_with_no_etag.cs" />
+    <Compile Include="ResponseTests\when_accessing_a_resource_with_invalid_token.cs" />
+    <Compile Include="UniqueIdentifierWebApi\UnimplementedUniqueIdentityTests.cs" />
+    <Compile Include="XmlShredding\XmlBulkProcessingTests.cs" />
+    <Compile Include="_Helpers\UniqueIdCreator.cs" />
+    <None Include="App.AzureDev.config">
+      <DependentUpon>App.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="App.AzureTest.config">
+      <DependentUpon>App.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+      <TransformOnBuild>true</TransformOnBuild>
+    </None>
+    <None Include="App.Debug.config">
+      <DependentUpon>App.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="App.LocalTest.config">
+      <DependentUpon>App.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App.Release.config">
+      <DependentUpon>App.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Profiles\Embedded one to one references can be included and excluded.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Embedded one to one references can be included and excluded.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile definitions can be readable or writable only.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile definitions can be readable or writable only.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile definitions can filter nested child collections to include or exclude items based on Type and Descriptor values.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile definitions can filter nested child collections to include or exclude items based on Type and Descriptor values.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile definitions can include and exclude certain references on resources.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile definitions can include and exclude certain references on resources.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile definitions can include and exclude specific properties on multiple derived resource child collections.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile definitions can include and exclude specific properties on multiple derived resource child collections.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile-specific content type headers in requests are validated to match target resources.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile-specific content type headers in requests are validated to match target resources.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile definitions can include all members of a resource or collection.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile definitions can include all members of a resource or collection.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile definitions can include and exclude specific properties on child collections.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile definitions can include and exclude specific properties on child collections.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile definitions can filter child collections to include or exclude items based on Type and Descriptor values.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile definitions can filter child collections to include or exclude items based on Type and Descriptor values.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profile definitions can include and exclude certain properties on resources.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profile definitions can include and exclude certain properties on resources.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profiles assigned to callers must be used for covered resources.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profiles assigned to callers must be used for covered resources.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Profiles can exclude optional references.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Profiles can exclude optional references.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Requests using content types referencing undefined profiles will fail.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Requests using content types referencing undefined profiles will fail.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\Resources not covered by an assigned profile are accessible using either the standard JSON content type or a valid profile content type.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>Resources not covered by an assigned profile are accessible using either the standard JSON content type or a valid profile content type.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Profiles\SwaggerUI includes profiles in drop down list.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>SwaggerUI includes profiles in drop down list.feature.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdFi.Common\EdFi.Common.csproj">
+      <Project>{C545A7D1-4054-4279-9723-F06DA524E122}</Project>
+      <Name>EdFi.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Ed-Fi-ODS-Implementation\Application\EdFi.Ods.Admin.DeployedUsers\EdFi.Ods.Admin.DeployedUsers.csproj">
+      <Project>{3b638150-7db3-4324-972c-0686efd6ba20}</Project>
+      <Name>EdFi.Ods.Admin.DeployedUsers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Messaging.MSMQ\EdFi.Messaging.MSMQ.csproj">
+      <Project>{8DD040EE-00E9-4ADF-A477-688E213EEAC5}</Project>
+      <Name>EdFi.Messaging.MSMQ</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Admin.Models\EdFi.Ods.Admin.Models.csproj">
+      <Project>{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}</Project>
+      <Name>EdFi.Ods.Admin.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Common\EdFi.Ods.Api.Common.csproj">
+      <Project>{c2ce5033-e5f3-49a4-a1c3-99775c926644}</Project>
+      <Name>EdFi.Ods.Api.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Data\EdFi.Ods.Api.Data.csproj">
+      <Project>{86eaf98e-a060-43b0-8f55-96a33fbce23b}</Project>
+      <Name>EdFi.Ods.Api.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Models.TestProfiles\EdFi.Ods.Api.Models.TestProfiles.csproj">
+      <Project>{E3FD8373-9915-4E06-BA2B-9DCEA0DAD6BC}</Project>
+      <Name>EdFi.Ods.Api.Models.TestProfiles</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Models\EdFi.Ods.Api.Models.csproj">
+      <Project>{28504282-cafb-499b-9919-c8458ac7a27d}</Project>
+      <Name>EdFi.Ods.Api.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api\EdFi.Ods.Api.csproj">
+      <Project>{2a1d92bc-c388-425e-aeee-0668bf472ccc}</Project>
+      <Name>EdFi.Ods.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.BulkLoad.Core\EdFi.Ods.BulkLoad.Core.csproj">
+      <Project>{1494CFA1-9ED3-471F-A77C-FBFFE76F00F6}</Project>
+      <Name>EdFi.Ods.BulkLoad.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.BulkLoad.Services\EdFi.Ods.BulkLoad.Services.csproj">
+      <Project>{5fc6505f-0ab4-4154-a80d-e43eb7d18569}</Project>
+      <Name>EdFi.Ods.BulkLoad.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Codegen.Generated\EdFi.Ods.CodeGen.Generated.csproj">
+      <Project>{afce2d31-ce65-44ed-92f3-757c64e4ad6e}</Project>
+      <Name>EdFi.Ods.CodeGen.Generated</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.CodeGen\EdFi.Ods.CodeGen.csproj">
+      <Project>{5616C863-9B07-4BA4-A611-9F2226294B10}</Project>
+      <Name>EdFi.Ods.CodeGen</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Common.ExceptionHandling\EdFi.Ods.Common.ExceptionHandling.csproj">
+      <Project>{933734a8-06a2-42da-a302-6ac42810adca}</Project>
+      <Name>EdFi.Ods.Common.ExceptionHandling</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Common\EdFi.Ods.Common.csproj">
+      <Project>{8D7CB143-8818-47A8-89E8-702D485E8DA0}</Project>
+      <Name>EdFi.Ods.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Entities.Common\EdFi.Ods.Entities.Common.csproj">
+      <Project>{DA329E1E-BBCA-4C8F-9B4C-313635D49BB5}</Project>
+      <Name>EdFi.Ods.Entities.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Entities.NHibernate.Mappings.SqlServer\EdFi.Ods.Entities.NHibernate.Mappings.SqlServer.csproj">
+      <Project>{B7008533-92B3-4F7E-82D0-66764E22E812}</Project>
+      <Name>EdFi.Ods.Entities.NHibernate.Mappings.SqlServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Entities.NHibernate\EdFi.Ods.Entities.NHibernate.csproj">
+      <Project>{766FC77D-7171-419B-B767-45DD737C6A41}</Project>
+      <Name>EdFi.Ods.Entities.NHibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Messaging\EdFi.Ods.Messaging.csproj">
+      <Project>{71FE3AD6-74D4-457A-9786-9C8B17813300}</Project>
+      <Name>EdFi.Ods.Messaging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Repositories.NHibernate\EdFi.Ods.Repositories.NHibernate.csproj">
+      <Project>{721d39e8-0fa9-4015-9217-71cd006b6f1c}</Project>
+      <Name>EdFi.Ods.Repositories.NHibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Api.Pipelines\EdFi.Ods.Api.Pipelines.csproj">
+      <Project>{f5aed08a-65d5-4efe-9307-9f2b54b111b7}</Project>
+      <Name>EdFi.Ods.Api.Pipelines</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Security.Metadata\EdFi.Ods.Security.Metadata.csproj">
+      <Project>{1acf010b-2092-4377-844e-fd710b6404bd}</Project>
+      <Name>EdFi.Ods.Security.Metadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Security\EdFi.Ods.Security.csproj">
+      <Project>{21495a36-4946-4e1f-93a5-4a2ab2d5b38c}</Project>
+      <Name>EdFi.Ods.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Swagger\EdFi.Ods.Swagger.csproj">
+      <Project>{B369A75B-1DFB-4BCC-8DFA-269D562AB47E}</Project>
+      <Name>EdFi.Ods.Swagger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.XmlShredding\EdFi.Ods.XmlShredding.csproj">
+      <Project>{1A264CF0-165C-4AAD-B284-AF52A5AE377D}</Project>
+      <Name>EdFi.Ods.XmlShredding</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Identity\EdFi.Identity.csproj">
+      <Project>{5fb903b5-16a9-402d-8c05-9583ac9e273e}</Project>
+      <Name>EdFi.Identity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.TestObjects\EdFi.TestObjects.csproj">
+      <Project>{d699fd99-71b6-47c4-8214-953f160cc338}</Project>
+      <Name>EdFi.TestObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Test.Common\Test.Common.csproj">
+      <Project>{df5439df-3b96-4e6e-970a-f9afed6bd482}</Project>
+      <Name>Test.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdFi.Ods.Tests\EdFi.Ods.Tests.csproj">
+      <Project>{06d25dda-12c5-4efa-ab3d-fdf08ae7a432}</Project>
+      <Name>EdFi.Ods.Tests</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\Ed-Fi-ODS-Implementation\Application\packages\EdFi.Ods.Api.Sdk.CodeGen.1.2.11\tools\sdk-generate.jar">
+      <Link>sdk-generate.jar</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\Ed-Fi-ODS-Implementation\Application\packages\PhantomJS.2.0.0\tools\phantomjs\phantomjs.exe">
+      <Link>phantomjs.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="phantomjs-license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sdk-generate.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AggregateTests\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+</Project>

@@ -1,0 +1,369 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InterchangeStandards xmlns="http://ed-fi.org/0200-Draft" xmlns:ann="http://ed-fi.org/annotation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ed-fi.org/Interchange-Standards.xsd">
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.1.A</LearningStandardId>
+		<Description>describe independent and dependent quantities in functional relationships;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+		<AcademicSubject>
+      <CodeValue>Mathematics</CodeValue>
+    </AcademicSubject>
+    <GradeLevel>
+      <CodeValue>Fifth Grade</CodeValue>
+    </GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.1.B</LearningStandardId>
+		<Description>gather and record data and use data sets to determine functional relationships between quantities;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+		<AcademicSubject>
+			<CodeValue>Mathematics</CodeValue>
+		</AcademicSubject>
+		<GradeLevel>
+			<CodeValue>Fifth Grade</CodeValue>
+		</GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.1.C</LearningStandardId>
+		<Description>describe functional relationships for given problem situations and write equations or inequalities to answer questions arising from the situations;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>		
+		<AcademicSubject>
+      <CodeValue>Mathematics</CodeValue>
+    </AcademicSubject>
+    <GradeLevel>
+      <CodeValue>Fifth Grade</CodeValue>
+    </GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.1.D</LearningStandardId>
+		<Description>represent relationships among quantities using concrete models, tables, graphs, diagrams, verbal descriptions, equations, and inequalities</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>		
+		<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.1.E</LearningStandardId>
+		<Description>interpret and make decisions, predictions, and critical judgments from functional relationships.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.2.A</LearningStandardId>
+		<Description>identify and sketch the general forms of linear (y = x) and quadratic (y = x2) parent functions;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.2.B</LearningStandardId>
+		<Description>identify mathematical domains and ranges and determine reasonable domain and range values for given situations, both continuous and discrete;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.2.C</LearningStandardId>
+		<Description>interpret situations in terms of given graphs or creates situations that fit given graphs</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.2.D</LearningStandardId>
+		<Description>collect and organize data, make and interpret scatterplots (including recognizing positive, negative, or no correlation for data approximating linear situations), and model, predict, and make decisions and critical judgments in problem situations.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.3.A</LearningStandardId>
+		<Description>use symbols to represent unknowns and variables</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.3.B</LearningStandardId>
+		<Description>look for patterns and represent generalizations algebraically.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.4.A</LearningStandardId>
+		<Description>find specific function values, simplify polynomial expressions, transform and solve equations, and factor as necessary in problem situations;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.4.B</LearningStandardId>
+		<Description>use the commutative, associative, and distributive properties to simplify algebraic expressions</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.4.C</LearningStandardId>
+		<Description>connect equation notation with function notation, such as y = x + 1 and f(x) = x + 1.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.5.A</LearningStandardId>
+		<Description>determine whether or not given situations can be represented by linear functions;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.5.B</LearningStandardId>
+		<Description>determine the domain and range for linear functions in given situations</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.5.C</LearningStandardId>
+		<Description>use, translate, and make connections among algebraic, tabular, graphical, or verbal descriptions of linear functions.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.6.A</LearningStandardId>
+		<Description>develop the concept of slope as rate of change and determine slopes from graphs, tables, and algebraic representations;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.6.B</LearningStandardId>
+		<Description>interpret the meaning of slope and intercepts in situations using data, symbolic representations, or graphs;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.6.C</LearningStandardId>
+		<Description>investigate, describe, and predict the effects of changes in m and b on the graph of y = mx + b;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.6.D</LearningStandardId>
+		<Description>graph and write equations of lines given characteristics such as two points, a point and a slope, or a slope and y intercept;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.6.E</LearningStandardId>
+		<Description>determine the intercepts of the graphs of linear functions and zeros of linear functions from graphs, tables, and algebraic representations;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.6.F</LearningStandardId>
+		<Description>interpret and predict the effects of changing slope and y-intercept in applied situations</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.6.G</LearningStandardId>
+		<Description>relate direct variation to linear functions and solve problems involving proportional change.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.7.A</LearningStandardId>
+		<Description>analyze situations involving linear functions and formulate linear equations or inequalities to solve problems;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.7.B</LearningStandardId>
+		<Description>investigate methods for solving linear equations and inequalities using concrete models, graphs, and the properties of equality, select a method, and solve the equations and inequalities</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.7.C</LearningStandardId>
+		<Description>interpret and determine the reasonableness of solutions to linear equations and inequalities.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.8.A</LearningStandardId>
+		<Description>analyze situations and formulate systems of linear equations in two unknowns to solve problems;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.8.B</LearningStandardId>
+		<Description>solve systems of linear equations using concrete models, graphs, tables, and algebraic methods</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.8.C</LearningStandardId>
+		<Description>interpret and determine the reasonableness of solutions to systems of linear equations.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.9.A</LearningStandardId>
+		<Description>determine the domain and range for quadratic functions in given situations;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.9.B</LearningStandardId>
+		<Description>investigate, describe, and predict the effects of changes in a on the graph of y = ax2 + c;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.9.C</LearningStandardId>
+		<Description>investigate, describe, and predict the effects of changes in c on the graph of y = ax2 + c</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.9.D</LearningStandardId>
+		<Description>analyze graphs of quadratic functions and draw conclusions.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.10.A</LearningStandardId>
+		<Description>solve quadratic equations using concrete models, tables, graphs, and algebraic methods</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.10.B</LearningStandardId>
+		<Description>make connections among the solutions (roots) of quadratic equations, the zeros of their related functions, and the horizontal intercepts (x-intercepts) of the graph of the function.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.11.A</LearningStandardId>
+		<Description>use patterns to generate the laws of exponents and apply them in problem-solving situations;</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.11.B</LearningStandardId>
+		<Description>analyze data and represent situations involving inverse variation using concrete models, tables, graphs, or algebraic methods</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+	<LearningStandard>
+		<LearningStandardId>111.32.NA.A.11.C</LearningStandardId>
+		<Description>analyze data and represent situations involving exponential growth and decay using concrete models, tables, graphs, or algebraic methods.</Description>
+		<ContentStandard>
+			<Title>Unknown</Title>
+		</ContentStandard>
+<AcademicSubject><CodeValue>Mathematics</CodeValue></AcademicSubject><GradeLevel><CodeValue>Fifth Grade</CodeValue></GradeLevel>
+		<CourseTitle>Algebra I</CourseTitle>
+	</LearningStandard>
+</InterchangeStandards>

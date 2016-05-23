@@ -1,0 +1,64 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="EdFi.Ods.Metadata" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ output extension=".generated.cs" #>
+using System;
+using System.Linq;
+using EdFi.Common;
+
+namespace EdFi.Ods.Common
+{
+    public class InterchangeType : Enumeration<InterchangeType, string>
+    {
+         static InterchangeType()
+         {
+             SortedInterchangeTypes = SortedInterchangeTypes = new[]
+                {
+<#
+    foreach (var met in AggregateLoadOrder.Metadata)
+    {
+#>
+                    <#= met.Item1 #>,
+<#        
+    }
+#>
+                };
+         }
+
+        public override string Id { get { return Name; } }
+        public string Name { get; private set; }
+
+        private static readonly InterchangeType[] SortedInterchangeTypes;
+
+<#
+    var directory = Host.ResolveAssemblyReference("$(schemaDir)");
+    foreach (var interchangeName in Interchanges.GetInterchanges(directory).Select(x=>x.Name).Distinct())
+    {
+#>
+        public static readonly InterchangeType <#= interchangeName #> = new InterchangeType("<#= interchangeName.ToLower() #>");
+<#        
+    }
+#>
+
+        private InterchangeType(string name)
+        {
+            Name = name;
+        }
+
+
+        public static InterchangeType[] RequiredLoadOrder
+        {
+            get { return SortedInterchangeTypes; }
+        }
+
+        public static InterchangeType GetByName(string name)
+        {
+            return GetValues().SingleOrDefault(x => string.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
+        }
+    }
+}

@@ -1,0 +1,133 @@
+﻿<div>
+    <h2>Applications</h2>
+    <h3>Vendor: {{vendor.vendorName}}</h3>
+    
+    <div class="text-right">
+        <button class="btn btn-default" ng-click="add()" data-toggle="modal" data-target="#edit-application-modal">Add Application</button>
+    </div>
+    
+    <div class="table"></div> <!-- Spacer -->
+    
+    <table class="table table-striped">
+        <tr>
+            <th>Application Name</th>
+            <th>Education Organizations</th>
+            <th>Profiles</th>
+            <th>ClaimSet</th>
+            <th>Key</th>
+            <th>Activation Code</th>
+            <th class="text-right">Actions</th>
+            <th>Key Status</th>
+        </tr>
+        <tr><td class="text-center text-info" colspan="8" ng-show="loading"><span class="text-info fa fa-spinner fa-spin"></span> Loading...</td></tr>
+        <tr><td class="text-center text-warning" colspan="8" ng-show="!appList.length && !loading">There is no application associated with this vendor</td></tr>
+        <tr ng-repeat="app in appList | orderBy: 'applicationName'">
+            <td><span class="btn-link pointer" ng-click="edit(app, $index)" data-toggle="modal" data-target="#edit-application-modal">{{app.applicationName}}</span></td>
+            <td><div ng-repeat="edOrg in app.educationOrganizations | orderBy:'educationOrganizationName'">{{edOrg.educationOrganizationName}}</div></td>
+            <td><div ng-repeat="profile in app.associatedProfiles | orderBy:'profileName'">{{profile.profileName}}</div></td>
+            <td>{{app.claimSetName}}</td>
+            <td>{{app.keyStatus == 'No Key' ? '' : app.apiKey}}</td>
+            <td>{{app.activationCode}}</td>
+            <td class="text-right">
+                <span class="fa fa-key fa-flip-horizontal pointer" aria-hidden="true" style="color:darkgoldenrod;" ng-click="genKey(app, $index)" data-toggle="modal" data-target="#confirm-regen-key-modal" title="Generate Key and Email it to Vendor"></span>
+                <span class="glyphicon glyphicon-pencil pointer" aria-hidden="true" style="color:navy;" ng-click="edit(app, $index)" data-toggle="modal" data-target="#edit-application-modal" title="Edit Application Properties"></span>
+                <span class="glyphicon glyphicon-remove pointer" aria-hidden="true" style="color:darkred;" ng-click="delete(app, $index)" data-toggle="modal" data-target="#confirm-delete-modal" title="Delete Application"></span>
+            </td>
+            <td>{{app.keyStatus}}</td>
+        </tr>
+    </table>
+    
+    <div class="text-right">
+        <button class="btn btn-default" ng-click="add()" data-toggle="modal" data-target="#edit-application-modal">Add Application</button>
+    </div>
+    
+    <div class="modal {{$root.fadeClass}}" id="edit-application-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 ng-show="editMode">Edit Application</h4>
+                    <h4 ng-show="!editMode">Add Application</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" name="editApplicationForm" novalidate>
+                        <div class="form-group required" ng-class="error('applicationName')">
+                            <label class="control-label col-sm-4" for="applicationName">Application Name:</label>
+                            <input class="form-control" type="text" id="applicationName" name="applicationName" ng-model="activeApp.applicationName" placeholder="Enter Application Name" required />
+                            <span class="help-block col-sm-offset-4" ng-show="submitted && editApplicationForm.applicationName.$invalid">Application name is required</span>
+                        </div>
+                        <div class="form-group" ng-show="editMode">
+                            <label class="control-label col-sm-4">Application Key:</label>
+                            <div style="padding-top: 7px">
+                                <span>{{activeApp.apiKey}}</span>
+                            </div>
+                        </div>
+                        <div class="form-group required" ng-class="{'has-error':submitted && activeApp.educationOrganizations.length == 0}">
+                            <label class="control-label col-sm-4">Associated EdOrgs:</label>
+                            <div class="input-group col-sm-8" style="padding-left: 0;">
+                                <input class="form-control" typeahead type="text" id="searchEdOrg" placeholder="Search by EdOrg Name or EdOrg ID" ng-model="activeApp.selectedEdOrg" on-select="addEdOrg(activeApp.selectedEdOrg)" />
+                            </div>
+                        </div>
+                        <div class="alert alert-warning collapse" role="alert" id="duplicateEdOrg">
+                            <span>The selected Education Organization is already in the list.</span>
+                        </div>
+                        <div class="form-group" ng-class="error('edOrgs')">
+                            <div class="text-warning  col-sm-offset-4" ng-show="activeApp.educationOrganizations.length == 0">No Education Organization has been associated.</div>
+                            <input class="form-control" type="number" ng-show="false" id="edOrgs" name="edOrgs" ng-model="activeApp.educationOrganizations.length" placeholder="Testing" min="1" />
+                            <span class="help-block col-sm-offset-4" ng-show="submitted && editApplicationForm.edOrgs.$invalid">At least one Education Organization should be selected</span>
+                            <ul class="list-group col-lg-10 col-lg-offset-1">
+                                <li class="list-group-item" ng-repeat="edOrg in activeApp.educationOrganizations | orderBy:'educationOrganizationName'">
+                                    {{edOrg.educationOrganizationName}} <small class="text-muted">({{edOrg.educationOrganizationId}})</small>
+                                    <span class="glyphicon glyphicon-remove pointer pull-right" aria-hidden="true" style="color:darkred;" ng-click="removeEdOrg(edOrg)"></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="form-group required" ng-class="error('claimSets')">
+                            <label class="control-label col-sm-4" for="claimSets">ClaimSet:</label>
+                            <select id="claimSets" name="claimSets" class="form-control"
+                                    ng-model="activeApp.claimSetName"
+                                    ng-options="claimSet.claimSetName as claimSet.claimSetName for claimSet in claimSets"
+                                    required>
+                                <option value="">Select from the list</option>
+                            </select>
+                            <span class="help-block col-sm-offset-4" ng-show="submitted && editApplicationForm.claimSets.$invalid">Claim Set is required</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Profiles:</label>
+                            <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="profileMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Select from the list
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu scrollable-menu" aria-labelledby="profileMenu">
+                                    <li class="pointer" ng-repeat="profile in availableProfiles | orderBy:'profileName'" ng-click="addProfile(profile)">{{profile.profileName}}</li>
+                                </ul>
+                                <ul class="list-group col-lg-10 col-lg-offset-1">
+                                    <li class="list-group-item" ng-repeat="profile in activeApp.associatedProfiles | orderBy:'profileName'">
+                                        {{profile.profileName}}
+                                        <span class="glyphicon glyphicon-remove pointer pull-right" aria-hidden="true" style="color:darkred;" ng-click="removeProfile(profile)"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="pull-right">
+                        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary" ng-show="!editMode" ng-click="performAdding(activeApp)" ng-disabled="disableActionButton">
+                            <i class="fa fa-spinner fa-spin fa-lg" ng-show="disableActionButton"></i>
+                            Create
+                        </button>
+                        <button class="btn btn-primary" ng-show="editMode" ng-click="performUpdating(activeApp)" ng-disabled="disableActionButton">
+                            Apply
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-ng-include="'app/components/application/_confirmDelete.html'"></div>
+    <div data-ng-include="'app/components/application/_confirmRegenKey.html'"></div>
+    <div data-ng-include="'app/components/shared/_alertMessage.html'"></div>
+</div>

@@ -1,0 +1,43 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen.XsdToWebApi" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ output extension=".schema.generated.cs" #>
+using System.Collections.Generic;
+using System.Linq;
+
+namespace EdFi.Ods.Metadata
+{
+    public static partial class Interchanges
+    {
+		public static IEnumerable<Interchange> GetInterchanges()
+	    {
+		    return _interchanges.ToList();
+	    }
+
+		private static Interchange[] _interchanges = new Interchange[] {
+<#
+    var xsdPath = Host.ResolvePath(@"App_Packages\Ed-Fi\Schema");
+    var xsdPaths = Directory.GetFiles(xsdPath, @"Interchange-*.xsd");
+    foreach (var xsdFile in xsdPaths)
+    {
+        var loader = InterchangeLoader.Load(xsdFile);
+			foreach (var interchange in loader)
+			{
+#>
+			new Interchange { Name="<#= interchange.XmlSchemaObjectName.Substring(11) #>", Elements = new Element[] {
+<#				foreach (var elementName in interchange.ChildElements.Select(x=> x.XmlSchemaObjectName))
+			    {
+#>
+					new Element { Name="<#= elementName #>", Type="<#= elementName #>" },
+<#				}
+#>			}},
+<#			}
+    }#>
+		};
+    }
+}

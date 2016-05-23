@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<InterchangeEducationOrgCalendar xsi:schemaLocation="http://ed-fi.org/Interchange-EducationOrgCalendar-Extension.xsd" xmlns="http://ed-fi.org/0200-Draft" xmlns:ann="http://ed-fi.org/annotation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Session>
+    <SessionName>Main</SessionName>
+    <SchoolYear>2010-2011</SchoolYear>
+    <Term>Fall Semester</Term>
+    <BeginDate>2010-08-23</BeginDate>
+    <EndDate>2010-12-30</EndDate>
+    <TotalInstructionalDays>200</TotalInstructionalDays>
+    <EducationOrganizationReference>
+      <EducationOrganizationIdentity>
+        <StateOrganizationId>123456001</StateOrganizationId>
+      </EducationOrganizationIdentity>
+    </EducationOrganizationReference>
+    <GradingPeriodReference ref="GID_1" />
+    <GradingPeriodReference ref="GID_2" />
+  </Session>
+  <Session>
+    <SessionName>Main</SessionName>
+    <SchoolYear>2010-2011</SchoolYear>
+    <Term>Year Round</Term>
+    <BeginDate>2010-08-23</BeginDate>
+    <EndDate>2011-05-27</EndDate>
+    <TotalInstructionalDays>200</TotalInstructionalDays>
+    <EducationOrganizationReference>
+      <EducationOrganizationIdentity>
+        <StateOrganizationId>123456001</StateOrganizationId>
+      </EducationOrganizationIdentity>
+    </EducationOrganizationReference>
+    <GradingPeriodReference ref="GID_1" />
+    <GradingPeriodReference ref="GID_2" />
+  </Session>
+  <GradingPeriod id="GID_1">
+    <GradingPeriod namespace="http://www.ed-fi.org/Descriptor/GradingPeriodDescriptor.xml">
+      <Description>First Six Weeks</Description>
+    </GradingPeriod>
+    <BeginDate>2010-08-23</BeginDate>
+    <EndDate>2010-10-01</EndDate>
+    <TotalInstructionalDays>30</TotalInstructionalDays>
+    <CalendarDateReference ref="CID_1-1" />
+    <CalendarDateReference ref="CID_1-2" />
+    <CalendarDateReference ref="CID_1-3" />
+    <CalendarDateReference ref="CID_1-4" />
+    <CalendarDateReference ref="CID_1-5" />
+    <CalendarDateReference ref="CID_1-6" />
+    <CalendarDateReference ref="CID_1-7" />
+    <CalendarDateReference ref="CID_1-8" />
+    <CalendarDateReference ref="CID_1-9" />
+    <CalendarDateReference ref="CID_1-10" />
+    <CalendarDateReference ref="CID_1-11" />
+    <CalendarDateReference ref="CID_1-12" />
+    <CalendarDateReference ref="CID_1-13" />
+    <CalendarDateReference ref="CID_1-14" />
+    <CalendarDateReference ref="CID_1-15" />
+    <CalendarDateReference ref="CID_1-16" />
+    <CalendarDateReference ref="CID_1-17" />
+    <CalendarDateReference ref="CID_1-18" />
+    <CalendarDateReference ref="CID_1-19" />
+    <CalendarDateReference ref="CID_1-20" />
+    <CalendarDateReference ref="CID_1-21" />
+    <CalendarDateReference ref="CID_1-22" />
+    <CalendarDateReference ref="CID_1-23" />
+    <CalendarDateReference ref="CID_1-24" />
+    <CalendarDateReference ref="CID_1-25" />
+    <CalendarDateReference ref="CID_1-26" />
+    <CalendarDateReference ref="CID_1-27" />
+    <CalendarDateReference ref="CID_1-28" />
+    <CalendarDateReference ref="CID_1-29" />
+    <CalendarDateReference ref="CID_1-30" />
+  </GradingPeriod>
+  <GradingPeriod id="GID_2">
+    <GradingPeriod namespace="http://www.ed-fi.org/Descriptor/GradingPeriodDescriptor.xml">
+      <Description>Second Six Weeks</Description>
+    </GradingPeriod>
+    <BeginDate>2010-10-04</BeginDate>
+    <EndDate>2010-11-05</EndDate>
+    <TotalInstructionalDays>25</TotalInstructionalDays>
+    <CalendarDateReference ref="CID_2-1" />
+    <CalendarDateReference ref="CID_2-2" />
+    <CalendarDateReference ref="CID_2-3" />
+    <CalendarDateReference ref="CID_2-4" />
+    <CalendarDateReference ref="CID_2-5" />
+    <CalendarDateReference ref="CID_2-6" />
+    <CalendarDateReference ref="CID_2-7" />
+    <CalendarDateReference ref="CID_2-8" />
+    <CalendarDateReference ref="CID_2-9" />
+    <CalendarDateReference ref="CID_2-10" />
+    <CalendarDateReference ref="CID_2-11" />
+    <CalendarDateReference ref="CID_2-12" />
+    <CalendarDateReference ref="CID_2-13" />
+    <CalendarDateReference ref="CID_2-14" />
+    <CalendarDateReference ref="CID_2-15" />
+    <CalendarDateReference ref="CID_2-16" />
+    <CalendarDateReference ref="CID_2-17" />
+    <CalendarDateReference ref="CID_2-18" />
+    <CalendarDateReference ref="CID_2-19" />
+    <CalendarDateReference ref="CID_2-20" />
+    <CalendarDateReference ref="CID_2-21" />
+    <CalendarDateReference ref="CID_2-22" />
+    <CalendarDateReference ref="CID_2-23" />
+    <CalendarDateReference ref="CID_2-24" />
+    <CalendarDateReference ref="CID_2-25" />
+  </GradingPeriod>
+  <CalendarDate id="CID_1-1">
+    <Date>2010-08-23</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+    <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-2">
+    <Date>2010-08-24</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-3">
+    <Date>2010-08-25</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-4">
+    <Date>2010-08-26</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-5">
+    <Date>2010-08-27</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-6">
+    <Date>2010-08-30</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-7">
+    <Date>2010-08-31</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-8">
+    <Date>2010-09-01</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-9">
+    <Date>2010-09-02</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-10">
+    <Date>2010-09-03</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-11">
+    <Date>2010-09-06</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Holiday</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-12">
+    <Date>2010-09-07</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-13">
+    <Date>2010-09-08</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-14">
+    <Date>2010-09-09</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+        <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-15">
+    <Date>2010-09-10</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+             <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-16">
+    <Date>2010-09-13</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-17">
+    <Date>2010-09-14</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-18">
+    <Date>2010-09-15</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-19">
+    <Date>2010-09-16</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-20">
+    <Date>2010-09-17</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-21">
+    <Date>2010-09-20</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-22">
+    <Date>2010-09-21</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>      
+      <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-23">
+    <Date>2010-09-22</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Teacher only day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-24">
+    <Date>2010-09-23</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-25">
+    <Date>2010-09-24</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-26">
+    <Date>2010-09-27</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-27">
+    <Date>2010-09-28</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-28">
+    <Date>2010-09-29</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-29">
+    <Date>2010-09-30</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_1-30">
+    <Date>2010-10-01</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-1">
+    <Date>2010-10-04</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-2">
+    <Date>2010-10-05</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-3">
+    <Date>2010-10-06</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Teacher only day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-4">
+    <Date>2010-10-07</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-5">
+    <Date>2010-10-08</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-6">
+    <Date>2010-10-11</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-7">
+    <Date>2010-10-12</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-8">
+    <Date>2010-10-13</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-9">
+    <Date>2010-10-14</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-10">
+    <Date>2010-10-15</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-11">
+    <Date>2010-10-18</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Holiday</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-12">
+    <Date>2010-10-19</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Holiday</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-13">
+    <Date>2010-10-20</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-14">
+    <Date>2010-10-21</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-15">
+    <Date>2010-10-22</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-16">
+    <Date>2010-10-25</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-17">
+    <Date>2010-10-26</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-18">
+    <Date>2010-10-27</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Holiday</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-19">
+    <Date>2010-10-28</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-20">
+    <Date>2010-10-29</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-21">
+    <Date>2010-11-01</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-22">
+    <Date>2010-11-02</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-23">
+    <Date>2010-11-03</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Teacher only day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-24">
+    <Date>2010-11-04</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+  <CalendarDate id="CID_2-25">
+    <Date>2010-11-05</Date>
+    <CalendarEvent namespace="http://www.ed-fi.org/Descriptor/CalendarEventDescriptor.xml">
+      <Description>Instructional day</Description>
+    </CalendarEvent>
+            <EventDuration>100</EventDuration>
+  </CalendarDate>
+</InterchangeEducationOrgCalendar>

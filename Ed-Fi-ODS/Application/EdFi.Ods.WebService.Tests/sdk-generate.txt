@@ -1,0 +1,1 @@
+﻿The EdFi.Ods.Api.Sdk.CodeGen package contains the pre-built JAR file for SDK client code generation.  The repository containing the source code is located at https://github.com/Ed-Fi-Alliance/Ed-Fi-ODS-API-SDK.

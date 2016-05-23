@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E00A8076-5A23-4FE4-A6BC-DD02D466BE6E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.SecurityConfiguration.Services</RootNamespace>
+    <AssemblyName>EdFi.Ods.SecurityConfiguration.Services</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IApplicationService.cs" />
+    <Compile Include="IClaimSetListService.cs" />
+    <Compile Include="Implementation\ApplicationService.cs" />
+    <Compile Include="Implementation\ClaimSetListService.cs" />
+    <Compile Include="Implementation\ConfigurationService.cs" />
+    <Compile Include="Implementation\CredentialService.cs" />
+    <Compile Include="Implementation\EducationOrganizationProvider.cs" />
+    <Compile Include="Implementation\EmailService.cs" />
+    <Compile Include="Implementation\Extensions.cs" />
+    <Compile Include="Implementation\IAdminContextFactory.cs" />
+    <Compile Include="Implementation\IAssemblyLocator.cs" />
+    <Compile Include="Implementation\KeyRetrievalChallengeService.cs" />
+    <Compile Include="Implementation\KeyStatus.cs" />
+    <Compile Include="Implementation\OdsConnectionStringProvider.cs" />
+    <Compile Include="Implementation\ProfileListService.cs" />
+    <Compile Include="Implementation\VendorAndApplicationBase.cs" />
+    <Compile Include="Implementation\VendorService.cs" />
+    <Compile Include="IProfileListService.cs" />
+    <Compile Include="IConfigurationService.cs" />
+    <Compile Include="ICredentialService.cs" />
+    <Compile Include="IEducationOrganizationProvider.cs" />
+    <Compile Include="IEmailService.cs" />
+    <Compile Include="IKeyRetrievalChallengeService.cs" />
+    <Compile Include="IOdsConnectionStringProvider.cs" />
+    <Compile Include="Model\EmailParameters.cs" />
+    <Compile Include="Model\ActivateResult.cs" />
+    <Compile Include="Model\KeyGenResult.cs" />
+    <Compile Include="Model\Application.cs" />
+    <Compile Include="Model\ClaimSet.cs" />
+    <Compile Include="Model\Credentials.cs" />
+    <Compile Include="Model\EducationOrganization.cs" />
+    <Compile Include="Model\Profile.cs" />
+    <Compile Include="Model\Vendor.cs" />
+    <Compile Include="Model\VendorContact.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IVendorService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\EdFi.Ods.Admin.Models\EdFi.Ods.Admin.Models.csproj">
+      <Project>{86BEC77A-1EEA-4570-8AF7-DAA4E7818353}</Project>
+      <Name>EdFi.Ods.Admin.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EdFi.Ods.Security.Metadata\EdFi.Ods.Security.Metadata.csproj">
+      <Project>{1acf010b-2092-4377-844e-fd710b6404bd}</Project>
+      <Name>EdFi.Ods.Security.Metadata</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

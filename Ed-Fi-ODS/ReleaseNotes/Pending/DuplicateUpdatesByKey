@@ -1,0 +1,1 @@
+* Give a better exception message when a bulk operation file causes multiple updates to the same resource (by natural key)

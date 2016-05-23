@@ -1,0 +1,1 @@
+* Fixed regression of failure to trim leading and trailing double quotes from incoming "If-Match" header values (some clients add quotes as part of the value, which must be stripped in order to convert back to a DateTime value).

@@ -1,0 +1,66 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Properties required to automatically perform t4 transforms on build (see http://msdn.microsoft.com/en-us/library/ee847423.aspx)-->
+  <PropertyGroup Condition="'$(SolutionDir)' == '' or '$(SolutionDir)' == '*undefined*'">
+    <SolutionDir>..\</SolutionDir>
+  </PropertyGroup>
+
+  <!-- location of common template .ttinclude files -->
+  <PropertyGroup>
+    <ttIncludeFolder>$(SolutionDir)..\..\Ed-Fi-ODS\Application\Templates\</ttIncludeFolder>
+    <ttLibsFolder>$(SolutionDir)..\..\Ed-Fi-ODS\Application\libs.codegen\</ttLibsFolder>
+    <ttExtensionsFolder>$(SolutionDir)..\Extensions\</ttExtensionsFolder>
+    <schemaDir>$(SolutionDir)..\..\Ed-Fi-ODS\Application\schema.codegen\</schemaDir>
+  </PropertyGroup>
+
+  <!-- 
+	Properties required by our T4 scripts to resolve directories(see http://msdn.microsoft.com/en-us/library/ee847423.aspx )
+	-->
+  <ItemGroup>
+    <T4ParameterValues Include="SolutionDir">
+      <Value>$(SolutionDir)</Value>
+    </T4ParameterValues>
+    <T4ParameterValues Include="ProjectDir">
+      <Value>$(ProjectDir)</Value>
+    </T4ParameterValues>
+    <T4ParameterValues Include="MSBuildProjectFullPath">
+      <Value>$(MSBuildProjectFullPath)</Value>
+    </T4ParameterValues>	
+    <T4ParameterValues Include="Configuration">
+      <Value>$(Configuration)</Value>
+    </T4ParameterValues>
+    <T4ParameterValues Include="ProjectName">
+      <Value>$(ProjectName)</Value>
+    </T4ParameterValues>
+	
+    <T4ParameterValues Include="ttIncludeFolder">
+      <Value>$(ttIncludeFolder)</Value>
+    </T4ParameterValues>
+    <T4ParameterValues Include="ttLibsFolder">
+      <Value>$(ttLibsFolder)</Value>
+    </T4ParameterValues>
+    <T4ParameterValues Include="ttExtensionsFolder">
+      <Value>$(ttExtensionsFolder)</Value>
+    </T4ParameterValues>
+    <T4ParameterValues Include="schemaDir">
+      <Value>$(schemaDir)</Value>
+      <InProject>False</InProject>
+    </T4ParameterValues>
+  </ItemGroup>
+ 
+  <!-- Optionally make the import portable across VS versions -->
+  <PropertyGroup>
+    <!-- Get the Visual Studio version – defaults to 10: -->
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <!-- Keep the next element all on one line: -->
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TransformOnBuild Condition="'$(TransformOnBuild)' == ''">true</TransformOnBuild>
+    <TransformOutOfDateOnly>false</TransformOutOfDateOnly>
+  </PropertyGroup>
+
+  <!-- This is the important line: -->
+  <Import Project="$(VSToolsPath)\TextTemplating\Microsoft.TextTemplating.targets" />
+</Project>

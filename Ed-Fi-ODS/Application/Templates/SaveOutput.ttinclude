@@ -1,0 +1,102 @@
+﻿<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#+
+  void SaveOutput(string outputFileName)
+  {
+	SaveOutput(outputFileName, false);
+  }
+
+  void SaveOutput(string outputFileName, bool append)
+  {
+      string templateDirectory = Path.GetDirectoryName(Host.TemplateFile);
+      string outputFilePath = Path.Combine(templateDirectory, outputFileName);
+
+	  // Make sure directory exists
+	  string outputDirectory = Path.GetDirectoryName(outputFilePath);
+
+	  if (!Directory.Exists(outputDirectory))
+		Directory.CreateDirectory(outputDirectory);
+	  if (append)
+		File.AppendAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+	  else
+		File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+
+      this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+  }
+
+  void DeleteOutput(string outputFileName)
+  {
+      string templateDirectory = Path.GetDirectoryName(Host.TemplateFile);
+      string outputFilePath = Path.Combine(templateDirectory, outputFileName);
+      File.Delete(outputFilePath); 
+
+      this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+  }
+
+  public class FileManager
+  {
+      private string currentFileName;
+      private string templateDirectory;
+      private StringBuilder generationEnvironment;
+      private List<Tuple<string, string>> fileContents = new List<Tuple<string, string>>();
+
+      public FileManager(StringBuilder generationEnvironment, string templateDirectory)
+      {
+          this.templateDirectory = templateDirectory;
+          this.generationEnvironment = generationEnvironment;
+      }
+
+      private bool isDefiningHeader;
+      private string headerText;
+
+      public void StartHeader()
+      {
+          if (headerText != null || currentFileName != null)
+              throw new InvalidOperationException("You cannot start defining the header after writing content.");
+                
+          isDefiningHeader = true;
+      }
+
+      public void StartNewFile(string fileName)
+      {
+          if (isDefiningHeader)
+          {
+              headerText = generationEnvironment.ToString();
+              isDefiningHeader = false;
+          }
+
+          // Save the current file's contents          
+          if (currentFileName != null)
+              fileContents.Add(Tuple.Create(currentFileName, generationEnvironment.ToString()));
+
+          // Clear the current writer, and add the header text, if defined
+          generationEnvironment.Remove(0, generationEnvironment.Length);
+          generationEnvironment.Append(headerText);
+
+          // Save the name of the file we're currently generating content for
+          currentFileName = Path.Combine(templateDirectory, fileName);
+      }
+      
+      public void Process()
+      {
+          // Save the current file's contents          
+          if (currentFileName != null)
+              fileContents.Add(Tuple.Create(currentFileName, generationEnvironment.ToString()));
+
+          foreach (var item in fileContents)
+          {
+              // Make sure directory exists
+	          string outputDirectory = Path.GetDirectoryName(item.Item1);
+
+	          if (!Directory.Exists(outputDirectory))
+		          Directory.CreateDirectory(outputDirectory);
+
+              File.WriteAllText(item.Item1, item.Item2);
+          }
+
+          currentFileName = null;
+          generationEnvironment.Remove(0, generationEnvironment.Length);
+      }
+  }
+#>

@@ -1,0 +1,17 @@
+﻿@using System.Configuration
+@using EdFi.Ods.Api.Common
+@{
+	var homeUrl = "~".ToAbsolutePath();
+	var oauthUrl = ConfigurationManager.AppSettings["OAuthUrl"];
+}
+
+<script>
+    var EdFiAdmin = EdFiAdmin || {};
+    var urls = EdFiAdmin.Urls = EdFiAdmin.Urls || {};
+
+    urls.createLogin = '@Url.Action("Create", "Account")';
+    urls.home = '@homeUrl';
+    urls.oauth = '@oauthUrl';
+    urls.removeOrphans = '@Url.Action("RemoveOrphans", "Sandbox")';
+
+</script>

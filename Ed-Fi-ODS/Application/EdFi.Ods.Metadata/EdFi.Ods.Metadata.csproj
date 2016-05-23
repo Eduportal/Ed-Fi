@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4AD8D95A-75A4-4BB5-B94A-BC366ED8B5B7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Ods.Metadata</RootNamespace>
+    <AssemblyName>EdFi.Ods.Metadata</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\Ed-Fi-ODS-Implementation\Application\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Interchanges.schema.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Interchanges.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App_Packages\Ed-Fi\Schema\Ed-Fi-Core.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-AssessmentMetadata.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-Descriptors.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-EducationOrganization.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-EducationOrgCalendar.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-Finance.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-MasterSchedule.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-PostSecondaryEvent.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StaffAssociation.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-Standards.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentAssessment.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentAttendance.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentCohort.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentDiscipline.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentEnrollment.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentGrade.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentGradebook.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentIntervention.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentParent.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentProgram.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\Interchange-StudentTranscript.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Packages\Ed-Fi\Schema\SchemaAnnotation.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Interchanges.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Interchanges.schema.generated.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Packages\Ed-Fi\Metadata\DomainMetadata.xml" />
+    <Content Include="App_Packages\Ed-Fi\Metadata\InterchangeOrderMetadata.xml" />
+    <Content Include="App_Packages\Ed-Fi\Metadata\PredefinedContextMetadata.xml" />
+    <Content Include="App_Packages\Ed-Fi\Metadata\SkipReferenceMetadata.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Import Project="../T4TextTemplating.Targets" />
+  <ItemGroup>
+    <myLibraries Include="$(TargetPath); $(TargetDir)$(TargetName).pdb">
+      <InProject>false</InProject>
+    </myLibraries>
+  </ItemGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(myLibraries)" DestinationFolder="$(ttLibsFolder)" SkipUnchangedFiles="true"/>
+  </Target>
+</Project>

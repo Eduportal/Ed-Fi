@@ -1,0 +1,412 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#+
+    
+    List<string> GetCollidingPropertyNames(Dictionary<string, Table> tablesByName, IEnumerable<XElement> aggregatesElts)
+    {
+        List<string> propertiesWithCollidingJsonNames = new List<string>();
+
+        // First, process all tables and columns for naming collisions when applying naming conventions related 
+        // to translating Database-based C# names to JSON property names serialization.  This convention is used
+        // to trim table names appearing as prefixes on columns, but collisions can result 
+        // (e.g. EducationOrganization's EducationOrganizationCategory and School's SchoolCategory).
+
+        // This enables us to detect, during code generation, when not to apply JSON conventions
+        foreach (var aggregateElt in aggregatesElts)
+        {
+            string aggregateRootName = aggregateElt.Attribute("root").Value;
+
+            List<string> aggregateTableNames = 
+                (from e in aggregateElt.Descendants("Entity")
+                    select e.Attribute("table").Value)
+                .ToList();
+ 
+            foreach (string aggregateTableName in aggregateTableNames)
+            {
+                Table tbl;
+ 
+                if (!tablesByName.TryGetValue(aggregateTableName, out tbl))
+                    continue;
+
+                if (IsExcluded(tbl.Name))
+                    continue;
+
+                var navigableChildFKs = tbl.GetNavigableChildTables(tablesByName).Where(ct => IsInAggregate(aggregateTableNames, ct.OtherTable)).ToList();
+                var navigableOneToOneChildFKs = tbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => IsInAggregate(aggregateTableNames, ct.OtherTable) && !IsExcluded(ct.OtherTable)).ToList();
+            
+                bool isAbstract = aggregateElt.Descendants("Entity")
+                    .Where(e => e.Attribute("table").Value == tbl.Name 
+                    && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                    .Any();
+
+                if (isAbstract)
+                    continue;
+
+                var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                    .Where(e => e.Attribute("table").Value == tbl.Name)
+                    .Select(e => e.Attribute("isA"))
+                    .SingleOrDefault();
+
+                string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+
+                Table baseTbl = tables.SingleOrDefault(t => t.Name.Equals(baseTableName, StringComparison.InvariantCultureIgnoreCase));
+
+                bool isDerived = baseTableName != null;
+
+                string baseAggregateRootName =
+                    (from a in aggregatesElts
+                        from e in a.Descendants("Entity")
+                        where e.Attribute("table").Value == baseTableName
+                        select a.Attribute("root").Value)
+                    .SingleOrDefault();
+
+                List<string> baseAggregateTableNames = 
+                    (from a in aggregatesElts
+                        where a.Attribute("root").Value == baseAggregateRootName
+                        from e in a.Descendants("Entity")
+                        select e.Attribute("table").Value)
+                    .ToList();
+
+                var baseNavigableChildFKs = baseTbl == null ? 
+                    new List<FKTable>()
+                    : baseTbl.GetNavigableChildTables(tablesByName).Where(ct => IsInAggregate(baseAggregateTableNames, ct.OtherTable)).ToList();
+
+                var baseNavigableOneToOneChildFKs = baseTbl == null ?
+                    new List<FKTable>()
+                    : baseTbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => IsInAggregate(baseAggregateTableNames, ct.OtherTable) && !IsExcluded(ct.OtherTable)).ToList();
+
+                AppendPropertiesWithCollidingJsonNames(propertiesWithCollidingJsonNames, tbl, baseTbl, navigableChildFKs, baseNavigableChildFKs, navigableOneToOneChildFKs, baseNavigableOneToOneChildFKs);
+            }
+        }
+
+        return propertiesWithCollidingJsonNames;
+    }
+
+    string ApplyPropertyNameConventions(string columnName, string tableName, List<string> collidingProperties)
+    {
+        return ApplyPropertyNameConventions(columnName, tableName, collidingProperties, false);
+    }
+
+    string ApplyPropertyNameConventions(string columnName, string tableName, List<string> collidingProperties, bool skipCamelCasing)
+    {
+        string fqn = tableName + "." + columnName;
+
+        if (collidingProperties != null && collidingProperties.Contains(fqn))
+            return skipCamelCasing ? columnName : CamelCase(columnName);
+
+        if (columnName.StartsWith(tableName))
+        {
+            if (columnName.EndsWith("USI") || columnName.EndsWith("TypeId") || columnName.EndsWith("Id") || columnName.EndsWith("X")) // Descriptor Id as well?
+            {
+                return skipCamelCasing ? columnName : CamelCase(columnName.TrimEnd('X'));
+            }
+
+            return skipCamelCasing ? columnName.Substring(tableName.Length) : CamelCase(columnName.Substring(tableName.Length));
+        }
+
+        return skipCamelCasing ? columnName : CamelCase(columnName);
+    }
+
+    public void AppendPropertiesWithCollidingJsonNames(List<string> collidingPropertyNames, Table tbl, Table baseTbl, IEnumerable<FKTable> navigableChildFKs, IEnumerable<FKTable> baseNavigableChildFKs, IEnumerable<FKTable> navigableOneToOneChildFKs, IEnumerable<FKTable> baseNavigableOneToOneChildFKs)
+    {
+        //Write("// DEBUG: Searching for JSON collisions in " + tbl.Name + "\r\n");
+
+        // List<string> collidingPropertyNames = new List<string>();
+        var propertyNameByJsonName = new Dictionary<string, string>();
+
+        // Determine the JSON names for the columns of the derived table
+        foreach (var column in tbl.Columns)
+        {
+            string jsonName = ApplyPropertyNameConventions(column.CleanName, tbl.Name, null);
+            propertyNameByJsonName[jsonName] = column.CleanName;
+
+            //Write("// DEBUG: Deriving JSON column name (" + tbl.Name + "): " + column.CleanName + " -> " + jsonName + "\r\n");
+        }
+
+        // Determine the JSON names for the navigable children of the derived table
+        foreach (var fkt in navigableChildFKs)
+        {
+            string jsonName = ApplyPropertyNameConventions(fkt.OtherQueryable, tbl.Name, null);
+            propertyNameByJsonName[jsonName] = fkt.OtherQueryable;
+        }
+
+        foreach (var fkt in navigableOneToOneChildFKs)
+        {
+            string jsonName = ApplyPropertyNameConventions(fkt.OtherClass, tbl.Name, null);
+
+            string columnName = null;
+
+            if (propertyNameByJsonName.TryGetValue(jsonName, out columnName))
+            {
+                //Write("// WARNING: JSON collision detected: " + columnName + "\r\n");
+
+                // Add both columns to the list, using <tbl>.<col> syntax
+                collidingPropertyNames.Add(tbl.Name + "." + fkt.OtherClass);
+                collidingPropertyNames.Add(tbl.Name + "." + columnName);
+            }
+            else
+            {
+                propertyNameByJsonName[jsonName] = fkt.OtherClass;
+            }
+        }
+
+        if (baseTbl != null)
+        {
+            // Determine the JSON names for the columns of the base table
+            foreach (var column in baseTbl.Columns)
+            {
+                string jsonName = ApplyPropertyNameConventions(column.CleanName, baseTbl.Name, null);
+
+                //Write("// DEBUG: Deriving JSON column name (" + baseTbl.Name + "): " + column.CleanName + " -> " + jsonName + "\r\n");
+
+                string columnName = null;
+
+                if (propertyNameByJsonName.TryGetValue(jsonName, out columnName))
+                {
+                    //Write("// WARNING: JSON collision detected: " + columnName + "\r\n");
+
+                    // Add both columns to the list, using <tbl>.<col> syntax
+                    collidingPropertyNames.Add(baseTbl.Name + "." + column.Name);
+                    collidingPropertyNames.Add(tbl.Name + "." + columnName);
+                }
+                else
+                {
+                    propertyNameByJsonName[jsonName] = column.CleanName;
+                }
+            }
+        }
+
+        // Determine the JSON names for the navigable children of the base table
+        foreach (var fkt in baseNavigableChildFKs)
+        {
+            string jsonName = ApplyPropertyNameConventions(fkt.OtherQueryable, baseTbl.Name, null);
+
+            //Write("// DEBUG: Deriving JSON column name (" + baseTbl.Name + "): " + fkt.OtherQueryable + " -> " + jsonName + "\r\n");
+
+            string otherQueryable = null;
+
+            if (propertyNameByJsonName.TryGetValue(jsonName, out otherQueryable))
+            {
+                //Write("// WARNING: JSON collision detected: " + otherQueryable + "\r\n");
+
+                // Add both columns to the list, using <tbl>.<col> syntax
+                collidingPropertyNames.Add(baseTbl.Name + "." + fkt.OtherQueryable);
+                collidingPropertyNames.Add(tbl.Name + "." + otherQueryable);
+            }            
+            else
+            {
+                propertyNameByJsonName[jsonName] = fkt.OtherQueryable;
+            }
+        }
+
+        foreach (var fkt in baseNavigableOneToOneChildFKs)
+        {
+            string jsonName = ApplyPropertyNameConventions(fkt.OtherClass, tbl.Name, null);
+
+            string columnName = null;
+
+            if (propertyNameByJsonName.TryGetValue(jsonName, out columnName))
+            {
+                //Write("// WARNING: JSON collision detected: " + columnName + "\r\n");
+
+                // Add both columns to the list, using <tbl>.<col> syntax
+                collidingPropertyNames.Add(baseTbl.Name + "." + fkt.OtherClass);
+                collidingPropertyNames.Add(tbl.Name + "." + columnName);
+            }
+            else
+            {
+                propertyNameByJsonName[jsonName] = fkt.OtherClass;
+            }
+        }
+
+        //return collidingPropertyNames;
+    }
+
+    bool IsDescriptorTable(Table t)
+    {
+        // Abstract table "Descriptor" itself is not considered a lookup table
+        if (t.Name == "Descriptor")
+            return false;
+
+        if (t.Name.EndsWith("Descriptor") && t.PrimaryKeyColumns.Count == 1 && t.PrimaryKeyColumns[0].Name == t.Name + "Id")
+          return true;
+        
+        return false;
+    }
+
+    bool IsTypeTable(Table t)
+    {
+        if (!t.Name.EndsWith("Type"))
+          return false;
+          
+        int qualifyingColumns = 0;
+        
+      // Type tables have at least 2 out of the 3 columns
+        if (t.Columns.Any(c => c.Name == "CodeValue")) qualifyingColumns++;
+        if (t.Columns.Any(c => c.Name == "ShortDescription")) qualifyingColumns++;
+        if (t.Columns.Any(c => c.Name == "Description")) qualifyingColumns++;
+        
+        if (qualifyingColumns == 3)
+            return true;
+        else
+          return false;
+    }
+
+	bool IsLookupTable(Table t)
+	{
+		return IsTypeTable(t) || IsDescriptorTable(t);
+	}
+
+	string GetLookupTableName(Dictionary<string, Table> tablesByName, Table table, string columnName)
+    {
+        string lookupTableName;
+
+        var visitedColumns = new HashSet<Tuple<string, string>>();
+        
+        if (IsLookupTypeColumn(tablesByName, table, columnName, visitedColumns, out lookupTableName))
+            return lookupTableName;
+
+        return null;
+    }
+
+	bool IsLookupTypeColumn(Dictionary<string, Table> tablesByName, Table table, string columnName)
+    {
+        string lookupTableName;
+
+        var visitedColumns = new HashSet<Tuple<string, string>>();
+        
+        return IsLookupTypeColumn(tablesByName, table, columnName, visitedColumns, out lookupTableName);
+    }
+
+	private bool IsLookupTypeColumn(Dictionary<string, Table> tablesByName, Table table, string columnName, HashSet<Tuple<string, string>> visitedColumns, out string lookupTableName)
+	{
+        lookupTableName = null;
+
+        // Don't re-evaluate already visisted columns (prevent infinite recursion)
+        if (visitedColumns.Contains(Tuple.Create(table.Name, columnName)))
+            return false;
+
+		// Find column in the FKs
+		var otherTableInfos =
+			(from fkt in table.FKTables
+			where !fkt.IsPrimaryTable && fkt.ThisColumns.Contains(columnName)
+            let index = fkt.ThisColumns.IndexOf(columnName)
+			select new { OtherTable = tablesByName[fkt.OtherTable], OtherColumnName = fkt.OtherColumns[index]})
+			.ToList();
+
+        // No more foreign keys to crawl? This is not a type column
+        if (!otherTableInfos.Any())
+            return false;
+
+        // Try to find the Type table
+        lookupTableName = 
+            (from fkt in otherTableInfos
+            where IsLookupTable(fkt.OtherTable)
+            select fkt.OtherTable.Name)
+            .FirstOrDefault();
+
+        // Did we find it defined in a Type table?
+		if (lookupTableName != null)
+            return true;
+
+        // Mark this column as visited
+        visitedColumns.Add(Tuple.Create(table.Name, columnName));
+
+        // Walk all the FK relationships recursively until we know whether any end in a lookup table.
+        bool isLookupTypeColumn = false;
+
+        foreach (var otherTableInfo in otherTableInfos)
+        {
+            isLookupTypeColumn |= IsLookupTypeColumn(tablesByName, otherTableInfo.OtherTable, otherTableInfo.OtherColumnName, visitedColumns, out lookupTableName);
+
+            if (isLookupTypeColumn)
+                break;
+        }
+
+        return isLookupTypeColumn;
+	}
+
+    bool IsDirectLookupReference(Dictionary<string, Table> tablesByName, FKTable fkt)
+    {
+        var tbl = tablesByName[fkt.ThisTable]; 
+        return fkt.ThisColumns.Count() == 1 && IsLookupTypeColumn(tablesByName, tbl, fkt.ThisColumns[0]);
+    }
+
+	string GetRoleName(FKTable fkt)
+	{
+        var nameParts = GetForeignKeyNameParts(fkt);
+
+        if (nameParts == null)
+            return null;
+
+        return nameParts.RoleName;
+	}
+
+	Column GetOtherColumn(Dictionary<string, Table> tablesByName, FKTable fkt, string thisColumn)
+	{
+		for (int i = 0; i < fkt.ThisColumns.Count; i++)
+		{
+			if (fkt.ThisColumns[i] == thisColumn)
+			{
+				string otherColumn = fkt.OtherColumns[i];
+				
+				return 
+					(from c in tablesByName[fkt.OtherTable].Columns
+					where c.Name == otherColumn
+					select c)
+					.Single();
+			}
+		}
+
+		throw new Exception(string.Format("Unable to find column '{0}' in foreign key constraint '{1}' between tables '{2}' and '{3}'.",
+			thisColumn, fkt.ConstraintName, fkt.ThisTable, fkt.OtherTable));
+	}
+
+    ForeignKeyNameParts GetForeignKeyNameParts(FKTable fkt)
+    {
+        if (fkt.IsPrimaryTable)
+            throw new Exception("Unable to process the parent side of a foreign key for role name or qualifier.");
+
+        for (int i = 0; i < fkt.ThisColumns.Count; i++)
+        {
+            if (fkt.ThisColumns[i] != fkt.OtherColumns[i])
+            {
+                string coreName = TrimSuffix(fkt.OtherColumns[i], "Id");
+                string pattern = @"^(?<RoleName>\w*)" + coreName + @"(?<Qualifier>\w*)$";
+                var match = Regex.Match(fkt.ThisColumns[i], pattern);
+
+                if (match.Success)
+                {
+                    var parts = new ForeignKeyNameParts { 
+                            RoleName = match.Groups["RoleName"].Value, 
+                            Core = coreName,
+                            Qualifier = match.Groups["Qualifier"].Value };
+                            
+                    // Don't let role name be the same as the parent table, or strangeness in naming will occur
+                    if (parts.RoleName == fkt.OtherTable)
+                      parts.RoleName = null;
+                      
+                    return parts;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    class ForeignKeyNameParts
+    {
+        public string RoleName { get; set; }
+        public string Core { get; set; }
+        public string Qualifier { get; set; }
+    }
+    
+ Table GetTable(Dictionary<string, Table> tablesByName, string tableName)
+ {
+    Table tbl;
+    
+    if (!tablesByName.TryGetValue(tableName, out tbl))
+      throw new Exception(string.Format("Unable to find table '{0}'.", tableName));
+
+    return tbl;
+ }
+ #>

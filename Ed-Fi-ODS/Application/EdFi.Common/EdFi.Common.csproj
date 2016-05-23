@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C545A7D1-4054-4279-9723-F06DA524E122}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdFi.Common</RootNamespace>
+    <AssemblyName>EdFi.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <RestorePackages>true</RestorePackages>
+    <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\Ed-Fi-ODS-Implementation\Application\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AzureTest|AnyCPU'">
+    <OutputPath>bin\AzureTest\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ed-Fi-ODS-Implementation\Application\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Caching\CacheProviderExtensions.cs" />
+    <Compile Include="ChainOfResponsibilityBase.cs" />
+    <Compile Include="Caching\AspNetCacheProvider.cs" />
+    <Compile Include="Caching\ICacheProvider.cs" />
+    <Compile Include="Caching\MemoryCacheProvider.cs" />
+    <Compile Include="Configuration\AppConfigConnectionStringsProvider.cs" />
+    <Compile Include="Configuration\IConfigConnectionStringsProvider.cs" />
+    <Compile Include="Configuration\NameValueCollectionConfigValueProvider.cs" />
+    <Compile Include="Context\HashtableContextStorage.cs" />
+    <Compile Include="Context\IContextStorage.cs" />
+    <Compile Include="Configuration\AppConfigSectionProvider.cs" />
+    <Compile Include="Configuration\AppConfigValueProvider.cs" />
+    <Compile Include="Context\CallContextStorage.cs" />
+    <Compile Include="Configuration\ExternalConfigFileConfigValueProvider.cs" />
+    <Compile Include="Configuration\ExternalConfigFileSectionProvider.cs" />
+    <Compile Include="Configuration\IConfigSectionProvider.cs" />
+    <Compile Include="Configuration\IConfigValueProvider.cs" />
+    <Compile Include="Context\HttpContextStorage.cs" />
+    <Compile Include="Configuration\InversionOfControlConfiguration.cs" />
+    <Compile Include="Database\IDatabaseConnectionStringProvider.cs" />
+    <Compile Include="Database\IDatabaseNameProvider.cs" />
+    <Compile Include="Database\LiteralDatabaseConnectionStringProvider.cs" />
+    <Compile Include="Database\LiteralDatabaseNameProvider.cs" />
+    <Compile Include="Database\NamedDatabaseConnectionStringProvider.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Enumeration.cs" />
+    <Compile Include="Expando\Expando.cs" />
+    <Compile Include="Expando\PropertyBag.cs" />
+    <Compile Include="Expando\SerializationUtils.cs" />
+    <Compile Include="Expando\Utilities.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Inflection\CompositeTermInflector.cs" />
+    <Compile Include="Inflection\Inflector.cs" />
+    <Compile Include="Security\Authorization\AuthorizationSegmentCollection.cs" />
+    <Compile Include="Security\Authorization\AuthorizationSegmentEndpointWithValue.cs" />
+    <Compile Include="Security\Authorization\ClaimsAuthorizationSegment.cs" />
+    <Compile Include="Security\Authorization\ParameterizedFilterBuilder.cs" />
+    <Compile Include="Security\EducationOrganizationIdentifiers.cs" />
+    <Compile Include="Security\IEducationOrganizationCache.cs" />
+    <Compile Include="Identity\Gender.cs" />
+    <Compile Include="Identity\Identifier.cs" />
+    <Compile Include="Identity\IdentifierType.cs" />
+    <Compile Include="Identity\Identity.cs" />
+    <Compile Include="Identity\IIdentifier.cs" />
+    <Compile Include="Identity\IIdentity.cs" />
+    <Compile Include="Identity\IUniqueIdentity.cs" />
+    <Compile Include="Identity\NameType.cs" />
+    <Compile Include="InversionOfControl\ChainOfResponsibilityRegistrar.cs" />
+    <Compile Include="InversionOfControl\DatabaseConnectionStringProviderFacility.cs" />
+    <Compile Include="InversionOfControl\InversionOfControlContainerFactory.cs" />
+    <Compile Include="InversionOfControl\IServiceLocator.cs" />
+    <Compile Include="InversionOfControl\IWindsorContainerExtensions.cs" />
+    <Compile Include="InversionOfControl\PreregisterAttribute.cs" />
+    <Compile Include="InversionOfControl\RegistrationMethodsInstallerBase.cs" />
+    <Compile Include="InversionOfControl\SelectivelyEmptyArrayResolver.cs" />
+    <Compile Include="InversionOfControl\WindsorContainerEx.cs" />
+    <Compile Include="IO\FileSystemWrapper.cs" />
+    <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="Messaging\CommandListener.cs" />
+    <Compile Include="Messaging\CommandSender.cs" />
+    <Compile Include="Messaging\ConventionBasedQueueNameProvider.cs" />
+    <Compile Include="Messaging\Envelope.cs" />
+    <Compile Include="Messaging\IBusSender.cs" />
+    <Compile Include="Messaging\ICommand.cs" />
+    <Compile Include="Messaging\ICommandListener.cs" />
+    <Compile Include="Messaging\ICommandSender.cs" />
+    <Compile Include="Messaging\IEnvelope.cs" />
+    <Compile Include="Messaging\IInboundEnvelopeProcessingMgr.cs" />
+    <Compile Include="Messaging\IInboundEnvelopeDataProcessor.cs" />
+    <Compile Include="Messaging\IMessageHandler.cs" />
+    <Compile Include="Messaging\IMessageManager.cs" />
+    <Compile Include="Messaging\IMessageProcessor.cs" />
+    <Compile Include="Messaging\InboundEnvelopeProcessingMgr.cs" />
+    <Compile Include="Messaging\IOutboundEnvelopeProcessingMgr.cs" />
+    <Compile Include="Messaging\IOutboundEnvelopeDataProcessor.cs" />
+    <Compile Include="Messaging\IQueueListener.cs" />
+    <Compile Include="Messaging\IQueueNameProvider.cs" />
+    <Compile Include="Messaging\MessageProcessor.cs" />
+    <Compile Include="Messaging\OutboundEnvelopeProcessingMgr.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\Authorization\ExistingValuesAuthorizationSegment.cs" />
+    <Compile Include="Security\Authorization\AuthorizationSegmentEndpoint.cs" />
+    <Compile Include="Security\Authorization\IAuthorizationSegmentsVerifier.cs" />
+    <Compile Include="Security\Authorization\IEdFiAuthorizationStrategy.cs" />
+    <Compile Include="Security\Claims\AuthorizationContextException.cs" />
+    <Compile Include="Security\Claims\AuthorizationContextKeys.cs" />
+    <Compile Include="Security\Claims\AuthorizationContextProvider.cs" />
+    <Compile Include="Security\Claims\EdFiAuthorizationContext.cs" />
+    <Compile Include="Security\Claims\EdFiClaimsPrincipalSelector.cs" />
+    <Compile Include="Security\Claims\EdFiResourceClaimValue.cs" />
+    <Compile Include="Security\Claims\EducationOrganizationTypes.cs" />
+    <Compile Include="Security\Claims\IClaimsIdentityProvider.cs" />
+    <Compile Include="Security\Claims\IEdFiAuthorizationProvider.cs" />
+    <Compile Include="Security\Claims\IResourceAuthorizationMetadataProvider.cs" />
+    <Compile Include="Security\Claims\JsonClaimHelper.cs" />
+    <Compile Include="Security\EdFiSecurityException.cs" />
+    <Compile Include="Services\IHostedService.cs" />
+    <Compile Include="_Installers\AllDeployedHandlersInstaller.cs" />
+    <Compile Include="_Installers\EdFiCommonInstaller.cs" />
+    <Compile Include="_Installers\EdFiMessagingInstaller.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Expando\README.md" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="../T4TextTemplating.Targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <ItemGroup>
+    <myLibraries Include="$(TargetPath); $(TargetDir)$(TargetName).pdb;">
+      <InProject>false</InProject>
+    </myLibraries>
+  </ItemGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(myLibraries)" DestinationFolder="$(ttLibsFolder)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

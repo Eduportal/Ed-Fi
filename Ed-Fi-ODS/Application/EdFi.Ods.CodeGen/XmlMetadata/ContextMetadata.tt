@@ -1,0 +1,39 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ include file="..\ttInclude\Metadata.ttinclude" #>
+<#@ output extension=".generated.cs" #>
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace EdFi.Ods.CodeGen.XsdToWebApi.Process 
+{
+    public class ContextMetadata
+    {
+        public string ElementName { get; set; }
+        public string ParentElementName { get; set; }
+        public string Context { get; set; }
+        public string[] UnifiedElements { get; set; }
+        
+        public static readonly List<ContextMetadata> PredefinedContextMetadata = new List<ContextMetadata> {
+<#
+    var doc = GetExtendedXmlDocument(this.Host, "PredefinedContextMetadata.xml");
+    foreach (var pcm in doc.Elements("PredefinedContextMetadata"))
+    {
+        foreach (var cm in pcm.Elements("ContextMetadata"))
+        {
+            var elementName = cm.Element("ElementName").Value;
+            var parentElementName = cm.Element("ParentElementName").Value;
+            var context = cm.Element("Context").Value;
+            var unifiedElements = string.Join(",", cm.Elements("UnifiedElementName").Select(el => string.Format("\"{0}\"", el.Value )));
+#>
+            new ContextMetadata { ElementName = "<#=elementName #>", ParentElementName = "<#=parentElementName #>", Context = "<#=context #>", UnifiedElements = new string[] {<#=unifiedElements#>} },
+<#
+        }
+    }
+#>
+        };
+    }
+}

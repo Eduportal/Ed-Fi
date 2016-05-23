@@ -1,0 +1,455 @@
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.Common.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Common.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ import namespace="EdFi.Ods.Common.Utils.Profiles" #>
+<#@ import namespace="EdFi.Common.Inflection" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="EdFi.Ods.CodeGen.Models.ProfileMetadata" #>
+<#@ output extension=".generated.cs" encoding="0" #>
+<#
+    // For resource-based repositories
+    // string persistentModelNamespacePart = "Resources";
+    // string aggregateNamespaceSuffix = "";
+#> 
+using System;
+using System.Net;
+using System.Web.Http;
+using System.Web.Http.Description;
+using System.Web.Http.Results;
+using EdFi.Ods.Api.Architecture;
+using EdFi.Ods.Api.Common;
+using EdFi.Ods.Api.Common.CustomActionResults;
+using EdFi.Ods.Api.Models.Requests;
+using EdFi.Ods.Common.Context;
+using EdFi.Ods.Common.ExceptionHandling;
+using EdFi.Ods.Entities.Common;
+using EdFi.Ods.Pipelines.Factories;
+
+<#
+    string projectPath = GetProjectPath();
+
+    // Load the current assembly's profiles
+    var profiles = MetadataHelper.GetProfiles(projectPath);
+
+    var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath()); 
+
+    var databaseSchemaProvider = 
+        new UsiToUniqueIdTransformingDatabaseSchemaProviderDecorator(
+            new EdFiExtensionsDatabaseSchemaProviderDecorator(
+                new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath())));
+
+    codeGenHelper = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+    
+    MetadataValidator.ValidateProfileMetadata(codeGenHelper, profiles, MetadataHelper.GetProfilesXDocument(projectPath));
+
+    var tables = databaseSchemaProvider.LoadTables();
+
+    var tablesByName = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
+
+    foreach (var t in tables)
+        tablesByName[t.Name] = t;
+
+    // Determine what tables in the database have not been explicitly handled
+    var unhandledTableNames = 
+        tablesByName.Keys
+        .Except(domainMetadataDoc.Descendants("Entity").Select(x => x.Attribute("table").Value))
+        .Where(x => !codeGenHelper.IsExcluded(x) && !x.EndsWith("Extension")) // Extension tables don't need to be explicitly handled, they are joined by convention
+        .ToList();
+
+    // Provide explicit message related to any unhandled tables
+    if (unhandledTableNames.Any())
+        throw new Exception(string.Format("The following tables have not been explicitly handled:\r\n{0}", string.Join("\r\n\t", unhandledTableNames)));
+
+    var aggregatesElts = domainMetadataDoc.Descendants("Aggregate");
+
+    var propertiesWithCollidingJsonNames = codeGenHelper.GetCollidingPropertyNames(tablesByName, aggregatesElts);
+
+    if (!projectPath.Contains("Profiles"))
+    {
+        GenerateControllers(
+            null, 
+            aggregatesElts, 
+            //ResourceNamespace,
+            tablesByName,
+            propertiesWithCollidingJsonNames,
+            //tables,
+            codeGenHelper);
+    }
+
+    foreach (var profile in profiles.Profile) {
+        GenerateControllers(
+            profile, 
+            aggregatesElts, 
+            //ResourceNamespace,
+            tablesByName,
+            propertiesWithCollidingJsonNames,
+            //tables,
+            codeGenHelper);
+    }
+#>
+<#+
+    void GenerateControllers(Profile profile, IEnumerable<XElement> aggregatesElts, 
+        //string resourceNamespace,
+        Dictionary<string, Table> tablesByName, 
+        List<string> propertiesWithCollidingJsonNames,
+        ICodeGenHelper coreCodeGenHelper)
+    {
+        ICodeGenHelper codeGenHelper;
+        string profileNamespaceSegment;
+        string readableProfileNamespaceSegment;
+        string writableProfileNamespaceSegment;
+
+        if (profile == null) 
+        {
+            codeGenHelper = coreCodeGenHelper;
+            profileNamespaceSegment = string.Empty;
+            readableProfileNamespaceSegment = string.Empty;
+            writableProfileNamespaceSegment = string.Empty;
+        }
+        else 
+        {
+            codeGenHelper = new ProfilesCodeGenHelper(new ProfileContext {Profile = profile}, coreCodeGenHelper);
+            profileNamespaceSegment = "." + profile.name.Replace("-", "_");
+            readableProfileNamespaceSegment = profileNamespaceSegment + "_Readable";
+            writableProfileNamespaceSegment = profileNamespaceSegment + "_Writable";
+        }
+
+        foreach (var aggregateElt in aggregatesElts)
+        { 
+            // WARNING: This code assumes that aggregateRootName and the root table name are the same.
+            string aggregateRootName = aggregateElt.Attribute("root").Value;
+            string collectionName = CompositeTermInflector.MakePlural(aggregateRootName);            
+
+            bool isAbstract = aggregateElt.Descendants("Entity")
+                .Where(e => e.Attribute("table").Value == aggregateRootName 
+                && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                .Any();
+
+            if (isAbstract)
+                continue;
+
+            Table tbl;
+ 
+            if (!tablesByName.TryGetValue(aggregateRootName, out tbl))
+                throw new Exception(string.Format("Unable to find table '{0}' in tables (count = {1}).", aggregateRootName, tablesByName.Keys.Count()));
+
+            if (codeGenHelper.IsExcluded(tbl.Name))
+                continue;
+
+            if (!codeGenHelper.ShouldGenerateAggregate(aggregateRootName, null))
+                continue;
+
+            var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name)
+                                .Select(e => e.Attribute("isA"))
+                                .SingleOrDefault();
+
+            string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+
+            Table baseTbl = null;
+
+            if (baseTableName != null)
+                tablesByName.TryGetValue(baseTableName, out baseTbl);
+        
+            bool isReadOnly = false;
+            bool isWriteOnly = false;    
+            if(profile != null)
+            {
+                isReadOnly = MetadataHelper.IsProfileReadOnly(profile, aggregateRootName);
+                isWriteOnly= MetadataHelper.IsProfileWriteOnly(profile, aggregateRootName);
+            }
+            
+            string readNullModel = collectionName + "NullReadRequest";
+            string writeNullModel= collectionName + "NullWriteRequest";
+            string readableClientDtoFqn = isWriteOnly ? readNullModel : "EdFi.Ods.Api.Models.Resources." + aggregateRootName + readableProfileNamespaceSegment + "." + aggregateRootName; 
+            string writableClientDtoFqn = isReadOnly ? writeNullModel : "EdFi.Ods.Api.Models.Resources." + aggregateRootName + writableProfileNamespaceSegment + "." + aggregateRootName; 
+            var TAggregateRoot = "EdFi.Ods."+ persistentModelNamespacePart + ".NHibernate."+ aggregateRootName + aggregateNamespaceSuffix + "." + aggregateRootName;
+            var TResourceReadModel = readableClientDtoFqn;
+            var TResourceWriteModel = writableClientDtoFqn;
+            var TEntityInterface = "EdFi.Ods.Entities.Common.I" + aggregateRootName;
+            var TGetByKeyRequest =  isWriteOnly ? readNullModel : "Api.Models.Requests.v2." + collectionName + profileNamespaceSegment + "." + aggregateRootName + "GetByKey";
+            //var TGetByIdsRequest = "Api.Models.Requests.v2." + collectionName + profileNamespaceSegment + "." + aggregateRootName + "GetByIds";
+            var TPostRequest = isReadOnly ? writeNullModel : "Api.Models.Requests.v2." + collectionName + profileNamespaceSegment + "." + aggregateRootName + "Post";
+            var TPutRequest = isReadOnly ? writeNullModel : "Api.Models.Requests.v2." + collectionName + profileNamespaceSegment + "." + aggregateRootName + "Put";
+            var TDeleteRequest = "Api.Models.Requests.v2." + collectionName + profileNamespaceSegment + "." + aggregateRootName + "Delete";
+            var TGetByExampleRequest = isWriteOnly ? readNullModel : "Api.Models.Requests.v2." + collectionName + profileNamespaceSegment + "." + aggregateRootName + "GetByExample";
+            //var TPatchRequest = "Api.Models.Requests.v2." + collectionName + profileNamespaceSegment + "." + aggregateRootName + "Patch";
+#>
+
+namespace EdFi.Ods.Api.Services.Controllers.v2.<#= collectionName #><#= profileNamespaceSegment #>
+{
+<#+
+    // TAggregateRoot,  (<_#= TAggregateRoot #_>)
+    // TResourceReadModel,  (<_#= TResourceReadModel #_>)
+    // TResourceWriteModel,  (<_#= TResourceWriteModel #_>)
+    // TGetByKeyRequest,  (<_#= TGetByKeyRequest #_>)
+    // TGetByIdsRequest,  (<_#= TGetByIdsRequest #_>)
+    // TPostRequest,  (<_#= TPostRequest #_>)
+    // TPutRequest,  (<_#= TPutRequest #_>)
+    // TDeleteRequest,  (<_#= TDeleteRequest #_>)
+    // TGetByExampleRequest,  (<_#= TGetByExampleRequest #_>)
+    // TPatchRequest (<_#= TPatchRequest #_>)
+#>
+    <#+ if(isReadOnly) { #>[ProfileContentType("<#= string.Format("application/vnd.ed-fi.{0}." + profile.name + ".writable+json", codeGenHelper.CamelCase(aggregateRootName)) #>")]
+    public class <#= writeNullModel #> : NullRequestBase { }
+    <#+} #>
+    <#+ if(isWriteOnly) { #>[ProfileContentType("<#= string.Format("application/vnd.ed-fi.{0}." + profile.name + ".readable+json", codeGenHelper.CamelCase(aggregateRootName)) #>")]
+    public class <#=  readNullModel #> : NullRequestBase { }
+    <#+} #>
+
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public partial class <#= collectionName #>Controller : EdFiControllerBase<
+        <#= TResourceReadModel #>, 
+        <#= TResourceWriteModel #>, 
+        <#= TEntityInterface #>, 
+        <#= TAggregateRoot #>, 
+        <#= TGetByKeyRequest #>, 
+        <#= TPutRequest #>,
+        <#= TPostRequest #>,
+        <#= TDeleteRequest #>,
+        <#= TGetByExampleRequest#>>
+    {
+        public <#= collectionName #>Controller(IPipelineFactory pipelineFactory, ISchoolYearContextProvider schoolYearContextProvider, IRESTErrorProvider restErrorProvider) 
+            : base(pipelineFactory, schoolYearContextProvider, restErrorProvider)
+        {
+        }
+        
+        protected override void MapKey(<#= TGetByKeyRequest #> request, I<#= aggregateRootName #> specification)
+        {
+            <#+ if(isReadOnly || !isWriteOnly) { #>
+            // Copy contextual primary key values
+            specification.SuspendReferenceAssignmentCheck();
+<#+ RenderParameterToModelMapping(tablesByName, tbl, baseTbl, propertiesWithCollidingJsonNames, true); #>
+            <#+} #>
+            <#+ if(isWriteOnly) {#>
+            throw new NotSupportedException("Profile only has a Write Content Type defined for this resource, and so the controller does not support read operations.");
+            <#+}#>
+        }
+
+        protected override void MapAll(<#= TGetByExampleRequest #> request, I<#= aggregateRootName #> specification)
+        {
+            <#+ if(isReadOnly || !isWriteOnly) { #>
+            // Copy all existing values
+<#+ RenderParameterToModelMapping(tablesByName, tbl, baseTbl, propertiesWithCollidingJsonNames, false); #>
+            <#+} #>
+            <#+ if(isWriteOnly) {#>
+            throw new NotSupportedException("Profile only has a Write Content Type defined for this resource, and so the controller does not support read operations.");
+            <#+}#>
+        }
+        <#+ if(!isWriteOnly) {#>
+        public IHttpActionResult GetByKey([FromUri] <#= RenderGetByKeyParameterList(tablesByName, tbl, propertiesWithCollidingJsonNames) #>)
+        {
+            var request = new <#= TGetByKeyRequest #>
+            {
+<#+ RenderGetByKeyRequestMapping(tablesByName, tbl, propertiesWithCollidingJsonNames); #>
+            };
+            return GetByKey(request);
+        }
+        <#+ } #>
+        protected override bool IsGetByNaturalKey(I<#= aggregateRootName #> request)
+        {
+            return 
+<#+          for (int i = 0; i < tbl.PKs.Count; i++) { 
+                var pkCol = tbl.PKs[i]; 
+        
+                if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) { #>
+                <#= i == 0 ? string.Empty : "&& " #>request.<#= pkCol.CleanName #> != default(<#= codeGenHelper.GetPropertyType(pkCol) #>)<#= i < (tbl.PKs.Count - 1) ? string.Empty : ";" #>
+<#+             } else { #>
+                <#= i == 0 ? string.Empty : "&& " #>request.<#= TrimSuffix(pkCol.CleanName, "Id") #> != null<#= i < (tbl.PKs.Count - 1) ? string.Empty : ";" #>
+<#+             } #>
+<#+         } #>
+        }
+
+        protected override string GetResourceCollectionName()
+        {
+            return "<#= codeGenHelper.CamelCase(collectionName) #>";
+        }
+<#+         if (profile != null) { #>
+
+        protected override string GetReadContentType()
+        {
+            return "<#= ProfilesContentTypeHelper.CreateContentType(codeGenHelper.CamelCase(collectionName), profile.name, ContentTypeUsage.Readable) #>";
+        }
+<#+         } #>
+        
+        <#+ if(isReadOnly) {#>
+        public override IHttpActionResult Post(<#= writeNullModel #> request)
+        {
+            return new StatusCodeResult(HttpStatusCode.MethodNotAllowed, this)
+                .WithError("The allowed methods for this resource with the '<#= profile.name #>' profile are GET, DELETE and OPTIONS.");
+        }
+
+        public override IHttpActionResult Put(<#= writeNullModel #> request, Guid id)
+        {
+            return new StatusCodeResult(HttpStatusCode.MethodNotAllowed, this)
+                .WithError("The allowed methods for this resource with the '<#= profile.name #>' profile are GET, DELETE and OPTIONS.");
+        }
+        <#+}#>
+
+        <#+ if(isWriteOnly) {#>
+        public override IHttpActionResult Get(Guid id)
+        {
+            return new StatusCodeResult(HttpStatusCode.MethodNotAllowed, this)
+                .WithError("The allowed methods for this resource with the '<#= profile.name #>' profile are PUT, POST, DELETE and OPTIONS.");
+        }
+
+        public override IHttpActionResult GetAll(UrlQueryParametersRequest urlQueryParametersRequest, <#= readNullModel #> specification = null)
+        {
+            return new StatusCodeResult(HttpStatusCode.MethodNotAllowed, this)
+                .WithError("The allowed methods for this resource with the '<#= profile.name #>' profile are PUT, POST, DELETE and OPTIONS.");
+        }
+        <#+}#>
+    }
+}
+<#+     }
+    }
+
+    private ICodeGenHelper codeGenHelper;
+
+    void RenderPropertiesAsParameters(Dictionary<string,Table> tablesByName, Table tbl, Table baseTbl, List<string> propertiesWithCollidingJsonNames)
+    {
+        bool propertiesGenerated = false;
+        bool isDerived = baseTbl != null;
+
+        foreach (var col in tbl.PKs)
+        {
+            if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) 
+            {
+                #><#= propertiesGenerated ? ", " : string.Empty#><#= col.SysType #> <#= MakeSafeForCSharp(codeGenHelper.ApplyPropertyNameConventions(col.CleanName, tbl.Name, propertiesWithCollidingJsonNames)) #><#+
+            }
+            else
+            {
+                #><#= propertiesGenerated ? ", " : string.Empty#>string <#= MakeSafeForCSharp(codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(col.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames)) #><#+
+            }
+
+            propertiesGenerated = true;
+        }
+
+        if (isDerived) 
+        {
+            foreach (var col in baseTbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) // Explicitly exclude the "DateTIme" columns property here
+            {
+                if (!codeGenHelper.IsLookupTypeColumn(tablesByName, baseTbl, col.Name)) 
+                {
+                    #><#= propertiesGenerated ? ", " : string.Empty#><#= codeGenHelper.GetPropertyType(col) #> <#= MakeSafeForCSharp(codeGenHelper.ApplyPropertyNameConventions(col.CleanName, baseTbl.Name, propertiesWithCollidingJsonNames)) #><#+
+                }
+                else
+                {
+                    #><#= propertiesGenerated ? ", " : string.Empty#>string <#= MakeSafeForCSharp(codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(col.CleanName, "Id"), baseTbl.Name, propertiesWithCollidingJsonNames)) #><#+
+                }
+
+                propertiesGenerated = true;
+            }
+        }
+
+        foreach (var col in tbl.NonPrimaryKeyColumns.Where(c => c.Name != "Id" && c.Name != "CreateDate" && c.Name != "LastModifiedDate")) // Explicitly exclude the "DateTIme" columns property here
+        {
+            if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, col.Name)) 
+            {
+                #><#= propertiesGenerated ? ", " : string.Empty#><#= codeGenHelper.GetPropertyType(col) #> <#= MakeSafeForCSharp(codeGenHelper.ApplyPropertyNameConventions(col.CleanName, tbl.Name, propertiesWithCollidingJsonNames)) #><#+
+            }
+            else
+            {
+                #><#= propertiesGenerated ? ", " : string.Empty#>string <#= MakeSafeForCSharp(codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(col.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames)) #><#+
+            }
+
+            propertiesGenerated = true;
+        }
+    }
+
+    void RenderParameterToModelMapping(Dictionary<string,Table> tablesByName, Table tbl, Table baseTbl, List<string> propertiesWithCollidingJsonNames, bool keysOnly)
+    {
+        bool isDerived = baseTbl != null;
+
+        if (!keysOnly)
+        { #>
+            specification.SuspendReferenceAssignmentCheck();
+<#+
+        }
+
+        var columnsToConsider = keysOnly? tbl.PKs : tbl.ExampleSpecificationColumns;
+
+        foreach (var pkCol in columnsToConsider)
+        {
+            if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) 
+            {
+#>            specification.<#= pkCol.CleanName #> = request.<#= codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames, true) #>;
+<#+
+            }
+            else
+            {
+#>            specification.<#= TrimSuffix(pkCol.CleanName, "Id") #> = request.<#= codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames, true) #>;
+<#+
+            }
+        }
+
+    }
+
+    void RenderGetByKeyRequestMapping(Dictionary<string,Table> tablesByName, Table tbl, List<string> propertiesWithCollidingJsonNames)
+    {
+        for (int i = 0; i < tbl.PKs.Count; i++)
+        {
+            var pkCol = tbl.PKs[i];
+            if (codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) 
+            {
+                var propertyName = codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames, true);
+#>                <#=string.Format("{0} = {1},", propertyName, codeGenHelper.CamelCase(propertyName))#>
+<#+
+            }
+            else
+            {
+                var propertyName = codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames, true);
+#>                <#=string.Format("{0} = {1},", propertyName, codeGenHelper.CamelCase(propertyName))#>
+<#+
+            }
+        }
+    }
+
+    string RenderGetByKeyParameterList(Dictionary<string,Table> tablesByName, Table tbl, List<string> propertiesWithCollidingJsonNames)
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < tbl.PKs.Count; i++)
+        {
+            var pkCol = tbl.PKs[i];
+            if (sb.Length > 0) sb.Append(", ");
+            if (codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) 
+            {
+                var propertyName = codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames, true);
+                sb.AppendFormat("string {0}", codeGenHelper.CamelCase(propertyName));
+            }
+            else
+            {
+                var propertyName = codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames, true);
+                sb.AppendFormat("{0} {1}", pkCol.SysType, codeGenHelper.CamelCase(propertyName));
+            }
+        }
+        return sb.ToString();
+    }
+
+    string MakeSafeForCSharp(string name)
+    {
+        bool prefixRequired;
+
+        switch (name)
+        {
+            case "namespace":
+                prefixRequired = true;
+                break;
+            default:
+                prefixRequired = false;
+                break;
+        }
+
+        return (prefixRequired ? "@" : string.Empty) + name;
+    }
+
+    // For entity-based ORM repositories
+    string persistentModelNamespacePart = "Entities"; // or Resources
+    string aggregateNamespaceSuffix = "Aggregate";
+#>

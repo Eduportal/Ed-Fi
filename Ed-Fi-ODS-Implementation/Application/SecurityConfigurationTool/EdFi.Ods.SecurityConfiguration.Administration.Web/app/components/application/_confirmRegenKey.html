@@ -1,0 +1,52 @@
+﻿<div class="modal {{$root.fadeClass}}" id="confirm-regen-key-modal" tabindex="-1" role="dialog" aria-labelledby="confirmDelete" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content panel-warning">
+            <div class="modal-header panel-heading">
+                <h4>Generate Application Key and Secret</h4>
+            </div>
+            <div class="modal-body">
+                <p ng-hide="activeApp.generated">Are you sure you want to generate a new key and secret for the following application?</p>
+                <blockquote>
+                    <dl class="dl-horizontal">
+                        <dt>Application Name:</dt>
+                        <dd><p>{{activeApp.applicationName}}</p></dd>
+                        <dt>Vendor:</dt>
+                        <dd>{{vendor.vendorName}}</dd>
+                        <dt>Key Status:</dt>
+                        <dd>{{activeApp.keyStatus}}</dd>
+                    </dl>
+                </blockquote>
+                <div ng-hide="activeApp.generated">
+                    <p class="text-warning">Please note: </p>
+                    <p>
+                        When the key and secret is regenerated for this application, the old key and secret will be disabled.
+                        If the application is currently using the current key, the regeneration process will need to be carefully
+                        coordinated with the vendor contact as they will need to configure the new key and secret before they can continue
+                        sending data to the ODS.
+                    </p>
+                </div>
+                <div ng-show="activeApp.generated">
+                    <p class="text-danger">
+                        The following activation code should be communicated to the vendor over the phone. The vendor will need this code to access the link they received via email.
+                    </p>
+                    <h1 ng-show="activeApp.generated" class="text-danger text-center">{{activeApp.activationCode}}</h1>
+                    <p>
+                        If you need to re-do this operation, click <a class="pointer" ng-click="activeApp.generated=false;">re-generate</a>
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div ng-hide="activeApp.generated">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-warning btn-ok" ng-click="performKeyGen(activeApp)" ng-disabled="disableActionButton">
+                        <i class="fa fa-spinner fa-spin fa-lg" ng-show="disableActionButton"></i>
+                        Generate
+                    </button>
+                </div>
+                <div ng-show="activeApp.generated">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

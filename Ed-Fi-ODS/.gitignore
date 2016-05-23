@@ -1,0 +1,84 @@
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+[Bb]in
+csx/
+rcf/
+[Oo]bj
+logistics/bin
+
+#User-specific files
+*.suo
+*.csproj.user
+*.ccproj.user
+*.sln.DotSettings.user
+*.csproj.DotSettings.user
+*.pubxml.user
+*.dbmdl
+
+#NCrunch
+_NCrunch*
+*.ncrunchsolution
+*.ncrunchsolution.user
+*.ncrunchproject
+*.ncrunchsolution
+#Vim backup files
+*~
+
+#MS Office Backup Files
+~*
+
+#Resharper files
+_ReSharper.*
+*.resharper
+*.resharper.user
+
+#Others
+*.cache
+*.orig
+*.original
+
+#Packages
+App_Packages/
+packages/
+/*.dll
+/*.pdb
+/*.XML
+
+#nDevConfig
+.workspaceInitialized
+nDevConfig/
+
+#Database Project Files
+application/EdFi.Ods.Entities.NHibernate/DescriptorMigration.sql
+application/EduId.Database/EduId.Database.dbmdl
+
+#Release Notes Working File
+ReleaseNotes/pending.md
+
+#File System Queues
+MessagingQueueData
+
+application/EdFi.Ods.BulkLoad.Core/*.dll
+application/EdFi.Ods.BulkLoad.Core/*.pdb
+
+credentials-*.xml
+
+#lib directory
+libs/
+libs.codegen/
+schema.codegen/
+logistics/Services/
+
+#Generated code
+*.generated.cs
+*.generated.txt
+*.generated.sql
+*.generated.resx
+*.generated.hbm.xml
+
+#Copies of generated code
+*.generated - Copy.cs
+*.generated - Copy.resx
+
+#Database project working files
+Import Schema Logs
+/Application/EdFi.Ods.CodeGen/App_Packages

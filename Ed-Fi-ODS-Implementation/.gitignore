@@ -1,0 +1,78 @@
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+[Bb]in
+csx/
+rcf/
+[Oo]bj
+logistics/bin
+
+#User-specific files
+*.suo
+*.csproj.user
+*.ccproj.user
+*.sln.DotSettings.user
+*.pubxml.user
+*.dbmdl
+
+#NCrunch
+_NCrunch*
+*.ncrunchsolution.user
+*.ncrunchproject
+
+
+#Vim backup files
+*~
+
+#MS Office Backup Files
+~*
+
+#Resharper files
+_ReSharper.*
+*.resharper
+*.resharper.user
+
+#Others
+*.cache
+*.orig
+*.original
+
+#Packages
+packages/
+/*.dll
+/*.pdb
+/*.XML
+
+#nDevConfig
+.workspaceInitialized
+nDevConfig/
+
+#Database Project Files
+application/EdFi.Ods.Entities.NHibernate/DescriptorMigration.sql
+application/EduId.Database/EduId.Database.dbmdl
+
+#Release Notes Working File
+ReleaseNotes/pending.md
+
+#File System Queues
+MessagingQueueData
+
+application/EdFi.Ods.BulkLoad.Core/*.dll
+application/EdFi.Ods.BulkLoad.Core/*.pdb
+
+credentials-*.xml
+
+#lib directory
+libs/
+libs.codegen/
+
+#Generated code
+*.generated.cs
+*.generated.txt
+*.generated.sql
+*.hbm.xml
+**/Metadata/types/*.json
+**/Metadata/resources/*.json
+**/Metadata/descriptors/*.json
+*.ncrunchsolution
+/Application/*.ncrunchsolution
+/Application/*.DotSettings
+/Application/msbuild.log

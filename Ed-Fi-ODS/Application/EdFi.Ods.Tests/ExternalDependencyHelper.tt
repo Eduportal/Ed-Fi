@@ -1,0 +1,180 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ include file="$(ttIncludeFolder)\SQLServer.ttinclude" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ output extension=".generated.cs" encoding="0" #>
+
+using System.Collections.Generic;
+
+<# 
+    var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath()); 
+    var tables = LoadTables();
+
+    var tablesByName = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
+
+    foreach (var t in tables)
+        tablesByName[t.Name] = t;
+
+    // Determine what tables in the database have not been explicitly handled
+    var unhandledTableNames = 
+        tablesByName.Keys
+        .Except(domainMetadataDoc.Descendants("Entity").Select(x => x.Attribute("table").Value))
+        .Where(x => !IsExcluded(x) && !x.EndsWith("Extension")) // Extension tables don't need to be explicitly handled, they are joined by convention
+        .ToList();
+
+    // Provide explicit message related to any unhandled tables
+    if (unhandledTableNames.Any())
+        throw new Exception(string.Format("The following tables have not been explicitly handled:\r\n{0}", string.Join("\r\n\t", unhandledTableNames)));
+
+    var aggregatesElts = domainMetadataDoc.Descendants("Aggregate");
+
+    
+    foreach (var aggregateElt in aggregatesElts) { 
+        string aggregateRootName = aggregateElt.Attribute("root").Value;
+
+        if (IsExcluded(aggregateRootName))
+            continue;
+    }
+ #>
+
+namespace UnitTests
+{
+    public static class ExternalDependencyHelper
+    {
+        public class Constraint
+        {
+            public Constraint(string tableName, string schemaName, string constraintName)
+            {
+                SchemaName = schemaName;
+                TableName = tableName;
+                ConstraintName = constraintName;
+            }
+
+            public string SchemaName { get; set; }
+            public string TableName { get; set; }
+            public string ConstraintName { get; set; }
+        }
+
+        public static List<Constraint> GetExternalConstraints(string aggregateRootType)
+        {
+            if (!externalConstraintNamesByAggregateRootType.ContainsKey(aggregateRootType))
+                return new List<Constraint>();
+
+            return externalConstraintNamesByAggregateRootType[aggregateRootType];
+        }
+
+        private static Dictionary<string, List<Constraint>> externalConstraintNamesByAggregateRootType = 
+            new Dictionary<string, List<Constraint>> 
+            {
+<# 
+    foreach (var aggregateElt in aggregatesElts)
+    { 
+        string aggregateRootName = aggregateElt.Attribute("root").Value;
+
+        List<string> aggregateTableNames = 
+            (from e in aggregateElt.Descendants("Entity")
+            select e.Attribute("table").Value)
+            .ToList();
+
+        if (IsExcluded(aggregateRootName))
+            continue;
+
+#>
+                { 
+                    "<#= aggregateRootName #>", 
+                    new List<Constraint> {
+<#
+        List<string> additionalTablesTBD = new List<string>();
+        var aggregateTableNamesToEnumerate = aggregateTableNames.Select(x => x).Concat(additionalTablesTBD);
+
+        foreach (string aggregateTableName in aggregateTableNamesToEnumerate)
+        { 
+            if (IsExcluded(aggregateTableName))
+                continue; #>
+                        // <#= aggregateTableName #>
+<#            
+            Table tbl = tables.SingleOrDefault(t => t.Name.Equals(aggregateTableName, StringComparison.InvariantCultureIgnoreCase));
+
+            if (tbl == null) { #>
+// WARNING: Unable to find table '<#= aggregateTableName #>'
+<#                continue;
+            } 
+
+            var navigableParentFKs = GetNavigableParentRelationships(tbl, aggregateTableNames);
+            var navigableChildFKs = tbl.GetNavigableChildTables(tablesByName).Where(ct => IsInAggregate(aggregateTableNames, ct.OtherTable)).ToList();
+            var navigableOneToOneParentFKs = tbl.GetNavigableOneToOneParentTables(tablesByName).Where(ct => IsInAggregate(aggregateTableNames, ct.OtherTable) && !IsExcluded(ct.OtherTable)).ToList();
+            var navigableOneToOneChildFKs = tbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => IsInAggregate(aggregateTableNames, ct.OtherTable) && !IsExcluded(ct.OtherTable)).ToList();
+
+            if (IsExcluded(tbl.Name))
+                continue;
+
+            bool isRootTable = tbl.Name.Equals(aggregateRootName, StringComparison.InvariantCultureIgnoreCase); 
+
+            bool isAbstract = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name 
+                                        && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                                .Any();
+
+            if (isAbstract)
+                continue;
+
+            var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                                .Where(e => e.Attribute("table").Value == tbl.Name)
+                                .Select(e => e.Attribute("isA"))
+                                .SingleOrDefault();
+
+            string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+
+            Table baseTbl = tables.SingleOrDefault(t => t.Name.Equals(baseTableName, StringComparison.InvariantCultureIgnoreCase));
+
+            bool isDerived = baseTableName != null;
+
+            string baseAggregateRootName =
+                    (from a in aggregatesElts
+                    from e in a.Descendants("Entity")
+                    where e.Attribute("table").Value == baseTableName
+                    select a.Attribute("root").Value)
+                    .SingleOrDefault();
+
+            List<string> baseAggregateTableNames = 
+                (from a in aggregatesElts
+                where a.Attribute("root").Value == baseAggregateRootName
+                from e in a.Descendants("Entity")
+                select e.Attribute("table").Value)
+                .ToList();
+
+            var baseNavigableChildFKs = baseTbl == null ? 
+                new List<FKTable>()
+                : baseTbl.GetNavigableChildTables(tablesByName).Where(ct => IsInAggregate(baseAggregateTableNames, ct.OtherTable)).ToList();
+
+            var baseNavigableParentFKs = baseTbl == null ? 
+                new List<FKTable>()
+                : GetNavigableParentRelationships(baseTbl, baseAggregateTableNames);
+
+            if (isDerived && isRootTable)
+            {
+                // Add the aggregate's tables to the list still to be iterated
+                additionalTablesTBD.AddRange(baseAggregateTableNames);
+            }
+
+            foreach (var fk in tbl.ParentTables.Where(pt => !navigableParentFKs.Contains(pt)))
+            { #>
+                        new Constraint("<#= tbl.Name #>", "<#= tbl.Schema #>", "<#= fk.ConstraintName  #>"),
+<#          }
+
+            if (isDerived && false) {
+                foreach (var fk in baseTbl.ParentTables.Where(pt => !baseNavigableParentFKs.Contains(pt))) 
+                { #>
+                        new Constraint("<#= baseTbl.Name #>", "<#= baseTbl.Schema #>", "<#= fk.ConstraintName  #>"),
+<#              }
+            }
+
+            #>
+<#      } #>
+                    }
+                },
+<#  } #>
+        };
+    }
+}

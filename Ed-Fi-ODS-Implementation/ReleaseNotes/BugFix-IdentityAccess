@@ -1,0 +1,2 @@
+Use string.Format to supply the needed query parameters for MultipleSqlServerWithUniqueIdIntegrationIdentityValueMapper 
+Dispose of the SQL readers in MultipleSqlServerWithUniqueIdIntegrationIdentityValueMapper 

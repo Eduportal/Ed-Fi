@@ -1,0 +1,64 @@
+﻿<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Xml.Schema" #>
+<#+
+public const string StandardMetadataFolder = @"..\..\..\Standard\Metadata\";
+public const string ExtensionMetadataFolder = @"..\Extensions\Metadata\";
+
+public string GetSolutionPath(ITextTemplatingEngineHost host)
+{
+    return host.ResolveAssemblyReference("$(SolutionDir)");
+}
+
+public System.Xml.Linq.XDocument GetExtendedXmlDocument(ITextTemplatingEngineHost host, string fileName){
+    var filepath = host.ResolvePath(StandardMetadataFolder + fileName);
+	var document = XDocument.Load(filepath);
+	var extfilepath = GetSolutionPath(host) + ExtensionMetadataFolder + fileName.Replace(".xml", "-Extension.xml");
+    if (File.Exists(extfilepath))
+    {
+        var extdocument = XDocument.Load(extfilepath);
+		document.Root.Add(extdocument.Root.Elements());
+    }
+    return document;
+}
+
+public System.Xml.Linq.XDocument GetReplacedXmlDocument(ITextTemplatingEngineHost host, string fileName){
+    var filepath  = host.ResolvePath(StandardMetadataFolder + fileName );
+    var extfilepath = GetSolutionPath(host) + ExtensionMetadataFolder + fileName.Replace(".xml", "-Extension.xml");
+    if (File.Exists(extfilepath))
+    {
+        filepath = extfilepath;
+    }
+	var mainDoc = XDocument.Load(filepath);
+	return mainDoc;
+}
+
+public static List<string> LoadElements(string schemaFile, string xsdNamespace)
+{
+	var parsedObjects = new List<string>();
+
+    var schemaSet = new XmlSchemaSet();
+	schemaSet.Add(xsdNamespace, schemaFile);
+    schemaSet.Compile();
+
+    foreach (XmlSchema schema in schemaSet.Schemas())
+    {
+        var xmlSchema = schema;
+
+		foreach (var schemaType in xmlSchema.SchemaTypes.Values)
+		{
+			var complexType = schemaType as XmlSchemaComplexType;
+			if (complexType != null)
+			{
+				parsedObjects.Add(complexType.Name);
+			}
+		}
+    }
+
+	return parsedObjects;
+}
+#>

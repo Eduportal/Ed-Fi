@@ -1,0 +1,331 @@
+<#@ include file="$(ttIncludeFolder)\Common.ttinclude" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Common.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.CodeGen.dll" #>
+<#@ assembly name="$(ttLibsFolder)\EdFi.Ods.Common.dll" #>
+<#@ import namespace="EdFi.Common.Inflection" #>
+<#@ import namespace="EdFi.Ods.CodeGen" #>
+<#@ import namespace="EdFi.Ods.CodeGen.DatabaseSchema" #>
+<#@ import namespace="EdFi.Ods.CodeGen.Models.ProfileMetadata" #>
+<#@ import namespace="EdFi.Ods.Common.Utils.Profiles" #>
+<#@ output extension=".generated.cs" encoding="0" #>
+using System;
+using System.Collections.Generic;
+using EdFi.Ods.Common;
+<#
+    string projectPath = GetProjectPath();
+
+    // Load the current assembly's profiles
+    var profiles = MetadataHelper.GetProfiles(projectPath);
+    var profilesXDoc = MetadataHelper.GetProfilesXDocument(projectPath);
+
+    if (profiles.Profile.Any())
+    {
+#>
+using EdFi.Ods.Api.Architecture;
+<#  }
+
+    var databaseSchemaProvider = 
+        new UsiToUniqueIdTransformingDatabaseSchemaProviderDecorator(
+            new EdFiExtensionsDatabaseSchemaProviderDecorator(
+                new DatabaseSchemaProvider(GetCurrentProjectFileName(), GetTemplatesPath())));
+
+    codeGenHelper = new CodeGenHelper(databaseSchemaProvider, GetExtensionsMetadataPath());
+
+    MetadataValidator.ValidateProfileMetadata(codeGenHelper, profiles, MetadataHelper.GetProfilesXDocument(projectPath));
+
+    var domainMetadataDoc = MetadataHelper.GetDomainMetadata(GetExtensionsMetadataPath()); 
+    var tables = databaseSchemaProvider.LoadTables();
+
+    var tablesByName = new Dictionary<string, Table>(StringComparer.InvariantCultureIgnoreCase);
+
+    foreach (var t in tables)
+        tablesByName[t.Name] = t;
+
+    // Determine what tables in the database have not been explicitly handled
+    var unhandledTableNames = 
+        tablesByName.Keys
+        .Except(domainMetadataDoc.Descendants("Entity").Select(x => x.Attribute("table").Value))
+        .Where(x => !codeGenHelper.IsExcluded(x) && !x.EndsWith("Extension")) // Extension tables don't need to be explicitly handled, they are joined by convention
+        .ToList();
+
+    // Provide explicit message related to any unhandled tables
+    if (unhandledTableNames.Any())
+        throw new Exception(string.Format("The following tables have not been explicitly handled:\r\n{0}", string.Join("\r\n\t", unhandledTableNames)));
+
+    var aggregatesElts = domainMetadataDoc.Descendants("Aggregate");
+
+    var propertiesWithCollidingJsonNames = codeGenHelper.GetCollidingPropertyNames(tablesByName, aggregatesElts);
+
+    string ResourceNamespace = "EdFi.Ods.Api.Models.Resources";
+
+    if (!projectPath.Contains("Profiles"))
+    {
+        GenerateRequests(
+            null, 
+            aggregatesElts, 
+            ResourceNamespace,
+            tablesByName,
+            propertiesWithCollidingJsonNames,
+            //tables,
+            codeGenHelper,
+            true);
+    }
+
+    foreach (var profile in profiles.Profile) {
+        var profileContexts = new List<ProfileContext>();
+        
+        var profileXElt = GetProfileXElement(profilesXDoc, profile.name);
+
+        if ((profile.Resource ?? new Resource[0]).Any(x => x.ReadContentType != null))
+            profileContexts.Add(new ProfileContext { Profile = profile, ProfileXElement = profileXElt, ContentTypeUsage = ContentTypeUsage.Readable });
+
+        if ((profile.Resource ?? new Resource[0]).Any(x => x.WriteContentType != null))
+            profileContexts.Add(new ProfileContext { Profile = profile, ProfileXElement = profileXElt, ContentTypeUsage = ContentTypeUsage.Writable });
+
+        foreach (var profileContext in profileContexts) {
+            GenerateRequests(
+                profileContext, 
+                aggregatesElts, 
+                ResourceNamespace,
+                tablesByName,
+                propertiesWithCollidingJsonNames,
+                //tables,
+                codeGenHelper,
+                profileContext == profileContexts.Last()
+                );
+        }
+    }
+
+#>
+<#+
+
+// TODO: Move to CodeGenHelper, and remove from Resources.ttinclude and Requests.ttinclude
+XElement GetProfileXElement(XDocument doc, string profileName)
+{
+        try 
+        {
+            var profileXElt = doc
+                .Descendants("Profile")
+                .Where(x => x.Attribute("name").Value == profileName)
+                .Single();
+
+            return profileXElt;
+        }
+        catch (InvalidOperationException)
+        {
+            throw new Exception(string.Format(
+                "Unable to find exactly one profile named '{0}'.", 
+                profileName));
+        }
+}
+
+void GenerateRequests(ProfileContext profileContext, IEnumerable<XElement> aggregatesElts, 
+    string resourceNamespace,
+    Dictionary<string, Table> tablesByName, 
+    List<string> propertiesWithCollidingJsonNames,
+    ICodeGenHelper coreCodeGenHelper,
+    bool generateDeleteRequest)
+{
+    ICodeGenHelper codeGenHelper;
+    string profileNamespaceSegment;
+    string writableProfileNamespaceSegment;
+    
+    string profileContentTypeWritableFormat = null;
+
+    Profile profile = profileContext == null ? null : profileContext.Profile;
+
+    if (profileContext == null) 
+    {
+        codeGenHelper = coreCodeGenHelper;
+        writableProfileNamespaceSegment = string.Empty;
+        profileNamespaceSegment = string.Empty;
+
+        //readableProfileNamespaceSegment = string.Empty;
+    }
+    else 
+    {
+        codeGenHelper = new ProfilesCodeGenHelper(profileContext, coreCodeGenHelper);
+        writableProfileNamespaceSegment = "." + profile.name.Replace("-", "_") + "_Writable";
+        profileNamespaceSegment = "." + profile.name.Replace("-", "_");
+
+        profileContentTypeWritableFormat = "application/vnd.ed-fi.{0}." + profile.name + ".writable+json";
+    }
+
+    foreach (var aggregateElt in aggregatesElts)
+    { 
+        // WARNING: This code assumes that aggregateRootName and the root table name are the same.
+        string aggregateRootName = aggregateElt.Attribute("root").Value;
+        string collectionName = CompositeTermInflector.MakePlural(aggregateRootName);
+        string writableClientDtoFqn = resourceNamespace + "." + aggregateRootName + writableProfileNamespaceSegment + "." + aggregateRootName; 
+
+        List<string> aggregateTableNames = 
+            (from e in aggregateElt.Descendants("Entity")
+            select e.Attribute("table").Value)
+            .ToList();
+
+        Table tbl;
+
+        if (!tablesByName.TryGetValue(aggregateRootName, out tbl))
+            throw new Exception(string.Format("Unable to find table '{0}' in tables (count = {1}).", aggregateRootName, tablesByName.Keys.Count()));
+
+        if (codeGenHelper.IsExcluded(tbl.Name))
+            continue;
+
+        if (!codeGenHelper.ShouldGenerateAggregate(aggregateRootName, null))
+            continue;
+
+        var navigableParentFKs = codeGenHelper.GetNavigableParentRelationships(tbl, aggregateTableNames);
+        var navigableChildFKs = tbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable)).ToList();
+        var navigableOneToOneParentFKs = tbl.GetNavigableOneToOneParentTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+        var navigableOneToOneChildFKs = tbl.GetNavigableOneToOneChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(aggregateTableNames, ct.OtherTable) && !codeGenHelper.IsExcluded(ct.OtherTable)).ToList();
+
+        bool isRootTable = tbl.Name.Equals(aggregateRootName, StringComparison.InvariantCultureIgnoreCase); 
+
+        bool isAbstract = aggregateElt.Descendants("Entity")
+                            .Where(e => e.Attribute("table").Value == tbl.Name 
+                                    && e.Attributes("isAbstract").FirstOrDefault(a => a.Value == "true") != null)
+                            .Any();
+
+        if (isAbstract)
+            continue;
+
+        var baseTableNameAttr = aggregateElt.Descendants("Entity")
+                            .Where(e => e.Attribute("table").Value == tbl.Name)
+                            .Select(e => e.Attribute("isA"))
+                            .SingleOrDefault();
+
+        string baseTableName = baseTableNameAttr == null ? null : baseTableNameAttr.Value;
+
+        bool isDerived = baseTableName != null;
+
+        Table baseTbl = null;
+
+        if (isDerived)
+            tablesByName.TryGetValue(baseTableName, out baseTbl);
+
+        string baseAggregateRootName =
+                (from a in aggregatesElts
+                from e in a.Descendants("Entity")
+                where e.Attribute("table").Value == baseTableName
+                select a.Attribute("root").Value)
+                .SingleOrDefault();
+
+        List<string> baseAggregateTableNames = 
+            (from a in aggregatesElts
+            where a.Attribute("root").Value == baseAggregateRootName
+            from e in a.Descendants("Entity")
+            select e.Attribute("table").Value)
+            .ToList();
+
+        var baseNavigableChildFKs = baseTbl == null ? 
+            new List<FKTable>()
+            : baseTbl.GetNavigableChildTables(tablesByName).Where(ct => codeGenHelper.IsInAggregate(baseAggregateTableNames, ct.OtherTable)).ToList();
+
+#>
+
+namespace EdFi.Ods.Api.Models.Requests.v2.<#= collectionName #><#= profileNamespaceSegment #>
+{ 
+<#+ if (profileContext == null || profileContext.ContentTypeUsage == ContentTypeUsage.Readable) { #>
+    public class <#= aggregateRootName #>GetByKey
+    {
+<#+     RenderRequestProperties(tablesByName, tbl, baseTbl, propertiesWithCollidingJsonNames, true); #>
+    }
+
+    public class <#= aggregateRootName #>GetByExample
+    {
+<#+     RenderRequestProperties(tablesByName, tbl, baseTbl, propertiesWithCollidingJsonNames, false); #>
+    }
+
+    public class <#= aggregateRootName #>GetByIds : IHasIdentifiers<Guid>
+    {
+        public <#= aggregateRootName #>GetByIds() { }
+
+        public <#= aggregateRootName #>GetByIds(params Guid[] ids)
+        {
+            Ids = new List<Guid>(ids);
+        }
+
+        public List<Guid> Ids { get; set; }
+    }
+<#+ } #>
+<#+ if (profileContext == null || profileContext.ContentTypeUsage == ContentTypeUsage.Writable) { #>
+<#+     if (profileContentTypeWritableFormat != null) { #>
+    [ProfileContentType("<#= string.Format(profileContentTypeWritableFormat, codeGenHelper.CamelCase(aggregateRootName)) #>")]
+<#+     } #>
+    public class <#= aggregateRootName #>Post : <#= writableClientDtoFqn #>
+    {
+    }
+
+<#+     if (profileContentTypeWritableFormat != null) { #>
+    [ProfileContentType("<#= string.Format(profileContentTypeWritableFormat, codeGenHelper.CamelCase(aggregateRootName)) #>")]
+<#+     } #>
+    public class <#= aggregateRootName #>Put : <#= writableClientDtoFqn #>
+    { 
+    }
+<#+ } #>
+<#+ if (generateDeleteRequest) { #>
+
+    public class <#= aggregateRootName #>Delete : IHasIdentifier 
+    {
+        public <#= aggregateRootName #>Delete() { }
+
+        public <#= aggregateRootName #>Delete(Guid id) 
+        {
+            Id = id;
+        }
+
+        public Guid Id { get; set; }
+    }
+<#+ } #>
+}
+
+/*
+namespace EdFi.Ods.Api.Models.Requests.v2.<#= collectionName #>
+{
+   // [ApiRequest(Route = "/<#= codeGenHelper.CamelCase(collectionName) #>/{id}", Verb = "PATCH", Summary = "Updates an existing resource using a partial representation.")]
+    public class <#= aggregateRootName #>Patch : ResourceAsJsonObject<Guid>
+    {
+       // [ApiMember(Name = "Id", ParameterType = "path", DataType = "string", Description = "The identifier of the resource.", IsRequired = true, Verb = "PATCH")]
+        public override Guid Id { get; set; }
+
+       // [ApiMember(Name = "body", ParameterType = "body", IsRequired = true, DataType = "string", Description = "The partial resource representation to apply to the specified resource.", Verb = "PATCH")]
+        public override Newtonsoft.Json.Linq.JObject Data { get; set; }
+
+       // [ApiMember(Name = "If-Match", ParameterType = "header", DataType = "string", Description = "The ETag header value used to prevent the PATCH from overwriting another consumer's changes in an unexpected way.", IsRequired = true, Verb = "PATCH")]
+        [Obsolete("This property is not intended to be used.  It is an affordance for ServiceStack in providing metadata to Swagger-UI.", true)]
+        public override string IfMatch { get; set; }
+    }
+}
+*/
+
+<#+ }
+} #>
+<#+
+    private ICodeGenHelper codeGenHelper;
+    void RenderRequestProperties(Dictionary<string,Table> tablesByName, Table tbl, Table baseTbl, List<string> propertiesWithCollidingJsonNames, bool keysOnly)
+    {
+        bool isDerived = baseTbl != null;
+        var columnsToConsider = keysOnly? tbl.PKs : tbl.ExampleSpecificationColumns;
+
+        foreach (var pkCol in columnsToConsider)
+        {
+            if (!codeGenHelper.IsLookupTypeColumn(tablesByName, tbl, pkCol.Name)) 
+            {
+#>        public <#= pkCol.SysType #> <#= codeGenHelper.ApplyPropertyNameConventions(pkCol.CleanName, tbl.Name, propertiesWithCollidingJsonNames, true) #> { get; set; }
+<#+
+            }
+            else
+            {
+#>        public string <#= codeGenHelper.ApplyPropertyNameConventions(TrimSuffix(pkCol.CleanName, "Id"), tbl.Name, propertiesWithCollidingJsonNames, true) #> { get; set; }
+<#+
+            }
+        }
+
+    }
+
+ #>
+
