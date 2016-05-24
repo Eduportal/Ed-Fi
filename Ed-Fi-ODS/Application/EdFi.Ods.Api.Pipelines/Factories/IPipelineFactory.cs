@@ -1,4 +1,5 @@
-﻿using EdFi.Ods.Common;
+﻿using EdFi.Ods.Api.Pipelines.GetByMatch;
+using EdFi.Ods.Common;
 using EdFi.Ods.Entities.Common;
 using EdFi.Ods.Pipelines.Delete;
 using EdFi.Ods.Pipelines.Get;
@@ -17,6 +18,10 @@ namespace EdFi.Ods.Pipelines.Factories
         GetByKeyPipeline<TResourceModel, TEntityModel> CreateGetByKeyPipeline<TResourceModel, TEntityModel>()
             where TResourceModel : IHasETag
             where TEntityModel : class;
+
+        //GetByMatchPipeline<TResourceModel, TEntityModel> CreateGetByKeyPipeline<TResourceModel, TEntityModel>()
+        //    where TResourceModel : IHasETag
+        //    where TEntityModel : class;
 
         GetManyPipeline<TResourceModel, TEntityModel> CreateGetManyPipeline<TResourceModel, TEntityModel>()
             where TResourceModel : IHasETag

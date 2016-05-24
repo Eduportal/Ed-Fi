@@ -139,6 +139,7 @@
     <Compile Include="Services\Binders\ResourceAsJsonObjectModelBinder.cs" />
     <Compile Include="Services\Controllers\BulkOperationsController.cs" />
     <Compile Include="Services\Controllers\BulkOperationsExceptionsController.cs" />
+    <Compile Include="Services\Controllers\SchoolIdentitiesController.cs" />
     <Compile Include="Services\Metadata\SwaggerMetadataCache.cs" />
     <Compile Include="Services\Metadata\SwaggerMetadataResourceAttribute.cs" />
     <Compile Include="Startup\Log4NetLogger.cs" />

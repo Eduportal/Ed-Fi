@@ -64,16 +64,11 @@ namespace EdFi.Ods.Api.Services.Controllers.v2
             //this.repository = repository;
             this.schoolYearContextProvider = schoolYearContextProvider;
             this.restErrorProvider = restErrorProvider;
-            getByIdPipeline = new Lazy<GetPipeline<TResourceReadModel, TAggregateRoot>>
-                (pipelineFactory.CreateGetPipeline<TResourceReadModel, TAggregateRoot>);
-            getByKeyPipeline = new Lazy<GetByKeyPipeline<TResourceReadModel, TAggregateRoot>>
-                (pipelineFactory.CreateGetByKeyPipeline<TResourceReadModel, TAggregateRoot>);
-            getManyPipeline = new Lazy<GetManyPipeline<TResourceReadModel, TAggregateRoot>>
-                (pipelineFactory.CreateGetManyPipeline<TResourceReadModel, TAggregateRoot>);
-            putPipeline = new Lazy<PutPipeline<TResourceWriteModel, TAggregateRoot>>
-                (pipelineFactory.CreatePutPipeline<TResourceWriteModel, TAggregateRoot>);
-            deletePipeline = new Lazy<DeletePipeline>
-                (pipelineFactory.CreateDeletePipeline<TResourceReadModel, TAggregateRoot>);
+            getByIdPipeline = new Lazy<GetPipeline<TResourceReadModel, TAggregateRoot>>(pipelineFactory.CreateGetPipeline<TResourceReadModel, TAggregateRoot>);
+            getByKeyPipeline = new Lazy<GetByKeyPipeline<TResourceReadModel, TAggregateRoot>>(pipelineFactory.CreateGetByKeyPipeline<TResourceReadModel, TAggregateRoot>);
+            getManyPipeline = new Lazy<GetManyPipeline<TResourceReadModel, TAggregateRoot>>(pipelineFactory.CreateGetManyPipeline<TResourceReadModel, TAggregateRoot>);
+            putPipeline = new Lazy<PutPipeline<TResourceWriteModel, TAggregateRoot>>(pipelineFactory.CreatePutPipeline<TResourceWriteModel, TAggregateRoot>);
+            deletePipeline = new Lazy<DeletePipeline>(pipelineFactory.CreateDeletePipeline<TResourceReadModel, TAggregateRoot>);
         }
 
         private ILog _logger;

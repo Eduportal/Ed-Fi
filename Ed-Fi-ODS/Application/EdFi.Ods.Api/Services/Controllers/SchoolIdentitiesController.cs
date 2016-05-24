@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -6,29 +7,35 @@ using System.Web.Http;
 using EdFi.Common.SchoolIdentity;
 using EdFi.Identity.Models;
 using EdFi.Ods.Api.Common.Filters;
+using EdFi.Ods.Api.Data.Mappings;
+using EdFi.Ods.Api.Models.Resources;
+using EdFi.Ods.Api.Models.Resources.School;
+using EdFi.Ods.Pipelines.GetByKey;
 using EdFi.Ods.Swagger.Attributes;
-using System;
+using EdFi.Ods.Pipelines.Factories;
 
-namespace EdFi.Identity.Controllers
+namespace EdFi.Ods.Api.Services.Controllers
 {
     [Description("Retrieve or create Unique Ids for a school, and add or update their information")]
     [EdFiAuthorization(Resource = "SchoolIdentity")]
     public class SchoolIdentitiesController : ApiController
     {
         private const string NoIdentitySystem = "There is no integrated Unique Identity System";
+
         private readonly IUniqueSchoolIdentity _schoolIdentitySubsystem;
-        private readonly ISchoolIdentityMapper _schoolIdentityMapper;
+        private Lazy<GetByKeyPipeline<School, Entities.NHibernate.SchoolAggregate.School>> _getByKeyPipeline;
+
 
         public SchoolIdentitiesController()
         {
 
         }
 
-        public SchoolIdentitiesController(IUniqueSchoolIdentity identitySubsystem, ISchoolIdentityMapper schoolIdentityMapper)
+        public SchoolIdentitiesController(IUniqueSchoolIdentity identitySubsystem, IPipelineFactory pipelineFactory)
             : this()
         {
             this._schoolIdentitySubsystem = identitySubsystem;
-            this._schoolIdentityMapper = schoolIdentityMapper;
+            this._getByKeyPipeline = new Lazy<GetByKeyPipeline<School, Entities.NHibernate.SchoolAggregate.School>>(pipelineFactory.CreateGetByKeyPipeline<School, Entities.NHibernate.SchoolAggregate.School>);
         }
 
 
@@ -44,9 +51,18 @@ namespace EdFi.Identity.Controllers
         {
             try
             {
-                var schoolIdentity = new SchoolIdentity { EducationOrganizationId = 12345 };
-                var result = _schoolIdentitySubsystem.Get(schoolIdentity);
-                return Request.CreateResponse(HttpStatusCode.OK, result.Select(s => _schoolIdentityMapper.MapToResource(s)));
+                //Get by key
+                var school = new School
+                {
+                    SchoolId = request.EducationOrganizationId
+                };
+
+                var result = _getByKeyPipeline.Value.Process((new GetByKeyContext<School, Entities.NHibernate.SchoolAggregate.School>(school, string.Empty)));
+                
+                //var schoolIdentity = new SchoolIdentity { EducationOrganizationId = 12345 };
+                //var result = _schoolIdentitySubsystem.Get(schoolIdentity);
+
+                return Request.CreateResponse(HttpStatusCode.OK, result.Resource.SchoolId);
             }
             catch (NotImplementedException)
             {

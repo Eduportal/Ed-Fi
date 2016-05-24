@@ -1,7 +1,6 @@
-﻿using System;
-using EdFi.Common.SchoolIdentity;
+﻿using EdFi.Common.SchoolIdentity;
 
-namespace EdFi.Identity.Models
+namespace EdFi.Ods.Api.Data.Repositories.SchoolIdentifier
 {
     public class UniqueSchoolIdentity : IUniqueSchoolIdentity
     {
@@ -16,12 +15,6 @@ namespace EdFi.Identity.Models
         public ISchoolIdentity[] Get(ISchoolIdentity identity)
         {
             return new ISchoolIdentity[] { identity };
-        }
-
-        public ISchoolIdentity Post(ISchoolIdentity command)
-        {
-            command.EducationOrganizationId = 12345;
-            return command;
         }
     }
 }

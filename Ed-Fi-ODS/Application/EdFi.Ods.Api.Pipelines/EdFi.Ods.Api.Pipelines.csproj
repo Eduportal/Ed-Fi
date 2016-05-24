@@ -109,6 +109,9 @@
     <Compile Include="GetByKey\GetByKeyPipeline.cs" />
     <Compile Include="GetByKey\GetByKeyContext.cs" />
     <Compile Include="GetByKey\GetResult.cs" />
+    <Compile Include="GetByMatch\GetByMatchContext.cs" />
+    <Compile Include="GetByMatch\GetByMatchPipeline.cs" />
+    <Compile Include="GetByMatch\GetByMatchResult.cs" />
     <Compile Include="GetMany\GetManyContext.cs" />
     <Compile Include="GetMany\GetManyPipeline.cs" />
     <Compile Include="GetMany\GetManyResult.cs" />
@@ -135,6 +138,7 @@
     <Compile Include="Put\PutResult.cs" />
     <Compile Include="Steps\GetEntityModelById.cs" />
     <Compile Include="Steps\GetEntityModelByKey.cs" />
+    <Compile Include="Steps\GetEntityModelByMatch.cs" />
     <Compile Include="Steps\GetEntityModelsBySpecification.cs" />
     <Compile Include="Steps\MapEntityModelsToResourceModels.cs" />
     <Compile Include="Steps\DeleteEntityModel.cs" />

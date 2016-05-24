@@ -79,7 +79,7 @@ namespace EdFi.Ods.Api.Services.Metadata {
         ///      &quot;description&quot;: &quot;Retrieve or create Unique Ids for a person, and add or update their information&quot;
         ///    },
         ///    {
-        ///      &quot;path&quot;: &quot;/schoolIden [rest of string was truncated]&quot;;.
+        ///      &quot;p [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string other_api_docs_json {
             get {
@@ -105,7 +105,7 @@ namespace EdFi.Ods.Api.Services.Metadata {
         ///        {
         ///          &quot;method&quot;: &quot;POST&quot;,
         ///          &quot;nickname&quot;: &quot;post&quot;,
-        ///          &quot;notes&quot;: &quot;This creates a session, during which XML interchange files are uploaded, committed, and processed. An Operation Identifie [rest of string was truncated]&quot;;.
+        ///          &quot;notes&quot;: &quot;This creates a session, during which XML interchange files are uploaded, committed, and processed. An Op [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string other_bulkOperations_json {
             get {
@@ -132,7 +132,7 @@ namespace EdFi.Ods.Api.Services.Metadata {
         ///          &quot;method&quot;: &quot;GET&quot;,
         ///          &quot;nickname&quot;: &quot;get&quot;,
         ///          &quot;summary&quot;: &quot;Retrieves collection of exceptions from a bulk operation.&quot;,
-        ///          &quot;type&quot;: &quot; [rest of string was truncated]&quot;;.
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string other_bulkOperationsExceptions_json {
             get {
@@ -185,7 +185,7 @@ namespace EdFi.Ods.Api.Services.Metadata {
         ///          &quot;nickname&quot;: &quot;postChunk&quot;,
         ///          &quot;summary&quot;: &quot;Allows for the upload of files parts of a larger upload file.&quot;,
         ///          &quot;type&quot;: &quot;upload&quot;,
-        ///          &quot;responseCl [rest of string was truncated]&quot;;.
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string other_uploads_json {
             get {

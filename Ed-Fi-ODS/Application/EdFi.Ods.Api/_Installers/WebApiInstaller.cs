@@ -16,7 +16,9 @@ using EdFi.Ods.Api.Common.Authorization;
 using EdFi.Ods.Api.Data.EventStore;
 using EdFi.Ods.Api.Data.Repositories.BulkOperations;
 using EdFi.Ods.Api.Data.Repositories.BulkOperations.Exceptions;
+using EdFi.Ods.Api.Data.Repositories.SchoolIdentifier;
 using EdFi.Ods.Api.Data._Installers;
+using EdFi.Ods.Api.Models.Resources;
 using EdFi.Ods.Api.Pipelines._Installers;
 using EdFi.Ods.Api.Services.Authorization;
 using EdFi.Ods.Api.Services.Providers;
@@ -155,7 +157,7 @@ namespace EdFi.Ods.Api._Installers
             // Unique Identity System Integration
             container.Register(Component
                 .For<IUniqueSchoolIdentity>()
-                .ImplementedBy<EdFi.Identity.Models.UniqueSchoolIdentity>());
+                .ImplementedBy<UniqueSchoolIdentity>());
             
             // Sample Unique Identity class registration
             //container.Register(Component
@@ -169,14 +171,6 @@ namespace EdFi.Ods.Api._Installers
             container.Register(Component
                 .For<IIdentityMapper>()
                 .ImplementedBy<IdentityMapper>());
-
-            container.Register(Component
-                .For<IValidator<SchoolIdentityResource>>()
-                .ImplementedBy<SchoolIdentityResourceCreateValidator>());
-
-            container.Register(Component
-                .For<ISchoolIdentityMapper>()
-                .ImplementedBy<SchoolIdentityMapper>());
         }
     }
 }

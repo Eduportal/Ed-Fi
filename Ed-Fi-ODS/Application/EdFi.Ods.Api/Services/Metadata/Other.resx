@@ -506,8 +506,24 @@
           "parameters": [
             {
               "paramType": "query",
-              "name": "uniqueId",
-              "description": "Gender of the identity",
+              "name": "EducationOrganizationId",
+              "description": "EducationOrganizationId",
+              "type": "integer",
+              "required": false,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "StateOrganizationId",
+              "description": "StateOrganizationId",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "NameOfInstitution",
+              "description": "NameOfInstitution",
               "type": "string",
               "required": false,
               "allowMultiple": false
@@ -571,12 +587,20 @@
     "school": {
       "id": "school",
       "properties": {
-        "uniqueId": {
+        "EducationOrganizationId": {
+          "type": "integer",
+          "required": false
+        },
+        "StateOrganizationId": {
           "type": "string",
-          "required": true
+          "required": false
+        },
+        "NameOfInstitution": {
+          "type": "string",
+          "required": false
         }
-      }  
-    } 
+      }
+    }
   }
 }</value>
   </data>

@@ -73,6 +73,7 @@
     <Compile Include="EventStore\EventRepository.cs" />
     <Compile Include="EventStore\IEventLogRepository.cs" />
     <Compile Include="Mappings\MappingExtensions.cs" />
+    <Compile Include="Mappings\SchoolIdentityExtensions.cs" />
     <Compile Include="Migrations\201409102047133_Base.cs" />
     <Compile Include="Migrations\201409102047133_Base.Designer.cs">
       <DependentUpon>201409102047133_Base.cs</DependentUpon>
@@ -105,6 +106,7 @@
     <Compile Include="Repositories\Marker_EdFi_Ods_Repositories_Common.cs" />
     <Compile Include="Repositories\QueryCriteriaBase.cs" />
     <Compile Include="Repositories\QueryParameters.cs" />
+    <Compile Include="Repositories\SchoolIdentifier\UniqueSchoolIdentity.cs" />
     <Compile Include="Repositories\TextCriteria.cs" />
     <Compile Include="Repositories\TextMatchMode.cs" />
     <Compile Include="UploadFile.cs" />
