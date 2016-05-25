@@ -7,6 +7,7 @@ using Castle.Windsor;
 using EdFi.Common.Identity;
 using EdFi.Common.SchoolIdentity;
 using EdFi.Common.Security.Claims;
+using EdFi.Common.StaffIdentity;
 using EdFi.Common._Installers;
 using EdFi.Identity.Models;
 using EdFi.Messaging.MSMQ._Installers;
@@ -31,6 +32,7 @@ using EdFi.Ods.Security.Claims;
 using EdFi.Ods.Security._Installers;
 using EduId.WebApi;
 using FluentValidation;
+using EdFi.Ods.Api.Data.Repositories.StaffIdentifier;
 
 namespace EdFi.Ods.Api._Installers
 {
@@ -158,6 +160,10 @@ namespace EdFi.Ods.Api._Installers
             container.Register(Component
                 .For<IUniqueSchoolIdentity>()
                 .ImplementedBy<UniqueSchoolIdentity>());
+
+            container.Register(Component
+               .For<IUniqueStaffIdentity>()
+               .ImplementedBy<UniqueStaffIdentity>());
             
             // Sample Unique Identity class registration
             //container.Register(Component

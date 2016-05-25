@@ -173,6 +173,9 @@
     <Compile Include="Security\Claims\JsonClaimHelper.cs" />
     <Compile Include="Security\EdFiSecurityException.cs" />
     <Compile Include="Services\IHostedService.cs" />
+    <Compile Include="StaffIdentity\IStaffIdentity.cs" />
+    <Compile Include="StaffIdentity\IUniqueStaffIdentity.cs" />
+    <Compile Include="StaffIdentity\StaffIdentity.cs" />
     <Compile Include="_Installers\AllDeployedHandlersInstaller.cs" />
     <Compile Include="_Installers\EdFiCommonInstaller.cs" />
     <Compile Include="_Installers\EdFiMessagingInstaller.cs" />

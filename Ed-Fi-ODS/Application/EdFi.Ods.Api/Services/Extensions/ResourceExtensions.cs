@@ -25,14 +25,14 @@ namespace EdFi.Ods.Api.Services.Extensions
             };
         }
 
-        //public static StaffIdentityResource ToResource(this Staff staff)
-        //{
-        //    return new StaffIdentityResource
-        //    {
-        //        StaffUniqueId = staff.StaffUniqueId,
-        //        FirstName = staff.FirstName,
-        //        LastSurname = staff.LastSurname
-        //    };
-        //}
+        public static StaffIdentityResource ToResource(this Staff staff)
+        {
+            return new StaffIdentityResource
+            {
+                StaffUniqueId = staff.StaffUniqueId,
+                FirstName = staff.FirstName,
+                LastSurname = staff.LastSurname
+            };
+        }
     }
 }

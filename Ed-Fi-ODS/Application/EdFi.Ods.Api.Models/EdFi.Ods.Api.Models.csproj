@@ -72,6 +72,7 @@
       <DependentUpon>Resources.tt</DependentUpon>
     </Compile>
     <Compile Include="Resources\SchoolIdentityResource.cs" />
+    <Compile Include="Resources\StaffIdentityResource.cs" />
     <Compile Include="Resources\UploadFileResource.cs" />
   </ItemGroup>
   <ItemGroup>

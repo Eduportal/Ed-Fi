@@ -107,6 +107,7 @@
     <Compile Include="Repositories\QueryCriteriaBase.cs" />
     <Compile Include="Repositories\QueryParameters.cs" />
     <Compile Include="Repositories\SchoolIdentifier\UniqueSchoolIdentity.cs" />
+    <Compile Include="Repositories\StaffIdentifier\UniqueStaffIdentity.cs" />
     <Compile Include="Repositories\TextCriteria.cs" />
     <Compile Include="Repositories\TextMatchMode.cs" />
     <Compile Include="UploadFile.cs" />
