@@ -1,18 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using EdFi.Common.SchoolIdentity;
-using EdFi.Identity.Models;
+using EdFi.Ods.Api.Common;
 using EdFi.Ods.Api.Common.Filters;
-using EdFi.Ods.Api.Data.Mappings;
+using EdFi.Ods.Api.Data.Repositories;
 using EdFi.Ods.Api.Models.Resources;
 using EdFi.Ods.Api.Models.Resources.School;
+using EdFi.Ods.Api.Services.Extensions;
 using EdFi.Ods.Pipelines.GetByKey;
 using EdFi.Ods.Swagger.Attributes;
 using EdFi.Ods.Pipelines.Factories;
+using EdFi.Ods.Pipelines.GetMany;
+using EntitySchool=EdFi.Ods.Entities.NHibernate.SchoolAggregate.School;
 
 namespace EdFi.Ods.Api.Services.Controllers
 {
@@ -23,8 +27,8 @@ namespace EdFi.Ods.Api.Services.Controllers
         private const string NoIdentitySystem = "There is no integrated Unique Identity System";
 
         private readonly IUniqueSchoolIdentity _schoolIdentitySubsystem;
-        private Lazy<GetByKeyPipeline<School, Entities.NHibernate.SchoolAggregate.School>> _getByKeyPipeline;
-
+        private readonly Lazy<GetByKeyPipeline<School, EntitySchool>> _getByKeyPipeline;
+        private readonly Lazy<GetManyPipeline<School, EntitySchool>> _getManyPipeline;
 
         public SchoolIdentitiesController()
         {
@@ -35,7 +39,8 @@ namespace EdFi.Ods.Api.Services.Controllers
             : this()
         {
             this._schoolIdentitySubsystem = identitySubsystem;
-            this._getByKeyPipeline = new Lazy<GetByKeyPipeline<School, Entities.NHibernate.SchoolAggregate.School>>(pipelineFactory.CreateGetByKeyPipeline<School, Entities.NHibernate.SchoolAggregate.School>);
+            this._getByKeyPipeline = new Lazy<GetByKeyPipeline<School, EntitySchool>>(pipelineFactory.CreateGetByKeyPipeline<School, EntitySchool>);
+            this._getManyPipeline = new Lazy<GetManyPipeline<School, EntitySchool>>(pipelineFactory.CreateGetManyPipeline<School, EntitySchool>);
         }
 
 
@@ -51,18 +56,62 @@ namespace EdFi.Ods.Api.Services.Controllers
         {
             try
             {
-                //Get by key
                 var school = new School
                 {
                     SchoolId = request.EducationOrganizationId
                 };
-
-                var result = _getByKeyPipeline.Value.Process((new GetByKeyContext<School, Entities.NHibernate.SchoolAggregate.School>(school, string.Empty)));
                 
-                //var schoolIdentity = new SchoolIdentity { EducationOrganizationId = 12345 };
-                //var result = _schoolIdentitySubsystem.Get(schoolIdentity);
+                //Get by SchoolId
+                var result = _getByKeyPipeline.Value.Process(new GetByKeyContext<School, EntitySchool>(school, string.Empty));
+                if (result.Resource != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, result.Resource.ToResource());
+                }
 
-                return Request.CreateResponse(HttpStatusCode.OK, result.Resource.SchoolId);
+                var returnData = new List<School>();
+                var queryParams = new QueryParameters(new UrlQueryParametersRequest());
+                //Get data based on the StateOrganizationId
+                if (!String.IsNullOrEmpty(request.StateOrganizationId))
+                {
+                    school = new School {StateOrganizationId = request.StateOrganizationId};
+                    var resultMany = _getManyPipeline.Value.Process(new GetManyContext<School, EntitySchool>(school, queryParams));
+                    if (resultMany.Resources.Any())
+                    {
+                        returnData.AddRange(resultMany.Resources.ToList());
+                    }
+                }
+
+                //Get data based on the name
+                if (!String.IsNullOrEmpty(request.NameOfInstitution))
+                {
+                    school = new School
+                    {
+                        NameOfInstitution = request.NameOfInstitution
+                        
+                    };
+                    var getManyContext = new GetManyContext<School, EntitySchool>(school, queryParams);
+                    var resultMany = _getManyPipeline.Value.Process(getManyContext);
+                    if (resultMany.Resources.Any())
+                    {
+                        returnData.AddRange(resultMany.Resources.ToList());
+                    }
+                }
+
+                //Get data based on both
+                if (!String.IsNullOrEmpty(request.StateOrganizationId) && !String.IsNullOrEmpty(request.NameOfInstitution))
+                {
+                    school = new School { StateOrganizationId =request.StateOrganizationId,  NameOfInstitution = request.NameOfInstitution };
+                    var resultMany = _getManyPipeline.Value.Process(new GetManyContext<School, EntitySchool>(school, queryParams));
+                    if (resultMany.Resources.Any())
+                    {
+                        returnData.AddRange(resultMany.Resources.ToList());
+                    }
+                }
+
+                //Get only unique
+                var uniqueReturnData = returnData.GroupBy(s => s.SchoolId).Select(g => g.FirstOrDefault()).Where(r=>r!=null).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, uniqueReturnData.Select(s=>s.ToResource()));
             }
             catch (NotImplementedException)
             {
