@@ -140,6 +140,7 @@
     <Compile Include="Services\Controllers\BulkOperationsController.cs" />
     <Compile Include="Services\Controllers\BulkOperationsExceptionsController.cs" />
     <Compile Include="Services\Controllers\SchoolIdentitiesController.cs" />
+    <Compile Include="Services\Controllers\StaffIdentitiesController.cs" />
     <Compile Include="Services\Extensions\ResourceExtensions.cs" />
     <Compile Include="Services\Metadata\SwaggerMetadataCache.cs" />
     <Compile Include="Services\Metadata\SwaggerMetadataResourceAttribute.cs" />
