@@ -55,18 +55,20 @@ namespace EdFi.Ods.Api.Services.Controllers
         {
             try
             {
-                var staff = new Staff
-                {
-                    StaffUniqueId = request.StaffUniqueId
-                };
+                var staff = new Staff();
                 var queryParams = new QueryParameters(new UrlQueryParametersRequest());
 
                 //Get by SchoolId
-                var result = _getManyPipeline.Value.Process(new GetManyContext<Staff, EntityStaff>(staff, queryParams));
-                if (result.Resources.Any())
+                if (!String.IsNullOrEmpty(request.StaffUniqueId))
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, result.Resources.Select(s => s.ToResource()));
+                    staff.StaffUniqueId = request.StaffUniqueId;
+                    var result = _getManyPipeline.Value.Process(new GetManyContext<Staff, EntityStaff>(staff, queryParams));
+                    if (result.Resources.Any())
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, result.Resources.Select(s => s.ToResource()));
+                    }
                 }
+
 
                 var returnData = new List<Staff>();
 
