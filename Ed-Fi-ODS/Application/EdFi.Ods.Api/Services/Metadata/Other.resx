@@ -496,7 +496,7 @@
         {
           "method": "GET",
           "nickname": "getByExample",
-          "summary": "Lookup an existing Unique Id for a staff, or suggest possible matches - v1.",
+          "summary": "Lookup an existing Unique Id for a staff, or suggest possible matches.",
           "type": "array",
           "items": { "$ref": "staff" },
           "parameters": [
@@ -535,7 +535,7 @@
         {
           "method": "GET",
           "nickname": "getByExample",
-          "summary": "Lookup an existing Unique Id for a school, or suggest possible matches - v1.",
+          "summary": "Lookup an existing Unique Id for a school, or suggest possible matches.",
           "type": "array",
           "items": { "$ref": "school" },
           "parameters": [
