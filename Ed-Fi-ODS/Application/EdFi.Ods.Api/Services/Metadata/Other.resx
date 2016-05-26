@@ -136,10 +136,6 @@
       "description": "Retrieve or create Unique Ids for a person, and add or update their information"
     },
     {
-      "path": "/schoolIdentities",
-      "description": "Retrieve or create Unique Ids for a school, and add or update their information"
-    },
-    {
       "path": "/uploads",
       "description": "Upload interchange XML files"
     }
@@ -494,13 +490,52 @@
       ]
     },
     {
+      "path": "/staffIdentities",
+      "description": "Retrieves Unique Id for a staff",
+      "operations": [
+        {
+          "method": "GET",
+          "nickname": "getByExample",
+          "summary": "Lookup an existing Unique Id for a staff, or suggest possible matches - v1.",
+          "type": "array",
+          "items": { "$ref": "staff" },
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "StaffUniqueId",
+              "description": "StaffUniqueId",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "FirstName",
+              "description": "FirstName",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
+            },
+            {
+              "paramType": "query",
+              "name": "LastSurname",
+              "description": "LastSurname",
+              "type": "string",
+              "required": false,
+              "allowMultiple": false
+            }
+          ]
+        }
+      ]
+    },
+    {
       "path": "/schoolIdentities",
       "description": "Retrieves Unique Ids for a school",
       "operations": [
         {
           "method": "GET",
           "nickname": "getByExample",
-          "summary": "Lookup an existing Unique Id for a school, or suggest possible matches.",
+          "summary": "Lookup an existing Unique Id for a school, or suggest possible matches - v1.",
           "type": "array",
           "items": { "$ref": "school" },
           "parameters": [
@@ -598,6 +633,23 @@
         "NameOfInstitution": {
           "type": "string",
           "required": false
+        }
+      }
+    },
+    "staff": {
+      "id": "staff",
+      "properties": {
+        "StaffUniqueId": {
+          "type": "string",
+          "required": false
+        },
+        "FirstName": {
+          "type": "string",
+          "required": false
+        },
+        "LastSurname": {
+          "required": false,
+          "type": "string"
         }
       }
     }
