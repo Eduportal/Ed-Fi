@@ -67,45 +67,31 @@ namespace EdFi.Ods.Api.Services.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, result.Resource.ToResource());
                 }
+                
+                //Get data based on both
+                if (!String.IsNullOrEmpty(request.StateOrganizationId) && !String.IsNullOrEmpty(request.NameOfInstitution))
+                {
+                    school = new School { StateOrganizationId = request.StateOrganizationId, NameOfInstitution = request.NameOfInstitution };
+                    var schools = GetSchools(school);
+                    if (schools.Any())
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, schools.Select(s => s.ToResource()));
+                    }
+                }
 
                 var returnData = new List<School>();
-                var queryParams = new QueryParameters(new UrlQueryParametersRequest());
                 //Get data based on the StateOrganizationId
                 if (!String.IsNullOrEmpty(request.StateOrganizationId))
                 {
-                    school = new School {StateOrganizationId = request.StateOrganizationId};
-                    var resultMany = _getManyPipeline.Value.Process(new GetManyContext<School, EntitySchool>(school, queryParams));
-                    if (resultMany.Resources.Any())
-                    {
-                        returnData.AddRange(resultMany.Resources.ToList());
-                    }
+                    school = new School { NameOfInstitution = request.NameOfInstitution };
+                    returnData.AddRange(GetSchools(school));
                 }
 
                 //Get data based on the name
                 if (!String.IsNullOrEmpty(request.NameOfInstitution))
                 {
-                    school = new School
-                    {
-                        NameOfInstitution = request.NameOfInstitution
-                        
-                    };
-                    var getManyContext = new GetManyContext<School, EntitySchool>(school, queryParams);
-                    var resultMany = _getManyPipeline.Value.Process(getManyContext);
-                    if (resultMany.Resources.Any())
-                    {
-                        returnData.AddRange(resultMany.Resources.ToList());
-                    }
-                }
-
-                //Get data based on both
-                if (!String.IsNullOrEmpty(request.StateOrganizationId) && !String.IsNullOrEmpty(request.NameOfInstitution))
-                {
-                    school = new School { StateOrganizationId =request.StateOrganizationId,  NameOfInstitution = request.NameOfInstitution };
-                    var resultMany = _getManyPipeline.Value.Process(new GetManyContext<School, EntitySchool>(school, queryParams));
-                    if (resultMany.Resources.Any())
-                    {
-                        returnData.AddRange(resultMany.Resources.ToList());
-                    }
+                    school = new School{NameOfInstitution = request.NameOfInstitution};
+                    returnData.AddRange(GetSchools(school));
                 }
 
                 //Get only unique
@@ -117,6 +103,18 @@ namespace EdFi.Ods.Api.Services.Controllers
             {
                 return this.Request.CreateErrorResponse(HttpStatusCode.NotImplemented, NoIdentitySystem);
             }
+        }
+
+        private List<School> GetSchools(School school)
+        {
+            var returnData = new List<School>();
+            var queryParams = new QueryParameters(new UrlQueryParametersRequest());
+            var resultMany = _getManyPipeline.Value.Process(new GetManyContext<School, EntitySchool>(school, queryParams));
+            if (resultMany.Resources.Any())
+            {
+                returnData.AddRange(resultMany.Resources.ToList());
+            }
+            return returnData;
         }
     }
 }
