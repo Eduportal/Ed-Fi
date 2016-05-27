@@ -12,6 +12,7 @@ using EdFi.Ods.Api.Data.Repositories;
 using EdFi.Ods.Api.Models.Resources;
 using EdFi.Ods.Api.Models.Resources.Staff;
 using EdFi.Ods.Api.Services.Extensions;
+using EdFi.Ods.Pipelines.GetByKey;
 using EdFi.Ods.Swagger.Attributes;
 using EdFi.Ods.Pipelines.Factories;
 using EdFi.Ods.Pipelines.GetMany;
@@ -23,7 +24,9 @@ namespace EdFi.Ods.Api.Services.Controllers
     [EdFiAuthorization(Resource = "StaffIdentity")]
     public class StaffIdentitiesController : ApiController
     {
+        private const string NoIdentitySystem = "There is no integrated Unique Identity System";
         private readonly Lazy<GetManyPipeline<Staff, EntityStaff>> _getManyPipeline;
+
         public StaffIdentitiesController()
         {
 
