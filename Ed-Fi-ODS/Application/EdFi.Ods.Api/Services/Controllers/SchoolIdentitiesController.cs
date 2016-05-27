@@ -71,7 +71,7 @@ namespace EdFi.Ods.Api.Services.Controllers
                 //Get data based on both
                 if (!String.IsNullOrEmpty(request.StateOrganizationId) && !String.IsNullOrEmpty(request.NameOfInstitution))
                 {
-                    school = new School { StateOrganizationId = request.StateOrganizationId, NameOfInstitution = request.NameOfInstitution };
+                    school = new School { StateOrganizationId = request.StateOrganizationId.Trim(), NameOfInstitution = request.NameOfInstitution.Trim() };
                     var schools = GetSchools(school);
                     if (schools.Any())
                     {
@@ -83,14 +83,14 @@ namespace EdFi.Ods.Api.Services.Controllers
                 //Get data based on the StateOrganizationId
                 if (!String.IsNullOrEmpty(request.StateOrganizationId))
                 {
-                    school = new School { NameOfInstitution = request.NameOfInstitution };
+                    school = new School { NameOfInstitution = request.NameOfInstitution.Trim() };
                     returnData.AddRange(GetSchools(school));
                 }
 
                 //Get data based on the name
                 if (!String.IsNullOrEmpty(request.NameOfInstitution))
                 {
-                    school = new School{NameOfInstitution = request.NameOfInstitution};
+                    school = new School { NameOfInstitution = request.NameOfInstitution.Trim() };
                     returnData.AddRange(GetSchools(school));
                 }
 

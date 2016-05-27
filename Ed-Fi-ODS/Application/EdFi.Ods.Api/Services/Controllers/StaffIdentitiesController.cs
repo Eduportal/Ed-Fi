@@ -57,7 +57,7 @@ namespace EdFi.Ods.Api.Services.Controllers
                 //Get by SchoolId
                 if (!String.IsNullOrEmpty(request.StaffUniqueId))
                 {
-                    staff = new Staff { StaffUniqueId = request.StaffUniqueId};
+                    staff = new Staff { StaffUniqueId = request.StaffUniqueId.Trim() };
                     returnData =  GetStaffMembers(staff);
                     if (returnData.Any())
                     {
@@ -67,24 +67,23 @@ namespace EdFi.Ods.Api.Services.Controllers
 
                 if (!String.IsNullOrEmpty(request.FirstName) && !String.IsNullOrEmpty(request.LastSurname))
                 {
-                    staff = new Staff { FirstName = request.FirstName, LastSurname = request.LastSurname };
+                    staff = new Staff { FirstName = request.FirstName.Trim(), LastSurname = request.LastSurname.Trim() };
                     returnData = GetStaffMembers(staff);
                     if (returnData.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, returnData.Select(s => s.ToResource()));
                     }
                 }
-
                 
                 if (!String.IsNullOrEmpty(request.FirstName))
                 {
-                    staff = new Staff{FirstName = request.FirstName};
+                    staff = new Staff { FirstName = request.FirstName.Trim() };
                     returnData = GetStaffMembers(staff);
                 }
 
                 if (!String.IsNullOrEmpty(request.LastSurname))
                 {
-                    staff = new Staff{LastSurname = request.LastSurname};
+                    staff = new Staff { LastSurname = request.LastSurname.Trim() };
                     returnData = GetStaffMembers(staff);
                 }
 
